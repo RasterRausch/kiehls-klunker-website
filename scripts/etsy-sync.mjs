@@ -50,7 +50,7 @@ function writeEnvKey(src, key, value) {
 }
 
 // ── Auth + Config ───────────────────────────────────────────────
-let CLIENT_ID, SHARED_SECRET, SHOP_ID, ACCESS, REFRESH, DISCOUNT_PCT;
+let CLIENT_ID, SHARED_SECRET, SHOP_ID, ACCESS, REFRESH;
 
 async function refreshAccessToken() {
   const res = await fetch(TOKEN_URL, {
@@ -115,12 +115,18 @@ function detectCategory(title) {
 }
 
 function detectMaterial(title, description = '') {
-  const t = `${title} ${description}`.toLowerCase();
-  if (/\btitan(ium)?\b/.test(t)) return 'Titan';
-  if (/\bmessing\b|\bbrass\b/.test(t)) return 'Messing';
-  if (/\bsilber\b|\bsterling\b/.test(t)) return 'Silber';
-  if (/\bgold\b/.test(t)) return 'Gold';
-  return '';
+  // Titel hat Vorrang — Beschreibungen erwähnen häufig andere Materialien
+  // als Vergleich (z.B. "anders als Titan ist Messing…") und würden sonst
+  // falsch matchen.
+  const scan = (text) => {
+    const t = text.toLowerCase();
+    if (/\btitan(ium)?\b/.test(t)) return 'Titan';
+    if (/\bmessing\b|\bbrass\b/.test(t)) return 'Messing';
+    if (/\bsilber\b|\bsterling\b/.test(t)) return 'Silber';
+    if (/\bgold\b/.test(t)) return 'Gold';
+    return '';
+  };
+  return scan(title) || scan(description);
 }
 
 function yamlString(s) {
@@ -342,16 +348,11 @@ async function syncProducts() {
       imageRefs.push(`./images/${slug}/${filename}`);
     }
 
-    // Basis-Preis aus Etsy
-    const basePrice =
-      listing.price && listing.price.amount
-        ? listing.price.amount / listing.price.divisor
-        : 0;
-    // Etsy-Sale-Event anwenden (wenn in .env konfiguriert), auf volle € gerundet
+    // Preis aus Etsy
     const price =
-      DISCOUNT_PCT > 0
-        ? Math.round(basePrice * (1 - DISCOUNT_PCT / 100))
-        : Math.round(basePrice * 100) / 100;
+      listing.price && listing.price.amount
+        ? Math.round((listing.price.amount / listing.price.divisor) * 100) / 100
+        : 0;
     const stock = listing.quantity ?? 0;
     const mdPath = path.join(PRODUCTS_DIR, `${slug}.md`);
     const existed = fs.existsSync(mdPath);
@@ -360,6 +361,13 @@ async function syncProducts() {
     let preservedOrder = i + 1;
     let preservedFeatured = false;
     let preservedTagline = '';
+    // Manuelle Länder-Preise (nicht von Etsy lieferbar) werden beim Sync erhalten
+    let preservedPriceDE;
+    let preservedPriceUS;
+    let preservedPriceWorld;
+    let previousEtsyPrice;
+    let preservedMaterial;
+    let preservedPersonalizationPrompt;
     if (existed) {
       try {
         const old = fs.readFileSync(mdPath, 'utf-8');
@@ -369,7 +377,24 @@ async function syncProducts() {
         if (featMatch) preservedFeatured = featMatch[1] === 'true';
         const tagMatch = old.match(/^tagline:\s*"([^"]*)"/m);
         if (tagMatch) preservedTagline = tagMatch[1];
+        const priceDEMatch = old.match(/^priceDE:\s*([\d.]+)/m);
+        if (priceDEMatch) preservedPriceDE = parseFloat(priceDEMatch[1]);
+        const priceUSMatch = old.match(/^priceUS:\s*([\d.]+)/m);
+        if (priceUSMatch) preservedPriceUS = parseFloat(priceUSMatch[1]);
+        const priceWorldMatch = old.match(/^priceWorld:\s*([\d.]+)/m);
+        if (priceWorldMatch) preservedPriceWorld = parseFloat(priceWorldMatch[1]);
+        const oldPriceMatch = old.match(/^price:\s*([\d.]+)/m);
+        if (oldPriceMatch) previousEtsyPrice = parseFloat(oldPriceMatch[1]);
+        const materialMatch = old.match(/^material:\s*"([^"]*)"/m);
+        if (materialMatch) preservedMaterial = materialMatch[1];
+        const promptMatch = old.match(/^personalizationPrompt:\s*"([^"]*)"/m);
+        if (promptMatch) preservedPersonalizationPrompt = promptMatch[1];
       } catch {}
+    }
+
+    // Warnen, wenn Etsy-Basispreis sich bewegt hat — dann sollten die Länder-Preise ggf. nachgezogen werden
+    if (previousEtsyPrice != null && previousEtsyPrice !== price && (preservedPriceDE != null || preservedPriceUS != null || preservedPriceWorld != null)) {
+      console.log(`  ⚠  ${slug}: Etsy-Preis ${previousEtsyPrice} → ${price} € — Länder-Preise prüfen (DE=${preservedPriceDE ?? '—'}, US=${preservedPriceUS ?? '—'}, World=${preservedPriceWorld ?? '—'})`);
     }
 
     const lines = [
@@ -377,10 +402,13 @@ async function syncProducts() {
       `name: ${yamlString(listing.title)}`,
       ...(preservedTagline ? [`tagline: ${yamlString(preservedTagline)}`] : []),
       `category: ${yamlString(detectCategory(listing.title))}`,
-      ...(detectMaterial(listing.title, listing.description || '')
-        ? [`material: ${yamlString(detectMaterial(listing.title, listing.description || ''))}`]
+      ...((preservedMaterial || detectMaterial(listing.title, listing.description || ''))
+        ? [`material: ${yamlString(preservedMaterial || detectMaterial(listing.title, listing.description || ''))}`]
         : []),
       `price: ${price}`,
+      ...(preservedPriceDE != null ? [`priceDE: ${preservedPriceDE}`] : []),
+      ...(preservedPriceUS != null ? [`priceUS: ${preservedPriceUS}`] : []),
+      ...(preservedPriceWorld != null ? [`priceWorld: ${preservedPriceWorld}`] : []),
       `currency: ${yamlString(listing.price?.currency_code || 'EUR')}`,
       `stock: ${stock}`,
       `available: ${stock > 0}`,
@@ -403,6 +431,8 @@ async function syncProducts() {
         : ['variants: []']),
       `featured: ${preservedFeatured}`,
       `order: ${preservedOrder}`,
+      `personalizable: ${!!listing.is_personalizable}`,
+      ...(preservedPersonalizationPrompt ? [`personalizationPrompt: ${yamlString(preservedPersonalizationPrompt)}`] : []),
       '---',
       '',
       normalizeDescription(listing.description || ''),
@@ -500,14 +530,10 @@ async function syncReviews() {
   SHOP_ID = map.ETSY_SHOP_ID;
   ACCESS = map.ETSY_ACCESS_TOKEN;
   REFRESH = map.ETSY_REFRESH_TOKEN;
-  DISCOUNT_PCT = parseFloat(map.ETSY_SHOP_DISCOUNT_PERCENT || '0');
 
   if (!CLIENT_ID || !SHARED_SECRET || !SHOP_ID || !REFRESH) {
     console.error('✗ ETSY_KEYSTRING / ETSY_SHARED_SECRET / ETSY_SHOP_ID / ETSY_REFRESH_TOKEN fehlen in .env');
     process.exit(1);
-  }
-  if (DISCOUNT_PCT > 0) {
-    console.log(`  Sale-Event aktiv: ${DISCOUNT_PCT} % Rabatt wird auf alle Preise angewendet`);
   }
 
   console.log('⏳ Access-Token erneuern…');

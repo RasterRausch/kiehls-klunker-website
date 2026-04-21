@@ -1,20 +1,27 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getLang, t, localizedPath } from '../../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
+const s = strings.checkout.cancel;
+const pageTitle = lang === 'en' ? 'Order cancelled — Kiehls Klunker' : 'Bestellung abgebrochen — Kiehls Klunker';
+const pageDesc = lang === 'en' ? 'Your cart is saved.' : 'Dein Warenkorb ist erhalten geblieben.';
+const eyebrow = lang === 'en' ? 'Payment cancelled' : 'Bezahlung abgebrochen';
 ---
 
-<BaseLayout title="Bestellung abgebrochen — Kiehls Klunker" description="Dein Warenkorb ist erhalten geblieben.">
+<BaseLayout title={pageTitle} description={pageDesc}>
   <section class="max-w-2xl mx-auto px-6 md:px-10 py-24 md:py-32 text-center">
-    <p class="eyebrow mb-6">Bezahlung abgebrochen</p>
-    <h1 class="mb-6">Kein Problem — dein Warenkorb ist erhalten.</h1>
+    <p class="eyebrow mb-6">{eyebrow}</p>
+    <h1 class="mb-6">{s.title}</h1>
     <p class="text-[var(--color-ink-soft)] leading-relaxed mb-12">
-      Du kannst deine Auswahl jederzeit wieder öffnen und die Bestellung in Ruhe abschließen.
+      {s.body}
     </p>
 
     <div class="flex flex-wrap items-center justify-center gap-4">
-      <a href="/shop" class="btn-primary">Zurück zum Shop</a>
-      <button type="button" class="btn-ghost" data-cart-open>Warenkorb öffnen</button>
+      <a href={p('/shop')} class="btn-primary">{s.back}</a>
+      <button type="button" class="btn-ghost" data-cart-open>{strings.nav.openCart}</button>
     </div>
   </section>
 </BaseLayout>

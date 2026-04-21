@@ -1,22 +1,23 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getLang, t } from '../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const c = strings.contact;
 
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
 ---
 
-<BaseLayout title="Kontakt — Kiehls Klunker">
+<BaseLayout title={c.pageTitle}>
   <section class="pt-20 pb-20 md:pb-28">
     <div class="max-w-2xl mx-auto px-6 md:px-10">
       <!-- HERO -->
       <div class="text-center mb-14 md:mb-16">
-        <p class="eyebrow mb-4">Kontakt</p>
-        <h1 class="mb-6">Schreib mir.</h1>
+        <p class="eyebrow mb-4">{c.eyebrow}</p>
+        <h1 class="mb-6">{c.title}</h1>
         <p class="text-[var(--color-ink-soft)] leading-relaxed max-w-md mx-auto">
-          Eine Frage zu einem Klunker, ein Sonderwunsch oder ein Einzelstück
-          in Auftrag? Ich freue mich auf deine Nachricht — meist antworte ich
-          innerhalb von ein bis zwei Werktagen persönlich.
+          {c.intro}
         </p>
       </div>
 
@@ -24,22 +25,22 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
       <form id="contact-form" class="contact-form" novalidate>
         <div class="grid sm:grid-cols-2 gap-5 sm:gap-6">
           <div class="field">
-            <label for="name">Name</label>
+            <label for="name">{c.name}</label>
             <input id="name" name="name" type="text" required maxlength="100" autocomplete="name" />
           </div>
           <div class="field">
-            <label for="email">E-Mail</label>
+            <label for="email">{c.email}</label>
             <input id="email" name="email" type="email" required maxlength="150" autocomplete="email" />
           </div>
         </div>
 
         <div class="field mt-5 sm:mt-6">
-          <label for="subject">Betreff <span class="optional">(optional)</span></label>
+          <label for="subject">{c.subject} <span class="optional">{c.optional}</span></label>
           <input id="subject" name="subject" type="text" maxlength="200" />
         </div>
 
         <div class="field mt-5 sm:mt-6">
-          <label for="message">Nachricht</label>
+          <label for="message">{c.message}</label>
           <textarea id="message" name="message" rows="7" required maxlength="5000"></textarea>
         </div>
 
@@ -64,12 +65,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
             type="submit"
             class="btn-primary w-full sm:w-auto sm:min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span data-btn-label>Senden</span>
-            <span data-btn-loading class="hidden">Wird gesendet…</span>
+            <span data-btn-label>{c.submit}</span>
+            <span data-btn-loading class="hidden">{c.submitting}</span>
           </button>
           <p class="text-xs text-[var(--color-ink-mute)] text-center max-w-sm leading-relaxed">
-            Deine Daten werden ausschließlich für die Beantwortung
-            deiner Anfrage verwendet.
+            {c.privacyNote}
           </p>
         </div>
 
@@ -82,7 +82,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
       <!-- KONTAKTWEGE — horizontaler Abschluss -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-6 text-sm">
         <div class="text-center sm:text-left">
-          <p class="eyebrow mb-3">Direkt per Mail</p>
+          <p class="eyebrow mb-3">{c.directMail}</p>
           <a
             href="#"
             class="obf-mail contact-link"
@@ -90,12 +90,12 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
             data-domain="kiehls-klunker.de"
             rel="nofollow noopener"
           >
-            Adresse anzeigen
+            {c.directMailCta}
           </a>
         </div>
 
         <div class="text-center sm:text-left">
-          <p class="eyebrow mb-3">Werkstatt</p>
+          <p class="eyebrow mb-3">{c.workshop}</p>
           <p class="text-[var(--color-ink-soft)] leading-relaxed">
             Kathrin Kiehl<br />
             Verwaltungsring 12<br />
@@ -104,13 +104,13 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
         </div>
 
         <div class="text-center sm:text-left">
-          <p class="eyebrow mb-3">Auch hier</p>
+          <p class="eyebrow mb-3">{c.alsoHere}</p>
           <div class="flex items-center justify-center sm:justify-start gap-4">
             <a
               href="https://www.instagram.com/kiehlsklunker/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Kiehls Klunker auf Instagram"
+              aria-label="Kiehls Klunker — Instagram"
               class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
@@ -123,7 +123,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
               href="https://www.facebook.com/kiehlsklunker"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Kiehls Klunker auf Facebook"
+              aria-label="Kiehls Klunker — Facebook"
               class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
@@ -233,7 +233,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
     }
   </style>
 
-  <script is:inline>
+  <script is:inline define:vars={{
+    successMsg: c.success,
+    errorGeneric: c.errorGeneric,
+    errorNetwork: c.errorNetwork,
+  }}>
     (() => {
       // Email-Obfuscation wie gehabt
       document.querySelectorAll('.obf-mail').forEach((el) => {
@@ -297,14 +301,14 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
           const result = await res.json().catch(() => ({}));
           if (res.ok && result.ok) {
             form.reset();
-            showStatus('Danke — deine Nachricht ist angekommen. Du bekommst gleich eine Bestätigung per Mail, und ich melde mich persönlich.', 'success');
+            showStatus(successMsg, 'success');
             // Turnstile reset, falls aktiv
             if (window.turnstile) window.turnstile.reset();
           } else {
-            showStatus(result.error || 'Es ist ein Fehler aufgetreten. Bitte versuche es gleich erneut.', 'error');
+            showStatus(result.error || errorGeneric, 'error');
           }
         } catch (err) {
-          showStatus('Netzwerkfehler. Bitte überprüfe deine Verbindung.', 'error');
+          showStatus(errorNetwork, 'error');
         } finally {
           setLoading(false);
         }

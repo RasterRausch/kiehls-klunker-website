@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import Stripe from 'stripe';
+import { displayPrice } from '../../lib/price';
+import { t, interpolate, type Lang } from '../../i18n';
 
 export const prerender = false;
 
@@ -8,6 +10,7 @@ type CartItem = {
   id: string;
   quantity: number;
   variants?: Record<string, string>;
+  personalization?: string;
 };
 
 const ALLOWED_COUNTRIES = [
@@ -15,18 +18,22 @@ const ALLOWED_COUNTRIES = [
   'DK', 'SE', 'FI', 'IE', 'PT', 'PL', 'CZ', 'SK', 'SI', 'HU',
 ] as const;
 
-export const POST: APIRoute = async ({ request, url }) => {
+export const POST: APIRoute = async ({ request, url, locals }) => {
   try {
     const body = await request.json();
+    // Sprache: explizit aus dem Request-Body, sonst aus Middleware-Locals
+    const requestedLang = typeof body?.lang === 'string' && body.lang === 'en' ? 'en' : null;
+    const lang: Lang = requestedLang ?? ((locals as { lang?: Lang })?.lang ?? 'de');
+    const s = t(lang).checkout;
     const items: CartItem[] = Array.isArray(body?.items) ? body.items : [];
     if (items.length === 0) {
-      return json({ error: 'Warenkorb ist leer.' }, 400);
+      return json({ error: s.errorCartEmpty }, 400);
     }
 
     const stripeKey =
       import.meta.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
     if (!stripeKey) {
-      return json({ error: 'Stripe ist noch nicht konfiguriert.' }, 500);
+      return json({ error: s.errorNotConfigured }, 500);
     }
     const stripe = new Stripe(stripeKey);
 
@@ -41,14 +48,14 @@ export const POST: APIRoute = async ({ request, url }) => {
       const qty = Math.max(1, Math.floor(Number(raw?.quantity ?? 1)));
       const product = productMap.get(id);
       if (!product) {
-        return json({ error: `Unbekanntes Produkt: ${id}` }, 400);
+        return json({ error: interpolate(s.errorUnknownProduct, { id }) }, 400);
       }
       if (!product.data.available) {
-        return json({ error: `${product.data.name} ist nicht mehr verfügbar.` }, 400);
+        return json({ error: interpolate(s.errorUnavailable, { name: product.data.name }) }, 400);
       }
       if (product.data.stock !== undefined && product.data.stock < qty) {
         return json(
-          { error: `${product.data.name}: nur noch ${product.data.stock} auf Lager.` },
+          { error: interpolate(s.errorStock, { name: product.data.name, stock: product.data.stock }) },
           400,
         );
       }
@@ -65,10 +72,10 @@ export const POST: APIRoute = async ({ request, url }) => {
         for (const group of product.data.variants) {
           const chosen = String(rawVariants[group.name] ?? '').trim();
           if (!chosen) {
-            return json({ error: `${product.data.name}: Bitte ${group.name} wählen.` }, 400);
+            return json({ error: interpolate(s.errorVariantMissing, { name: product.data.name, group: group.name }) }, 400);
           }
           if (!group.values.includes(chosen)) {
-            return json({ error: `${product.data.name}: Ungültige Auswahl bei ${group.name}.` }, 400);
+            return json({ error: interpolate(s.errorVariantInvalid, { name: product.data.name, group: group.name }) }, 400);
           }
           validatedVariants[group.name] = chosen;
         }
@@ -81,17 +88,24 @@ export const POST: APIRoute = async ({ request, url }) => {
         ? `${product.data.name} — ${variantLabel}`
         : product.data.name;
 
+      // Personalisierungstext nur übernehmen, wenn Produkt auch personalisierbar ist
+      const rawPersonalization =
+        product.data.personalizable && typeof raw?.personalization === 'string'
+          ? raw.personalization.trim().slice(0, 256)
+          : '';
+
       const variantMetadata: Record<string, string> = {
         product_id: product.id,
         ...Object.fromEntries(
           Object.entries(validatedVariants).map(([k, v]) => [`var_${k}`.slice(0, 40), String(v).slice(0, 500)]),
         ),
+        ...(rawPersonalization ? { personalization: rawPersonalization.slice(0, 500) } : {}),
       };
 
       lineItems.push({
         price_data: {
           currency: (product.data.currency || 'EUR').toLowerCase(),
-          unit_amount: Math.round(product.data.price * 100),
+          unit_amount: Math.round(displayPrice(product.data) * 100),
           product_data: {
             name: productName,
             ...(imageUrl ? { images: [imageUrl] } : {}),
@@ -102,27 +116,36 @@ export const POST: APIRoute = async ({ request, url }) => {
       });
     }
 
+    const langPrefix = lang === 'en' ? '/en' : '';
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: lineItems,
-      locale: 'de',
-      success_url: `${url.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${url.origin}/checkout/cancel`,
+      locale: lang === 'en' ? 'en' : 'de',
+      success_url: `${url.origin}${langPrefix}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${url.origin}${langPrefix}/checkout/cancel`,
       shipping_address_collection: { allowed_countries: [...ALLOWED_COUNTRIES] },
       shipping_options: [
         {
           shipping_rate_data: {
             type: 'fixed_amount',
             fixed_amount: { amount: 490, currency: 'eur' },
-            display_name: 'Versand DHL',
+            display_name: s.shippingOptionName,
             delivery_estimate: {
-              minimum: { unit: 'business_day', value: 7 },
+              minimum: { unit: 'business_day', value: 2 },
               maximum: { unit: 'business_day', value: 9 },
             },
           },
         },
       ],
-      invoice_creation: { enabled: true },
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          // Kleinunternehmer-Hinweis nach §19 UStG auf jede Rechnung
+          footer: lang === 'en'
+            ? 'Small-business exemption under §19 UStG — no VAT is charged.'
+            : 'Kein Ausweis der Umsatzsteuer gemäß §19 UStG.',
+        },
+      },
       automatic_tax: { enabled: false },
       allow_promotion_codes: true,
     });
@@ -130,7 +153,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     return json({ url: session.url }, 200);
   } catch (err) {
     console.error('[checkout] error:', err);
-    const msg = err instanceof Error ? err.message : 'Unbekannter Fehler';
+    const fallbackLang: Lang = 'de';
+    const msg = err instanceof Error ? err.message : t(fallbackLang).checkout.errorGeneric;
     return json({ error: msg }, 500);
   }
 };

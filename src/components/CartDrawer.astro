@@ -4,6 +4,12 @@
 //   - Öffnen: dispatchEvent(new CustomEvent('cart:open'))  ODER click auf [data-cart-open]
 //   - Schließen: click auf [data-cart-close] / Overlay / Escape
 //   - Item-Änderung: `cart:changed`-Event triggert Re-Render + Badge-Update
+
+import { getLang, t, localizedPath } from '../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
 ---
 
 <!-- Overlay -->
@@ -23,11 +29,11 @@
 >
   <!-- Header -->
   <div class="flex items-center justify-between px-6 py-5 border-b border-[var(--color-hairline)]">
-    <p id="cart-drawer-title" class="eyebrow !text-[var(--color-ink)]">Warenkorb</p>
+    <p id="cart-drawer-title" class="eyebrow !text-[var(--color-ink)]">{strings.cart.title}</p>
     <button
       type="button"
       data-cart-close
-      aria-label="Warenkorb schließen"
+      aria-label={strings.cart.close}
       class="icon-btn"
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
@@ -41,8 +47,8 @@
   <div id="cart-drawer-items" class="flex-1 overflow-y-auto">
     <!-- Leer-Zustand -->
     <div id="cart-drawer-empty" class="hidden px-6 py-16 text-center">
-      <p class="text-[var(--color-ink-soft)] leading-relaxed mb-6">Dein Warenkorb ist noch leer.</p>
-      <a href="/shop" class="btn-primary" data-cart-close>Zum Shop</a>
+      <p class="text-[var(--color-ink-soft)] leading-relaxed mb-6">{strings.cart.empty}</p>
+      <a href={p('/shop')} class="btn-primary" data-cart-close>{strings.cart.toShop}</a>
     </div>
     <!-- Item-Liste -->
     <ul id="cart-drawer-list" class="divide-y divide-[var(--color-hairline)]"></ul>
@@ -51,10 +57,10 @@
   <!-- Footer (nur wenn gefüllt) -->
   <div id="cart-drawer-footer" class="hidden border-t border-[var(--color-hairline)] px-6 py-5">
     <div class="flex items-end justify-between mb-2">
-      <span class="text-sm text-[var(--color-ink-soft)]">Zwischensumme</span>
+      <span class="text-sm text-[var(--color-ink-soft)]">{strings.cart.subtotal}</span>
       <span class="font-serif text-2xl" id="cart-drawer-total">0,00 €</span>
     </div>
-    <p class="text-xs text-[var(--color-ink-mute)] mb-4">Versand wird an der Kasse berechnet.</p>
+    <p class="text-xs text-[var(--color-ink-mute)] mb-4">{strings.cart.shippingNote}</p>
 
     <label class="flex gap-2.5 mb-4 cursor-pointer select-none" for="cart-agb-check">
       <input
@@ -63,10 +69,9 @@
         class="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-ink)] cursor-pointer"
       />
       <span class="text-xs leading-relaxed text-[var(--color-ink-soft)]">
-        Ich habe die <a href="/agb" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">AGB</a>,
-        <a href="/widerruf" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">Widerrufsbelehrung</a> und
-        <a href="/datenschutz" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">Datenschutzhinweise</a>
-        gelesen und stimme ihnen zu.
+        {strings.cart.termsIntro} <a href="/agb" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.agb}</a>{strings.cart.termsAnd}
+        <a href="/widerruf" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.widerruf}</a> {strings.cart.termsMid}
+        <a href="/datenschutz" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.datenschutz}</a>{strings.cart.termsOutro}
       </span>
     </label>
 
@@ -77,8 +82,8 @@
       disabled
       class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      <span data-checkout-label>Zur Kasse</span>
-      <span data-checkout-loading class="hidden">Bitte warten…</span>
+      <span data-checkout-label>{strings.cart.checkout}</span>
+      <span data-checkout-loading class="hidden">{strings.cart.checkoutLoading}</span>
     </button>
   </div>
 </aside>
@@ -93,16 +98,17 @@
         <p class="font-serif text-base leading-snug line-clamp-2 text-[var(--color-ink)]" data-item-name></p>
       </a>
       <p class="text-[0.7rem] text-[var(--color-ink-soft)] mt-1 hidden" data-item-variants></p>
+      <p class="text-[0.7rem] text-[var(--color-ink-soft)] italic mt-1 hidden line-clamp-2" data-item-personalization></p>
       <p class="text-xs text-[var(--color-ink-soft)] mt-1" data-item-price></p>
 
       <div class="mt-auto pt-3 flex items-end justify-between gap-3">
         <div class="flex items-center border border-[var(--color-hairline)]">
-          <button type="button" class="qty-btn" data-qty-decrease aria-label="Menge verringern">−</button>
+          <button type="button" class="qty-btn" data-qty-decrease aria-label={strings.product.decreaseQty}>−</button>
           <span class="min-w-[2rem] text-center text-sm" data-item-qty></span>
-          <button type="button" class="qty-btn" data-qty-increase aria-label="Menge erhöhen">+</button>
+          <button type="button" class="qty-btn" data-qty-increase aria-label={strings.product.increaseQty}>+</button>
         </div>
         <button type="button" class="text-[0.65rem] uppercase tracking-[0.18em] text-[var(--color-ink-mute)] hover:text-[var(--color-ink)] transition-colors" data-remove>
-          Entfernen
+          {strings.cart.remove}
         </button>
       </div>
     </div>
@@ -126,12 +132,17 @@
     font-size: 0.95rem;
     color: var(--color-ink);
     cursor: pointer;
-    transition: background-color 0.2s ease;
   }
-  .qty-btn:hover { background: var(--color-bone-deep); }
 </style>
 
-<script is:inline>
+<script is:inline define:vars={{
+  lang,
+  perItemLabel: strings.cart.perItem,
+  wishTemplate: strings.cart.wish,
+  checkoutErrorGeneric: strings.cart.checkoutError,
+  checkoutLabel: strings.cart.checkout,
+  checkoutLoading: strings.cart.checkoutLoading,
+}}>
   (() => {
     const drawer = document.getElementById('cart-drawer');
     const overlay = document.getElementById('cart-overlay');
@@ -142,7 +153,10 @@
     const template = document.getElementById('cart-drawer-item-template');
     if (!drawer) return;
 
-    const fmt = (n) => n.toFixed(2).replace('.', ',') + ' €';
+    // Preise locale-gerecht formatieren (DE: 39,00 €, EN: €39.00)
+    const fmt = (n) => lang === 'en'
+      ? '€' + n.toFixed(2)
+      : n.toFixed(2).replace('.', ',') + ' €';
     const load = () => JSON.parse(localStorage.getItem('cart') || '[]');
     const save = (cart) => {
       localStorage.setItem('cart', JSON.stringify(cart));
@@ -150,9 +164,34 @@
     };
 
     const keyOf = (item) => item.cartKey || item.id;
+
+    // Minimal-Übersetzungsmap für Varianten-Namen und -Werte (EN).
+    // Deckung lückenhaft — bei Bedarf in src/i18n/index.ts erweitern.
+    const variantNameMap = {
+      'Farbe': 'Color', 'Primäre Farbe': 'Primary color', 'Sekundäre Farbe': 'Secondary color',
+      'Länge': 'Length', 'Größe': 'Size', 'Material': 'Material', 'Haartyp': 'Hair type',
+    };
+    const colorValueMap = {
+      'bunt': 'multicolor', 'karamell': 'caramel', 'flieder': 'lilac', 'violett': 'purple',
+      'blau': 'blue', 'hellblau': 'light blue', 'grün': 'green', 'mint': 'mint',
+      'gelb': 'yellow', 'rosé': 'rose', 'rosa': 'pink', 'rot': 'red',
+      'schwarz': 'black', 'weiß': 'white', 'grau': 'gray', 'silber': 'silver',
+      'gold': 'gold', 'ohne (titangrau)': 'plain (titanium grey)',
+    };
+    const tName = (n) => lang === 'de' ? n : (variantNameMap[n] || n);
+    const tValue = (v) => {
+      if (lang === 'de') return v;
+      const m = v.match(/^(\d+\s+)(.+)$/);
+      if (m) {
+        const key = m[2].toLowerCase();
+        return colorValueMap[key] ? `${m[1]}${colorValueMap[key]}` : v;
+      }
+      return colorValueMap[v.toLowerCase()] || v;
+    };
+
     const formatVariants = (v) => {
       if (!v || typeof v !== 'object') return '';
-      return Object.keys(v).map((k) => `${k}: ${v[k]}`).join(' · ');
+      return Object.keys(v).map((k) => `${tName(k)}: ${tValue(v[k])}`).join(' · ');
     };
 
     const render = () => {
@@ -170,7 +209,8 @@
           const node = template.content.cloneNode(true);
           const root = node.querySelector('[data-item]');
           root.dataset.itemKey = keyOf(item);
-          node.querySelectorAll('[data-item-link]').forEach((a) => (a.href = '/shop/' + item.id));
+          const shopPathPrefix = lang === 'en' ? '/en/shop/' : '/shop/';
+          node.querySelectorAll('[data-item-link]').forEach((a) => (a.href = shopPathPrefix + item.id));
           const img = node.querySelector('[data-item-image]');
           if (item.image) img.src = item.image;
           img.alt = item.name;
@@ -181,7 +221,12 @@
             variantsEl.textContent = variantStr;
             variantsEl.classList.remove('hidden');
           }
-          node.querySelector('[data-item-price]').textContent = fmt(item.price) + ' je Stück';
+          const personalizationEl = node.querySelector('[data-item-personalization]');
+          if (item.personalization) {
+            personalizationEl.textContent = wishTemplate.replace('{text}', item.personalization);
+            personalizationEl.classList.remove('hidden');
+          }
+          node.querySelector('[data-item-price]').textContent = fmt(item.price) + ' ' + perItemLabel;
           node.querySelector('[data-item-qty]').textContent = item.quantity;
           list.appendChild(node);
         }
@@ -283,20 +328,22 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            lang,
             items: cart.map((i) => ({
               id: i.id,
               quantity: i.quantity,
               variants: i.variants || {},
+              ...(i.personalization ? { personalization: i.personalization } : {}),
             })),
           }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.url) {
-          throw new Error(data.error || 'Checkout konnte nicht erstellt werden.');
+          throw new Error(data.error || checkoutErrorGeneric);
         }
         window.location.href = data.url;
       } catch (err) {
-        showError(err instanceof Error ? err.message : 'Unbekannter Fehler.');
+        showError(err instanceof Error ? err.message : checkoutErrorGeneric);
         setCheckoutLoading(false);
       }
     });

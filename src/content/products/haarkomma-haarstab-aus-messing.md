@@ -2,7 +2,10 @@
 name: "Haarkomma, Haarstab aus Messing"
 category: "haarstaebe"
 material: "Messing"
-price: 31
+price: 36
+priceDE: 32
+priceUS: 62
+priceWorld: 36
 currency: "EUR"
 stock: 72
 available: true
@@ -35,6 +38,7 @@ variants:
       - "Wunschmaß"
 featured: false
 order: 9
+personalizable: true
 ---
 
 Das Haarkomma ist ein minimalistischer, leichter Haarstab aus Messing. Durch seine spezielle Form hält er sehr gut das Haar zusammen.

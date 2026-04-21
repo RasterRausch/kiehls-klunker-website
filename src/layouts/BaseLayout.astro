@@ -3,24 +3,36 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
+import { getLang, localizedPath } from '../i18n';
 
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = 'Handgefertigter Haarschmuck aus Titan — schlichtes, elegantes Design aus der Werkstatt von Kiehls Klunker.' } = Astro.props;
+const defaultDescDE = 'Handgefertigter Haarschmuck aus Titan — schlichtes, elegantes Design aus der Werkstatt von Kiehls Klunker.';
+const defaultDescEN = 'Handmade hair jewelry in titanium — understated, elegant design from the Kiehls Klunker studio.';
+const lang = getLang(Astro);
+const { title, description = lang === 'en' ? defaultDescEN : defaultDescDE } = Astro.props;
+
+const pathNoLang = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || '';
+const hrefDE = siteUrl + pathNoLang;
+const hrefEN = siteUrl + (pathNoLang === '/' ? '/en' : `/en${pathNoLang}`);
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    <link rel="alternate" hreflang="de" href={hrefDE} />
+    <link rel="alternate" hreflang="en" href={hrefEN} />
+    <link rel="alternate" hreflang="x-default" href={hrefDE} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://use.typekit.net/yjk4kja.css" />

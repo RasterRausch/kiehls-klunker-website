@@ -1,22 +1,32 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logos/Kiehls-Klunker-Vector-Logo-clean.svg';
+import { getLang, t, localizedPath } from '../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
 
 const nav = [
-  { href: '/ueber-mich', label: 'Über mich' },
-  { href: '/kontakt', label: 'Kontakt' },
-  { href: '/shop', label: 'Shop' },
+  { href: p('/ueber-mich'), label: strings.nav.about },
+  { href: p('/kontakt'), label: strings.nav.contact },
+  { href: p('/shop'), label: strings.nav.shop },
 ];
 
 const path = Astro.url.pathname;
 const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+
+// Sprach-Switcher-Ziele: aktuelle Page in der jeweils anderen Sprache
+const pathNoLang = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+const switchToDE = pathNoLang;
+const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
 ---
 
 <header class="sticky top-0 z-50 bg-[var(--color-paper)]/95 backdrop-blur-sm">
   <!-- Announcement Bar -->
   <div class="bg-[var(--color-surface-dark)] text-[var(--color-paper)] text-center py-2.5">
     <p class="text-[0.68rem] uppercase tracking-[0.24em] font-light">
-      Handgefertigt in Leipzig · Versand in 7–9 Werktagen · Oft schneller
+      {strings.header.announcement}
     </p>
   </div>
 
@@ -24,12 +34,12 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
   <div class="max-w-7xl mx-auto px-6 md:px-10">
     <div class="flex items-center justify-between h-20 md:h-24 gap-6">
       <!-- Logo left -->
-      <a href="/" class="shrink-0 transition-opacity hover:opacity-70" aria-label="Kiehls Klunker Startseite">
+      <a href={p('/')} class="shrink-0 transition-opacity hover:opacity-70" aria-label={`Kiehls Klunker — ${strings.nav.home}`}>
         <Image src={logo} alt="Kiehls Klunker" class="h-[18px] md:h-[22px] lg:h-[26px] w-auto" />
       </a>
 
       <!-- Nav + Cart (right) -->
-      <div class="flex items-center gap-6 md:gap-10 lg:gap-14">
+      <div class="flex items-center gap-5 md:gap-8 lg:gap-10">
         <nav class="hidden md:flex items-center gap-8 lg:gap-12">
           {nav.map((item) => (
             <a
@@ -46,7 +56,7 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
 
         <button
           type="button"
-          aria-label="Warenkorb öffnen"
+          aria-label={strings.nav.openCart}
           class="icon-btn relative group"
           data-cart-open
         >
@@ -57,10 +67,27 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
           <span class="cart-badge hidden" data-cart-badge>0</span>
         </button>
 
+        <!-- Language switcher (rechts außen) -->
+        <div class="lang-switcher" role="group" aria-label={strings.langSwitcher.label}>
+          <a
+            href={switchToDE}
+            class:list={['lang-option', lang === 'de' && 'is-active']}
+            data-lang="de"
+            aria-current={lang === 'de' ? 'true' : undefined}
+          >DE</a>
+          <span class="lang-sep" aria-hidden="true">/</span>
+          <a
+            href={switchToEN}
+            class:list={['lang-option', lang === 'en' && 'is-active']}
+            data-lang="en"
+            aria-current={lang === 'en' ? 'true' : undefined}
+          >EN</a>
+        </div>
+
         <!-- Mobile menu button -->
         <button
           type="button"
-          aria-label="Menü"
+          aria-label={lang === 'en' ? 'Menu' : 'Menü'}
           class="md:hidden icon-btn"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25">
@@ -76,18 +103,54 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
   <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-hairline)] to-transparent"></div>
 </header>
 
+<style>
+  .lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: var(--color-ink-mute);
+  }
+  .lang-option {
+    padding: 0.1rem 0.3rem;
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .lang-option:hover { color: var(--color-ink); }
+  .lang-option.is-active {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .lang-sep {
+    color: var(--color-hairline);
+  }
+</style>
+
 <script is:inline>
   (() => {
     const badge = document.querySelector('[data-cart-badge]');
-    if (!badge) return;
-    const updateBadge = () => {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const total = cart.reduce((sum, i) => sum + (i.quantity || 0), 0);
-      badge.textContent = String(total);
-      badge.classList.toggle('hidden', total === 0);
-    };
-    updateBadge();
-    window.addEventListener('cart:changed', updateBadge);
-    window.addEventListener('storage', (e) => { if (e.key === 'cart') updateBadge(); });
+    if (badge) {
+      const updateBadge = () => {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const total = cart.reduce((sum, i) => sum + (i.quantity || 0), 0);
+        badge.textContent = String(total);
+        badge.classList.toggle('hidden', total === 0);
+      };
+      updateBadge();
+      window.addEventListener('cart:changed', updateBadge);
+      window.addEventListener('storage', (e) => { if (e.key === 'cart') updateBadge(); });
+    }
+
+    // Sprach-Klick: Cookie setzen, damit die Wahl beim nächsten Seitenaufruf erhalten bleibt
+    document.querySelectorAll('[data-lang]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const choice = el.getAttribute('data-lang');
+        if (choice === 'de' || choice === 'en') {
+          document.cookie = 'kk_lang=' + choice + '; path=/; max-age=' + (60 * 60 * 24 * 365);
+        }
+      });
+    });
   })();
 </script>

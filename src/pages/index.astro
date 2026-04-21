@@ -1,12 +1,17 @@
 ---
-export const prerender = true;
-
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ReviewCard from '../components/ReviewCard.astro';
+import { displayPrice } from '../lib/price';
+import { getLang, t, localizedPath } from '../i18n';
 import hero from '../assets/images/hero-schmuck.png';
 import soEntsteht from '../assets/images/so-entsteht.jpg';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
+const h = strings.home;
 
 const products = (await getCollection('products'))
   .filter((p) => p.data.available)
@@ -20,14 +25,14 @@ const featuredReviews = (await getCollection('reviews'))
   .slice(0, 60);
 ---
 
-<BaseLayout title="Kiehls Klunker — Handgefertigter Haarschmuck aus Titan">
+<BaseLayout title={h.pageTitle}>
   <!-- HERO: Full-bleed, Bild als Hintergrund, Text links auf weißem Bereich -->
   <section class="relative w-full">
     <!-- Desktop: Bild als Hintergrund, Text absolut -->
     <div class="hidden md:block relative w-full">
       <Image
         src={hero}
-        alt="Kiehls Klunker Titan-Haarforke im Dutt"
+        alt={h.heroImageAlt}
         widths={[960, 1440, 1920, 2560]}
         sizes="100vw"
         class="hero-image w-full h-[min(62vh,540px)] lg:h-[min(74vh,720px)] xl:h-[min(82vh,840px)] object-cover"
@@ -40,15 +45,14 @@ const featuredReviews = (await getCollection('reviews'))
           <div class="max-w-[440px] lg:max-w-[560px] xl:max-w-[620px]">
             <h1 class="hero-headline mb-6 lg:mb-10">Handmade<br />Jewels.</h1>
             <p class="font-serif italic text-xl lg:text-2xl xl:text-3xl text-[var(--color-ink-soft)] mb-10 lg:mb-14">
-              for your hair
+              {h.heroSubtitle}
             </p>
             <p class="text-sm lg:text-base xl:text-lg text-[var(--color-ink-soft)] mb-10 leading-relaxed max-w-md">
-              Willkommen bei Kiehls Klunker. Hier findest du funktionalen Haarschmuck,
-              der schlichtes, elegantes Design mit hochwertigen Materialien kombiniert.
+              {h.heroBody}
             </p>
             <div class="flex flex-wrap gap-3">
-              <a href="/shop" class="btn-primary">Zum Shop</a>
-              <a href="/ueber-mich" class="btn-ghost">Die Goldschmiedin</a>
+              <a href={p('/shop')} class="btn-primary">{h.heroCta}</a>
+              <a href={p('/ueber-mich')} class="btn-ghost">{h.heroCtaSecondary}</a>
             </div>
           </div>
         </div>
@@ -59,7 +63,7 @@ const featuredReviews = (await getCollection('reviews'))
     <div class="md:hidden">
       <Image
         src={hero}
-        alt="Kiehls Klunker Titan-Haarforke im Dutt"
+        alt={h.heroImageAlt}
         widths={[480, 720, 960, 1280]}
         sizes="100vw"
         class="hero-image-mobile w-full h-[clamp(220px,38vh,280px)] object-cover"
@@ -67,14 +71,13 @@ const featuredReviews = (await getCollection('reviews'))
       />
       <div class="px-6 py-14">
         <h1 class="hero-headline mb-6">Handmade<br />Jewels.</h1>
-        <p class="font-serif italic text-xl text-[var(--color-ink-soft)] mb-10">for your hair</p>
+        <p class="font-serif italic text-xl text-[var(--color-ink-soft)] mb-10">{h.heroSubtitle}</p>
         <p class="text-base text-[var(--color-ink-soft)] mb-8 leading-relaxed">
-          Willkommen bei Kiehls Klunker. Hier findest du funktionalen Haarschmuck,
-          der schlichtes, elegantes Design mit hochwertigen Materialien kombiniert.
+          {h.heroBody}
         </p>
         <div class="flex flex-wrap gap-3">
-          <a href="/shop" class="btn-primary">Zum Shop</a>
-          <a href="/ueber-mich" class="btn-ghost">Die Goldschmiedin</a>
+          <a href={p('/shop')} class="btn-primary">{h.heroCta}</a>
+          <a href={p('/ueber-mich')} class="btn-ghost">{h.heroCtaSecondary}</a>
         </div>
       </div>
     </div>
@@ -118,12 +121,11 @@ const featuredReviews = (await getCollection('reviews'))
   <section class="py-12 md:py-16">
     <div class="max-w-7xl mx-auto px-6 md:px-10">
       <div class="max-w-3xl mx-auto text-center">
-        <p class="eyebrow mb-6">Meine Philosophie</p>
+        <p class="eyebrow mb-6">{h.philosophyEyebrow}</p>
         <blockquote class="font-serif text-3xl md:text-4xl leading-[1.3] text-[var(--color-ink)]">
-          Ich denke Haarschmuck als das, was er sein sollte: ein Werkzeug, das hält, ein
-          Schmuckstück, das bleibt — kompromisslos schlicht und handgefertigt.
+          {h.philosophyQuote}
         </blockquote>
-        <p class="mt-8 text-sm text-[var(--color-ink-soft)]">— Kathrin Kiehl</p>
+        <p class="mt-8 text-sm text-[var(--color-ink-soft)]">{h.philosophyAuthor}</p>
       </div>
     </div>
   </section>
@@ -132,10 +134,10 @@ const featuredReviews = (await getCollection('reviews'))
   <section class="pt-0 pb-24 md:pb-32">
     <div class="max-w-7xl mx-auto px-6 md:px-10 flex items-end justify-between mb-12">
       <div>
-        <p class="eyebrow mb-3">Kollektion</p>
-        <h2>Aus der Werkstatt.</h2>
+        <p class="eyebrow mb-3">{h.collectionEyebrow}</p>
+        <h2>{h.collectionHeadline}</h2>
       </div>
-      <a href="/shop" class="link-arrow">Zum Shop <span class="arrow">→</span></a>
+      <a href={p('/shop')} class="link-arrow">{h.collectionCta} <span class="arrow">→</span></a>
     </div>
 
     <!-- Slider wrapper (relative für Arrow-Button) -->
@@ -147,7 +149,7 @@ const featuredReviews = (await getCollection('reviews'))
         <div class="flex gap-6 md:gap-8 container-align pb-2">
           {sliderProducts.map((product, i) => (
             <a
-              href={`/shop/${product.id}`}
+              href={p(`/shop/${product.id}`)}
               class="product-card group/card block shrink-0"
               style="width: clamp(260px, 26vw, 440px);"
               data-idx={i}
@@ -163,13 +165,13 @@ const featuredReviews = (await getCollection('reviews'))
                 />
                 <!-- Hover Overlay -->
                 <div class="quick-add">
-                  <span class="quick-add-label">Näher betrachten</span>
+                  <span class="quick-add-label">{h.cardHoverLabel}</span>
                 </div>
               </div>
               <h3 class="text-xl md:text-2xl mb-1">{product.data.name}</h3>
               <p class="text-sm text-[var(--color-ink-soft)] mb-3">{product.data.tagline}</p>
               <p class="text-sm">
-                {product.data.price.toFixed(2).replace('.', ',')} €
+                {displayPrice(product.data).toFixed(2).replace('.', ',')} €
               </p>
             </a>
           ))}
@@ -179,7 +181,7 @@ const featuredReviews = (await getCollection('reviews'))
       <!-- Right Arrow Button -->
       <button
         type="button"
-        aria-label="Nächste Produkte"
+        aria-label={h.sliderNextProducts}
         class="slider-nav slider-nav-right"
         data-slider-next
       >
@@ -190,7 +192,7 @@ const featuredReviews = (await getCollection('reviews'))
       </button>
       <button
         type="button"
-        aria-label="Vorherige Produkte"
+        aria-label={h.sliderPrevProducts}
         class="slider-nav slider-nav-left"
         data-slider-prev
       >
@@ -276,10 +278,10 @@ const featuredReviews = (await getCollection('reviews'))
   {featuredReviews.length > 0 && (
     <section class="py-24 md:py-32">
       <div class="max-w-7xl mx-auto px-6 md:px-10 text-center mb-12 md:mb-16">
-        <p class="eyebrow mb-3">Bewertungen</p>
-        <h2>Was Kundinnen sagen.</h2>
+        <p class="eyebrow mb-3">{h.reviewsEyebrow}</p>
+        <h2>{h.reviewsHeadline}</h2>
         <p class="mt-4 text-sm text-[var(--color-ink-mute)]">
-          Verifizierte Bewertungen direkt von Etsy.
+          {h.reviewsSub}
         </p>
       </div>
 
@@ -310,7 +312,7 @@ const featuredReviews = (await getCollection('reviews'))
         <!-- Arrow Buttons -->
         <button
           type="button"
-          aria-label="Nächste Bewertungen"
+          aria-label={h.sliderNextReviews}
           class="slider-nav slider-nav-right"
           data-review-next
         >
@@ -321,7 +323,7 @@ const featuredReviews = (await getCollection('reviews'))
         </button>
         <button
           type="button"
-          aria-label="Vorherige Bewertungen"
+          aria-label={h.sliderPrevReviews}
           class="slider-nav slider-nav-left"
           data-review-prev
         >
@@ -396,9 +398,9 @@ const featuredReviews = (await getCollection('reviews'))
         <svg class="mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 3l8 3v6c0 4.5-3.2 8.3-8 9-4.8-0.7-8-4.5-8-9V6l8-3z" />
         </svg>
-        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">Sichere Zahlungen</h3>
+        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">{h.uspPaymentsHeadline}</h3>
         <p class="text-[var(--color-ink-soft)] leading-relaxed">
-          Alle Transaktionen werden sicher verschlüsselt.
+          {h.uspPaymentsBody}
         </p>
       </div>
       <div>
@@ -408,10 +410,9 @@ const featuredReviews = (await getCollection('reviews'))
           <circle cx="6" cy="18" r="1.7" />
           <circle cx="17" cy="18" r="1.7" />
         </svg>
-        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">Versicherter Versand</h3>
+        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">{h.uspShippingHeadline}</h3>
         <p class="text-[var(--color-ink-soft)] leading-relaxed">
-          Bearbeitungszeit in der Regel 7–9 Werktage — oft geht es schneller.
-          Versand versichert mit DHL, Lieferung an Packstationen möglich.
+          {h.uspShippingBody}
         </p>
       </div>
       <div>
@@ -421,10 +422,9 @@ const featuredReviews = (await getCollection('reviews'))
           <circle cx="9" cy="10" r="0.6" fill="currentColor" />
           <circle cx="15" cy="10" r="0.6" fill="currentColor" />
         </svg>
-        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">Über 2900 zufriedene Kunden</h3>
+        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">{h.uspCustomersHeadline}</h3>
         <p class="text-[var(--color-ink-soft)] leading-relaxed">
-          Seit 2016 entstehen die Klunker in meiner Werkstatt — mehr als 2900
-          Kundinnen und Kunden tragen ihren schon.
+          {h.uspCustomersBody}
         </p>
       </div>
     </div>
@@ -434,21 +434,18 @@ const featuredReviews = (await getCollection('reviews'))
   <section class="bg-[var(--color-bone)]">
     <div class="max-w-7xl mx-auto px-6 md:px-10 py-24 md:py-32 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
       <div class="order-2 md:order-1">
-        <Image src={soEntsteht} alt="Titan wird von Hand in Form geschmiedet" widths={[480, 720, 960, 1200]} sizes="(min-width: 768px) 50vw, 100vw" class="w-full h-auto" />
+        <Image src={soEntsteht} alt={h.craftImageAlt} widths={[480, 720, 960, 1200]} sizes="(min-width: 768px) 50vw, 100vw" class="w-full h-auto" />
       </div>
       <div class="order-1 md:order-2">
-        <p class="eyebrow mb-4">Handwerk</p>
-        <h2 class="mb-6">So entsteht dein Klunker.</h2>
+        <p class="eyebrow mb-4">{h.craftEyebrow}</p>
+        <h2 class="mb-6">{h.craftHeadline}</h2>
         <p class="text-[var(--color-ink-soft)] leading-relaxed mb-4">
-          Jedes Stück wird aus Reintitan in meiner Werkstatt von Hand geschmiedet —
-          sägen, biegen, mit dem Hammer in Form bringen. Die besondere Oberfläche entsteht
-          durch das Schlagmuster, das jedem Klunker seinen eigenen Charakter gibt.
+          {h.craftBody1}
         </p>
         <p class="text-[var(--color-ink-soft)] leading-relaxed mb-8">
-          Titan ist extrem leicht, antiallergen, korrosionsbeständig und nahezu unverwüstlich.
-          Ein echtes Weltraummetall für ein Leben lang.
+          {h.craftBody2}
         </p>
-        <a href="/ueber-mich" class="link-arrow">Mehr über Kathrin <span class="arrow">→</span></a>
+        <a href={p('/ueber-mich')} class="link-arrow">{h.craftCta} <span class="arrow">→</span></a>
       </div>
     </div>
   </section>

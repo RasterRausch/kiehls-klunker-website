@@ -2,7 +2,10 @@
 name: "Haarforke aus Titan, geschmiedet"
 category: "haarforken"
 material: "Titan"
-price: 39
+price: 46
+priceDE: 39
+priceUS: 69
+priceWorld: 46
 currency: "EUR"
 stock: 18
 available: true
@@ -41,6 +44,7 @@ variants:
       - "violett"
 featured: false
 order: 2
+personalizable: true
 ---
 
 Titanhaarforke

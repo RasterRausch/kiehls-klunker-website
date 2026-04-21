@@ -1,8 +1,36 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logos/Kiehls-Klunker-Vector-Logo-clean.svg';
+import { getLang, t, localizedPath, interpolate } from '../i18n';
 
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
 const year = new Date().getFullYear();
+
+const newsletterCopyDE = {
+  eyebrow: 'Ein kleiner Gruß',
+  headline: 'Neues aus der Werkstatt.',
+  body: 'Etwa alle zwei Monate schicke ich eine kleine Post — neue Klunker, Markttermine, Inspirationen. Kein Spam, jederzeit abbestellbar.',
+  placeholder: 'deine@email.de',
+  submit: 'Anmelden',
+  emailLabel: 'E-Mail-Adresse',
+};
+const newsletterCopyEN = {
+  eyebrow: 'A little hello',
+  headline: 'News from the studio.',
+  body: 'Every couple of months I send a small postcard — new Klunkers, market dates, little inspirations. No spam, easy to unsubscribe.',
+  placeholder: 'your@email.com',
+  submit: 'Subscribe',
+  emailLabel: 'Email address',
+};
+const n = lang === 'en' ? newsletterCopyEN : newsletterCopyDE;
+
+const brandDescDE = 'Handgefertigter Haarschmuck aus Titan. Seit 2016 in der Werkstatt von Kathrin Kiehl.';
+const brandDescEN = 'Handmade hair jewelry in titanium. Made by Kathrin Kiehl since 2016.';
+const brandDesc = lang === 'en' ? brandDescEN : brandDescDE;
+
+const tagline = lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzig';
 ---
 
 <!-- Newsletter-Postkarte — eigener Block vor dem Footer -->
@@ -14,13 +42,12 @@ const year = new Date().getFullYear();
         <div class="md:grid md:grid-cols-[1.15fr_auto_1fr] md:gap-10 md:items-center">
           <!-- Nachricht -->
           <div>
-            <p class="eyebrow mb-4">Ein kleiner Gruß</p>
+            <p class="eyebrow mb-4">{n.eyebrow}</p>
             <p class="font-serif italic text-2xl md:text-[1.85rem] leading-[1.3] mb-4 text-[var(--color-ink)]">
-              Neues aus der Werkstatt.
+              {n.headline}
             </p>
             <p class="text-sm text-[var(--color-ink-soft)] leading-relaxed max-w-sm">
-              Etwa alle zwei Monate schicke ich eine kleine Post — neue Klunker,
-              Markttermine, Inspirationen. Kein Spam, jederzeit abbestellbar.
+              {n.body}
             </p>
           </div>
 
@@ -29,12 +56,12 @@ const year = new Date().getFullYear();
 
           <!-- Adressfeld -->
           <form class="mt-10 md:mt-0 space-y-4" onsubmit="return false;">
-            <label class="sr-only" for="newsletter-email">E-Mail-Adresse</label>
+            <label class="sr-only" for="newsletter-email">{n.emailLabel}</label>
             <input
               id="newsletter-email"
               type="email"
               required
-              placeholder="deine@email.de"
+              placeholder={n.placeholder}
               class="w-full bg-transparent border-0 border-b border-[var(--color-hairline)] focus:border-[var(--color-ink)] focus:outline-none text-[var(--color-ink)] placeholder:text-[var(--color-ink-mute)] px-0 py-3 text-sm transition-colors"
             />
             <button
@@ -43,7 +70,7 @@ const year = new Date().getFullYear();
               title="Backend folgt"
               class="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Anmelden
+              {n.submit}
             </button>
           </form>
         </div>
@@ -57,14 +84,14 @@ const year = new Date().getFullYear();
     <div class="md:col-span-2">
       <Image src={logo} alt="Kiehls Klunker" class="h-6 md:h-7 w-auto mb-5 brightness-0 invert opacity-90" />
       <p class="text-sm text-[var(--color-paper)]/65 max-w-xs leading-relaxed mb-6">
-        Handgefertigter Haarschmuck aus Titan. Seit 2016 in der Werkstatt von Kathrin Kiehl.
+        {brandDesc}
       </p>
       <div class="flex items-center gap-4">
         <a
           href="https://www.instagram.com/kiehlsklunker/"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Kiehls Klunker auf Instagram"
+          aria-label={`Kiehls Klunker — ${strings.footer.instagram}`}
           class="text-[var(--color-paper)]/60 hover:text-[var(--color-paper)] transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
@@ -77,7 +104,7 @@ const year = new Date().getFullYear();
           href="https://www.facebook.com/kiehlsklunker"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Kiehls Klunker auf Facebook"
+          aria-label="Kiehls Klunker — Facebook"
           class="text-[var(--color-paper)]/60 hover:text-[var(--color-paper)] transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
@@ -87,26 +114,26 @@ const year = new Date().getFullYear();
       </div>
     </div>
     <div>
-      <p class="eyebrow mb-4 !text-[#c9b99e]">Shop</p>
+      <p class="eyebrow mb-4 !text-[#c9b99e]">{strings.nav.shop}</p>
       <ul class="space-y-2 text-sm">
-        <li><a href="/shop" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Alle Produkte</a></li>
-        <li><a href="/ueber-mich" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Über mich</a></li>
-        <li><a href="/kontakt" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Kontakt</a></li>
+        <li><a href={p('/shop')} class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.shop.allProducts}</a></li>
+        <li><a href={p('/ueber-mich')} class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.nav.about}</a></li>
+        <li><a href={p('/kontakt')} class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.nav.contact}</a></li>
       </ul>
     </div>
     <div>
-      <p class="eyebrow mb-4 !text-[#c9b99e]">Rechtliches</p>
+      <p class="eyebrow mb-4 !text-[#c9b99e]">{strings.footer.legal}</p>
       <ul class="space-y-2 text-sm">
-        <li><a href="/impressum" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Impressum</a></li>
-        <li><a href="/datenschutz" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Datenschutz</a></li>
-        <li><a href="/agb" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">AGB</a></li>
+        <li><a href="/impressum" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.footer.impressum}</a></li>
+        <li><a href="/datenschutz" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.footer.datenschutz}</a></li>
+        <li><a href="/agb" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.footer.agb}</a></li>
       </ul>
     </div>
   </div>
   <div class="border-t border-[var(--color-paper)]/10">
     <div class="max-w-7xl mx-auto px-6 md:px-10 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-[var(--color-paper)]/45">
-      <p>© {year} Kiehls Klunker · Kathrin Kiehl</p>
-      <p>Handgefertigt in Leipzig</p>
+      <p>{interpolate(strings.footer.copyright, { year })}</p>
+      <p>{tagline}</p>
     </div>
   </div>
 </footer>

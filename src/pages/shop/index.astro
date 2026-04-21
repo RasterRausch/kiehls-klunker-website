@@ -1,37 +1,32 @@
 ---
-export const prerender = true;
-
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { displayPrice } from '../../lib/price';
+import { getLang, t, localizedPath, interpolate } from '../../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
 
 const products = (await getCollection('products'))
   .filter((p) => p.data.available)
   .sort((a, b) => a.data.order - b.data.order);
 
-const categoryLabels: Record<string, string> = {
-  haarforken: 'Haarforken',
-  haarstaebe: 'Haarstäbe',
-  haarspangen: 'Haarspangen',
-  zopfhalter: 'Zopfhalter',
-  ohrschmuck: 'Ohrschmuck',
-};
-
 const activeCategories = Array.from(new Set(products.map((p) => p.data.category)));
 const categoryCounts = activeCategories.map((key) => ({
   key,
-  label: categoryLabels[key] ?? key,
+  label: (strings.shop.category as Record<string, string>)[key] ?? key,
   count: products.filter((p) => p.data.category === key).length,
 }));
 ---
 
-<BaseLayout title="Shop — Kiehls Klunker">
+<BaseLayout title={strings.shopPage.pageTitle}>
   <section class="max-w-7xl mx-auto px-6 md:px-10 pt-20 pb-12 md:pb-16">
-    <p class="eyebrow mb-3">Shop</p>
-    <h1 class="mb-6">Alle Produkte</h1>
+    <p class="eyebrow mb-3">{strings.shop.title}</p>
+    <h1 class="mb-6">{strings.shop.allProducts}</h1>
     <p class="max-w-xl text-[var(--color-ink-soft)] leading-relaxed">
-      Jedes Stück wird einzeln von Hand aus Reintitan gefertigt —
-      leicht, langlebig, hypoallergen.
+      {strings.shop.subheadline}
     </p>
   </section>
 
@@ -51,10 +46,10 @@ const categoryCounts = activeCategories.map((key) => ({
         <span></span>
         <span></span>
       </span>
-      <span data-filter-toggle-label>Filter einblenden</span>
+      <span data-filter-toggle-label>{strings.shop.filterShow}</span>
     </button>
     <p class="text-sm text-[var(--color-ink-mute)]">
-      <span data-product-count>{products.length}</span> Produkte
+      <span data-product-count>{products.length}</span> {strings.shop.productsCount}
     </p>
   </div>
 
@@ -68,7 +63,7 @@ const categoryCounts = activeCategories.map((key) => ({
         aria-hidden="true"
       >
         <div class="shop-filter-inner">
-          <p class="eyebrow mb-6">Kategorie</p>
+          <p class="eyebrow mb-6">{strings.shop.categoryLabel}</p>
           <div class="space-y-3">
             {categoryCounts.map((cat) => (
               <label class="filter-check flex items-center gap-3 cursor-pointer group">
@@ -97,10 +92,10 @@ const categoryCounts = activeCategories.map((key) => ({
         >
           {products.map((product) => (
             <a
-              href={`/shop/${product.id}`}
+              href={p(`/shop/${product.id}`)}
               class="product-card group/card block"
               data-category={product.data.category}
-              data-price={product.data.price}
+              data-price={displayPrice(product.data)}
             >
               <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-4">
                 <Image
@@ -112,17 +107,17 @@ const categoryCounts = activeCategories.map((key) => ({
                 />
                 {product.data.stock === 0 && (
                   <span class="absolute top-3 left-3 bg-[var(--color-ink)] text-[var(--color-paper)] text-[0.62rem] uppercase tracking-[0.22em] px-2.5 py-1">
-                    Ausverkauft
+                    {strings.product.soldOut}
                   </span>
                 )}
                 {product.data.stock !== undefined && product.data.stock > 0 && product.data.stock <= 5 && (
                   <span class="absolute top-3 left-3 bg-[var(--color-paper)]/95 text-[var(--color-ink)] text-[0.62rem] uppercase tracking-[0.22em] px-2.5 py-1 border border-[var(--color-hairline)]">
-                    Noch {product.data.stock} verfügbar
+                    {interpolate(strings.product.onlyLeft, { count: product.data.stock })}
                   </span>
                 )}
                 <!-- Hover Overlay — slidet von unten rein -->
                 <div class="quick-add">
-                  <span class="quick-add-label">Näher betrachten</span>
+                  <span class="quick-add-label">{strings.home.cardHoverLabel}</span>
                 </div>
               </div>
               <h3 class="font-serif text-base md:text-lg leading-snug mb-1">{product.data.name}</h3>
@@ -130,20 +125,20 @@ const categoryCounts = activeCategories.map((key) => ({
                 <p class="text-xs md:text-sm text-[var(--color-ink-soft)] mb-2 line-clamp-1">{product.data.tagline}</p>
               )}
               <p class="text-sm">
-                {product.data.price.toFixed(2).replace('.', ',')} €
+                {displayPrice(product.data).toFixed(2).replace('.', ',')} €
               </p>
             </a>
           ))}
         </div>
 
         <p class="hidden mt-16 text-center text-sm text-[var(--color-ink-mute)]" data-empty-state>
-          Keine Produkte entsprechen deinen Filtern. <button type="button" class="underline underline-offset-4 hover:text-[var(--color-ink)] transition-colors" data-filter-reset>Filter zurücksetzen</button>
+          {strings.shop.filterEmpty} <button type="button" class="underline underline-offset-4 hover:text-[var(--color-ink)] transition-colors" data-filter-reset>{strings.shop.filterReset}</button>
         </p>
       </div>
     </div>
   </section>
 
-  <script is:inline>
+  <script is:inline define:vars={{ filterShow: strings.shop.filterShow, filterHide: strings.shop.filterHide }}>
     (() => {
       const layout = document.querySelector('[data-shop-layout]');
       const grid = document.querySelector('[data-product-grid]');
@@ -184,7 +179,7 @@ const categoryCounts = activeCategories.map((key) => ({
         layout.dataset.filterOpen = String(open);
         root.setAttribute('aria-hidden', String(!open));
         toggleBtn?.setAttribute('aria-expanded', String(open));
-        if (toggleLabel) toggleLabel.textContent = open ? 'Filter ausblenden' : 'Filter einblenden';
+        if (toggleLabel) toggleLabel.textContent = open ? filterHide : filterShow;
         toggleBtn?.classList.toggle('is-open', open);
       };
       toggleBtn?.addEventListener('click', () => {

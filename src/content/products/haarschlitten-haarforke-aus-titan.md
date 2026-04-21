@@ -2,7 +2,10 @@
 name: "Haarschlitten, Haarforke aus Titan"
 category: "haarforken"
 material: "Titan"
-price: 37
+price: 43
+priceDE: 38
+priceUS: 68
+priceWorld: 43
 currency: "EUR"
 stock: 8
 available: true
@@ -34,6 +37,7 @@ variants:
       - "violett"
 featured: false
 order: 5
+personalizable: true
 ---
 
 Der Haarschlitten ist eine schlichte Titanhaarforke. Die Biegung der Forke legt sich beim Stecken um die Haarknotenschlaufe und verschwindet unter der Frisur, dadurch sieht es aus als hätte man zwei einzelne Stäbe im Haar...

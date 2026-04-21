@@ -12,21 +12,30 @@ const KEY = env.ETSY_KEYSTRING, SECRET = env.ETSY_SHARED_SECRET, TOKEN = env.ETS
 const headers = { 'x-api-key': `${KEY}:${SECRET}`, Authorization: `Bearer ${TOKEN}` };
 
 // includes=BuyerPrice + Inventory, und dazu mal einen anderen Endpoint für "buyer view"
-async function hit(url, label) {
+async function hit(url, label, full = false) {
   const res = await fetch(url, { headers });
   const text = await res.text();
   console.log(`\n━━ ${label} ━━`);
   console.log(`${res.status}  ${url}`);
-  console.log(text.slice(0, 1200));
+  console.log(full ? text : text.slice(0, 4000));
 }
 
+const LISTING = '611155804';
+
 await hit(
-  `https://openapi.etsy.com/v3/application/listings/611156384?includes=BuyerPrice,Inventory`,
-  'Listing mit BuyerPrice + Inventory'
+  `https://openapi.etsy.com/v3/application/listings/${LISTING}?includes=BuyerPrice,Inventory`,
+  'Listing mit BuyerPrice + Inventory',
+  true
 );
 
-// Alle Listings mit buyerprice
 await hit(
-  `https://openapi.etsy.com/v3/application/shops/18017798/listings/active?includes=BuyerPrice&limit=3`,
-  'Listings-Liste mit BuyerPrice'
+  `https://openapi.etsy.com/v3/application/shops/18017798/listings/${LISTING}/translations/en`,
+  'Listing Translation EN',
+  true
+);
+
+await hit(
+  `https://openapi.etsy.com/v3/application/shops/18017798/listings/${LISTING}/translations/de`,
+  'Listing Translation DE',
+  true
 );

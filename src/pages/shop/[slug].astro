@@ -1,49 +1,47 @@
 ---
-export const prerender = true;
-
-import { getCollection, render } from 'astro:content';
+import { render, getEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { displayPrice } from '../../lib/price';
+import { getLang, t, localizedPath, interpolate, translateVariantName, translateVariantValue } from '../../i18n';
 
-export async function getStaticPaths() {
-  const products = await getCollection('products');
-  return products.map((product) => ({
-    params: { slug: product.id },
-    props: { product },
-  }));
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
+
+const { slug } = Astro.params;
+const product = slug ? await getEntry('products', slug) : undefined;
+if (!product) {
+  return Astro.redirect(p('/shop'));
 }
-
-const { product } = Astro.props;
 const { Content } = await render(product);
 const images = product.data.images;
+const price = displayPrice(product.data);
 
-const materialCopy: Record<string, { headline: string; detail: string }> = {
-  Titan: {
-    headline: 'Reintitan',
-    detail: 'leicht, hypoallergen, korrosionsresistent — ein Leben lang.',
-  },
-  Messing: {
-    headline: 'Massives Messing',
-    detail: 'warm im Ton, edle Patina mit der Zeit.',
-  },
-  Silber: {
-    headline: 'Sterling Silber',
-    detail: 'edel, langlebig, mit dem Charakter echten Silbers.',
-  },
-  Gold: {
-    headline: 'Gold',
-    detail: 'zeitlos, langlebig, ein Erbstück.',
-  },
-};
-const mat = product.data.material ? materialCopy[product.data.material] : null;
+const matKey = product.data.material as keyof typeof strings.product.materialCopy | undefined;
+const mat = matKey ? strings.product.materialCopy[matKey] : null;
 const materialBadge = mat
-  ? { headline: mat.headline, detail: mat.detail }
-  : { headline: 'Hochwertige Materialien', detail: 'sorgfältig ausgewählt, handwerklich verarbeitet.' };
+  ? mat
+  : {
+      headline: strings.product.materialFallbackHeadline,
+      detail: strings.product.materialFallbackDetail,
+    };
+
+// Categorie-Eyebrow oberhalb der Überschrift übersetzen
+const categoryLabel = (strings.shop.category as Record<string, string>)[product.data.category] ?? product.data.category;
+
+// Placeholder für variant-select je nach Varianten-Name erraten
+const placeholderFor = (variantName: string) => {
+  const low = variantName.toLowerCase();
+  if (low.includes('farbe') || low.includes('color')) return strings.product.chooseColor;
+  if (low.includes('länge') || low.includes('length') || low.includes('größe') || low.includes('size')) return strings.product.chooseSize;
+  return strings.product.chooseOption;
+};
 ---
 
 <BaseLayout title={`${product.data.name} — Kiehls Klunker`} description={product.data.tagline}>
   <section class="max-w-7xl mx-auto px-6 md:px-10 pt-10 pb-4">
-    <a href="/shop" class="link-arrow"><span class="arrow arrow-left">←</span> Zurück zum Shop</a>
+    <a href={p('/shop')} class="link-arrow"><span class="arrow arrow-left">←</span> {strings.product.backToShop}</a>
   </section>
 
   <section class="max-w-7xl mx-auto px-6 md:px-10 pb-24 grid md:grid-cols-2 gap-12 lg:gap-20">
@@ -67,7 +65,7 @@ const materialBadge = mat
       </div>
       {images.length > 1 && (
         <div class="grid grid-cols-4 gap-2 md:gap-3">
-          {images.slice(0, 8).map((img, i) => (
+          {images.map((img, i) => (
             <button
               type="button"
               class:list={['gallery-thumb aspect-square overflow-hidden bg-[var(--color-bone)]', i === 0 && 'is-active']}
@@ -83,24 +81,24 @@ const materialBadge = mat
 
     <!-- DETAILS -->
     <div class="md:sticky md:top-8 md:self-start">
-      <p class="eyebrow mb-3">{product.data.category === 'haarforken' ? 'Haarforken' : 'Haarstäbe'}</p>
-      <h1 class="mb-3">{product.data.name}</h1>
+      <p class="eyebrow mb-3">{categoryLabel}</p>
+      <h1 class="pdp-title mb-3">{product.data.name}</h1>
       {product.data.tagline && (
         <p class="text-lg text-[var(--color-ink-soft)] mb-6 font-serif italic">{product.data.tagline}</p>
       )}
       <p class="font-serif text-3xl mb-3">
-        {product.data.price.toFixed(2).replace('.', ',')} €
+        {price.toFixed(2).replace('.', ',')} €
       </p>
       {product.data.stock !== undefined && (
         <p class="text-xs uppercase tracking-[0.2em] mb-10">
           {product.data.stock === 0 && (
-            <span class="text-[var(--color-ink)]">● Ausverkauft</span>
+            <span class="text-[var(--color-ink)]">● {strings.product.soldOut}</span>
           )}
           {product.data.stock > 0 && product.data.stock <= 5 && (
-            <span class="text-[var(--color-gold)]">● Noch {product.data.stock} verfügbar</span>
+            <span class="text-[var(--color-gold)]">● {interpolate(strings.product.onlyLeft, { count: product.data.stock })}</span>
           )}
           {product.data.stock > 5 && (
-            <span class="text-[var(--color-ink-soft)]">● Auf Lager</span>
+            <span class="text-[var(--color-ink-soft)]">● {strings.product.inStock}</span>
           )}
         </p>
       )}
@@ -110,7 +108,7 @@ const materialBadge = mat
           {product.data.variants.map((variant) => (
             <div class="variant-field">
               <label class="eyebrow mb-2 block" for={`variant-${variant.name}`}>
-                {variant.name}
+                {translateVariantName(variant.name, lang)}
               </label>
               <div class="select-wrapper">
                 <select
@@ -119,13 +117,9 @@ const materialBadge = mat
                   data-variant-name={variant.name}
                   required
                 >
-                  <option value="">
-                    {variant.name.toLowerCase().includes('farbe') ? 'Farbe wählen' :
-                     variant.name.toLowerCase().includes('länge') || variant.name.toLowerCase().includes('größe') ? 'Größe wählen' :
-                     'Auswählen'}
-                  </option>
+                  <option value="">{placeholderFor(variant.name)}</option>
                   {variant.values.map((value) => (
-                    <option value={value}>{value}</option>
+                    <option value={value}>{translateVariantValue(value, lang)}</option>
                   ))}
                 </select>
                 <svg class="select-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -137,33 +131,60 @@ const materialBadge = mat
         </div>
       )}
 
+      {product.data.personalizable && (
+        <div class="mb-6" data-personalization-wrap>
+          <button type="button" class="personalization-toggle" data-personalization-toggle aria-expanded="false" aria-controls="personalization-panel">
+            <span class="personalization-icon" aria-hidden="true">+</span>
+            <span class="personalization-label">{strings.product.personalizationToggle}</span>
+            <span class="personalization-optional">{strings.product.personalizationOptional}</span>
+          </button>
+          <div id="personalization-panel" class="personalization-panel" data-personalization-panel hidden>
+            <label class="eyebrow mb-2 block" for="personalization-input">{strings.product.personalizationLabel}</label>
+            <p class="text-sm text-[var(--color-ink-soft)] mb-3 leading-relaxed">
+              {product.data.personalizationPrompt ?? strings.product.personalizationPromptDefault}
+            </p>
+            <textarea
+              id="personalization-input"
+              class="personalization-input"
+              rows="3"
+              maxlength="256"
+              data-personalization-input
+            ></textarea>
+            <p class="personalization-counter text-xs text-[var(--color-ink-mute)] mt-1 text-right">
+              <span data-personalization-count>0</span>/256
+            </p>
+          </div>
+        </div>
+      )}
+
       {product.data.stock !== 0 && (
         <>
-          <div class="flex items-stretch gap-3 mb-2">
+          <div class="grid grid-cols-[auto_1fr] items-stretch gap-x-3 gap-y-2 mb-4">
             <div class="flex items-center border border-[var(--color-hairline)]">
-              <button type="button" class="qty-btn" data-pdp-qty-decrease aria-label="Menge verringern">−</button>
+              <button type="button" class="qty-btn" data-pdp-qty-decrease aria-label={strings.product.decreaseQty}>−</button>
               <span class="min-w-[3rem] text-center text-sm" data-pdp-qty>1</span>
-              <button type="button" class="qty-btn" data-pdp-qty-increase aria-label="Menge erhöhen">+</button>
+              <button type="button" class="qty-btn" data-pdp-qty-increase aria-label={strings.product.increaseQty}>+</button>
             </div>
             <button
               type="button"
-              class="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               data-pdp-add-to-cart
               data-product-id={product.id}
               data-product-name={product.data.name}
-              data-product-price={product.data.price}
+              data-product-price={price}
               data-product-image={product.data.images[0].src}
               data-product-max-stock={product.data.stock}
-              disabled={product.data.variants.length > 0}
             >
-              In den Warenkorb
+              {strings.product.addToCart}
             </button>
+            {product.data.variants.length > 0 && (
+              <p class="variant-hint text-xs text-center col-start-2" data-variant-hint>
+                {interpolate(strings.product.hintSelect, {
+                  fields: product.data.variants.map((v) => translateVariantName(v.name, lang)).join(strings.product.hintJoin),
+                })}
+              </p>
+            )}
           </div>
-          {product.data.variants.length > 0 && (
-            <p class="text-xs text-[var(--color-ink-mute)] mb-4" data-variant-hint>
-              Bitte zuerst {product.data.variants.map((v) => v.name.toLowerCase()).join(' und ')} wählen.
-            </p>
-          )}
         </>
       )}
       {product.data.stock === 0 && (
@@ -171,7 +192,7 @@ const materialBadge = mat
           disabled
           class="btn-primary w-full mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Ausverkauft
+          {strings.product.soldOut}
         </button>
       )}
 
@@ -182,7 +203,7 @@ const materialBadge = mat
             <path d="m11 7-7 7 3 3 7-7"/>
             <path d="M3 21h10"/>
           </svg>
-          <span><span class="text-[var(--color-ink)] font-medium">Handgefertigt in Leipzig</span> — in Kathrins Werkstatt, Stück für Stück.</span>
+          <span><span class="text-[var(--color-ink)] font-medium">{strings.product.features.handmade}</span> — {strings.product.features.handmadeDetail}</span>
         </li>
         <li class="flex items-start gap-3 text-sm text-[var(--color-ink-soft)] leading-relaxed">
           <svg class="shrink-0 mt-0.5 text-[var(--color-ink)]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -198,7 +219,7 @@ const materialBadge = mat
             <circle cx="6.5" cy="17.5" r="1.6"/>
             <circle cx="16" cy="17.5" r="1.6"/>
           </svg>
-          <span><span class="text-[var(--color-ink)] font-medium">Versand in 7–9 Werktagen</span> — per DHL, oft schneller.</span>
+          <span><span class="text-[var(--color-ink)] font-medium">{strings.product.features.shipping}</span> — {strings.product.features.shippingDetail}</span>
         </li>
       </ul>
 
@@ -219,6 +240,27 @@ const materialBadge = mat
           dec.addEventListener('click', () => updateQty(qty - 1));
           inc.addEventListener('click', () => updateQty(qty + 1));
 
+          // —— Personalisierung (optional) ————————————————————
+          const personalizationToggle = document.querySelector('[data-personalization-toggle]');
+          const personalizationPanel = document.querySelector('[data-personalization-panel]');
+          const personalizationInput = document.querySelector('[data-personalization-input]');
+          const personalizationCount = document.querySelector('[data-personalization-count]');
+          if (personalizationToggle && personalizationPanel) {
+            personalizationToggle.addEventListener('click', () => {
+              const open = personalizationToggle.getAttribute('aria-expanded') === 'true';
+              personalizationToggle.setAttribute('aria-expanded', open ? 'false' : 'true');
+              personalizationPanel.hidden = open;
+              if (!open && personalizationInput) personalizationInput.focus();
+            });
+          }
+          if (personalizationInput && personalizationCount) {
+            personalizationInput.addEventListener('input', () => {
+              personalizationCount.textContent = String(personalizationInput.value.length);
+            });
+          }
+          const getPersonalization = () =>
+            personalizationInput ? personalizationInput.value.trim() : '';
+
           // —— Varianten-Auswahl ——————————————————————————————
           const selects = document.querySelectorAll('.variant-select');
           const hint = document.querySelector('[data-variant-hint]');
@@ -237,38 +279,55 @@ const materialBadge = mat
             });
             return variants;
           };
-          const syncButton = () => {
+          const syncHint = () => {
             const ready = allSelected();
-            addBtn.disabled = !ready;
             if (hint) hint.classList.toggle('hidden', ready || selects.length === 0);
           };
-          selects.forEach((s) => s.addEventListener('change', syncButton));
-          syncButton();
+          selects.forEach((s) => {
+            s.addEventListener('change', () => {
+              s.classList.remove('is-invalid');
+              if (hint && allSelected()) hint.classList.remove('is-invalid');
+              syncHint();
+            });
+          });
+          syncHint();
 
-          // —— Cart-Key: Produkt + gewählte Varianten ————————————
-          const keyFor = (id, variants) => {
+          // —— Cart-Key: Produkt + Varianten + Personalisierung ——
+          // Zwei Forken mit gleichen Varianten aber unterschiedlichem Wunschtext
+          // müssen als separate Zeilen im Warenkorb bleiben.
+          const hashText = (s) => {
+            let h = 0;
+            for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+            return Math.abs(h).toString(36);
+          };
+          const keyFor = (id, variants, personalization) => {
             const parts = Object.keys(variants).sort().map((k) => `${k}=${variants[k]}`);
-            return parts.length ? `${id}::${parts.join('|')}` : id;
+            const base = parts.length ? `${id}::${parts.join('|')}` : id;
+            return personalization ? `${base}::p=${hashText(personalization)}` : base;
           };
 
           addBtn.addEventListener('click', () => {
-            if (addBtn.disabled) return;
             if (!allSelected()) {
-              // Visuelles Feedback: erstes leeres Select hervorheben
+              // Alle leeren Felder markieren + Hint einfärben, erstes leeres fokussieren & scrollen
+              let firstMissing = null;
               for (const s of selects) {
                 if (!s.value) {
                   s.classList.add('is-invalid');
-                  s.focus();
-                  setTimeout(() => s.classList.remove('is-invalid'), 2000);
-                  break;
+                  if (!firstMissing) firstMissing = s;
                 }
+              }
+              if (hint) hint.classList.add('is-invalid');
+              if (firstMissing) {
+                firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstMissing.focus({ preventScroll: true });
               }
               return;
             }
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
             const id = addBtn.dataset.productId;
             const variants = collectVariants();
-            const cartKey = keyFor(id, variants);
+            const personalization = getPersonalization();
+            const cartKey = keyFor(id, variants, personalization);
             const existing = cart.find((i) => (i.cartKey || i.id) === cartKey);
             if (existing) {
               existing.quantity = Math.min(maxStock, existing.quantity + qty);
@@ -281,6 +340,7 @@ const materialBadge = mat
                 image: addBtn.dataset.productImage,
                 quantity: qty,
                 variants,
+                ...(personalization ? { personalization } : {}),
               });
             }
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -338,6 +398,10 @@ const materialBadge = mat
     .gallery-thumb.is-active::after { opacity: 1; }
     .gallery-thumb.is-active img { opacity: 0.7; }
 
+    .pdp-title {
+      font-size: clamp(1.75rem, 2.8vw, 2.5rem);
+    }
+
     /* —— Varianten-Dropdowns (Größe, Farbe, etc.) —— */
     .select-wrapper {
       position: relative;
@@ -368,6 +432,68 @@ const materialBadge = mat
       border-color: var(--color-gold);
       box-shadow: inset 0 0 0 1px var(--color-gold);
       background: #faf1ec;
+    }
+    .variant-hint {
+      color: var(--color-ink-mute);
+      transition: color 0.2s ease;
+    }
+    .variant-hint.is-invalid {
+      color: var(--color-gold);
+      font-weight: 500;
+    }
+
+    /* —— Personalisierung —— */
+    .personalization-toggle {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      line-height: 1.4;
+      transition: color 0.2s ease;
+    }
+    .personalization-toggle:hover { color: var(--color-gold-hover); }
+    .personalization-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.25s ease;
+      transform-origin: center;
+    }
+    .personalization-toggle[aria-expanded="true"] .personalization-icon {
+      transform: rotate(45deg);
+    }
+    .personalization-label { font-weight: 500; }
+    .personalization-optional {
+      color: var(--color-ink-mute);
+      font-size: 0.85rem;
+    }
+    .personalization-panel {
+      margin-top: 0.9rem;
+    }
+    .personalization-panel[hidden] { display: none; }
+    .personalization-input {
+      width: 100%;
+      background: var(--color-paper);
+      border: 1px solid var(--color-hairline);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      padding: 0.7rem 0.9rem;
+      resize: vertical;
+      min-height: 4.5rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .personalization-input:focus {
+      outline: none;
+      border-color: var(--color-ink);
+      box-shadow: inset 0 0 0 1px var(--color-ink);
     }
     /* Leerer State: Placeholder-Option in Mute-Farbe */
     .variant-select:has(option[value=""]:checked) {

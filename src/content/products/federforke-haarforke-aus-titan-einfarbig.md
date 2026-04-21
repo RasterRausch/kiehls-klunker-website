@@ -2,7 +2,10 @@
 name: "Federforke, Haarforke aus Titan, einfarbig"
 category: "haarforken"
 material: "Titan"
-price: 42
+price: 49
+priceDE: 46
+priceUS: 76
+priceWorld: 49
 currency: "EUR"
 stock: 19
 available: true
@@ -45,6 +48,7 @@ variants:
       - "Wunschmaß"
 featured: false
 order: 8
+personalizable: true
 ---
 
 Die Federforke ist eine super minimalistische Haarforke aus Titan. Im Haar wirkt sie filigran wie ein Blatt Papier... doch der Schein trügt, da Titan ein sehr stabiler Werkstoff gibt sie dem Haar einen sicheren Halt, hinzu kommt dass Titan sehr leicht ist und absolut korrosionsbeständig. Das macht die Federforke sehr leicht, abwaschbar und überhaupt sehr angenehm zu tragen. Ein richtiges Weltraummetall!

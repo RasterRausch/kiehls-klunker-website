@@ -193,6 +193,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     const fromNotif = env('CONTACT_FROM_NOTIFICATION');
     const fromConfirm = env('CONTACT_FROM_CONFIRMATION');
     const to = env('CONTACT_TO');
+    // Staging-Sicherheitsnetz: wenn gesetzt, gehen alle Mails an diese Adresse.
+    const overrideTo = env('EMAIL_OVERRIDE_TO');
     if (!fromNotif || !fromConfirm || !to) {
       throw new Error('CONTACT_FROM_* / CONTACT_TO unvollständig');
     }
@@ -208,7 +210,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     const notif = notificationEmail(safe, m);
     await sendMail({
       from: `${fromName} Formular <${fromNotif}>`,
-      to,
+      to: overrideTo || to,
       subject: `Neue Nachricht: ${safe.subject}`,
       html: notif.html,
       text: notif.text,
@@ -219,7 +221,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     const confirm = confirmationEmail(safe, m);
     await sendMail({
       from: `${fromName} <${fromConfirm}>`,
-      to: e,
+      to: overrideTo || e,
       subject: 'Deine Nachricht ist angekommen — Kiehls Klunker',
       html: confirm.html,
       text: confirm.text,

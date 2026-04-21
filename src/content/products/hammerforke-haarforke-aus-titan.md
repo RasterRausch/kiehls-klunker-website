@@ -2,7 +2,10 @@
 name: "Hammerforke, Haarforke aus Titan"
 category: "haarforken"
 material: "Titan"
-price: 44
+price: 52
+priceDE: 49
+priceUS: 79
+priceWorld: 52
 currency: "EUR"
 stock: 19
 available: true
@@ -44,6 +47,7 @@ variants:
       - "Wunschmaß"
 featured: false
 order: 11
+personalizable: true
 ---
 
 Hier gibt es eine minimalistische Haarforke aus Titan mit Hammerschlagmuster, sie wurde aus einem Stück gebaut.

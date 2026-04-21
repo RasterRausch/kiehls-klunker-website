@@ -2,7 +2,10 @@
 name: "Haarnudel, Haarforke aus Titan, titanium hair fork"
 category: "haarforken"
 material: "Titan"
-price: 42
+price: 49
+priceDE: 46
+priceUS: 76
+priceWorld: 49
 currency: "EUR"
 stock: 7
 available: true
@@ -37,6 +40,7 @@ variants:
       - "violett"
 featured: false
 order: 3
+personalizable: true
 ---
 
 Haarnudel

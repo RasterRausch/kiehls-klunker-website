@@ -1,0 +1,15 @@
+---
+import { getLang, t } from '../i18n';
+
+const lang = getLang(Astro);
+// Die Rechtstexte sind bewusst DE-only. Auf der EN-Seite erscheint oben dieser
+// Hinweis, damit englischsprachige Besucher wissen woran sie sind.
+---
+
+{lang === 'en' && (
+  <div class="max-w-2xl mx-auto px-6 md:px-10 pt-10">
+    <p class="text-xs text-[var(--color-ink-mute)] border border-[var(--color-hairline)] px-4 py-3 leading-relaxed">
+      {t(lang).legalNotice.body}
+    </p>
+  </div>
+)}

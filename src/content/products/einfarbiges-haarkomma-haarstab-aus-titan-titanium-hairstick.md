@@ -2,7 +2,10 @@
 name: "Einfarbiges Haarkomma, Haarstab aus Titan, titanium hairstick"
 category: "haarstaebe"
 material: "Titan"
-price: 31
+price: 36
+priceDE: 32
+priceUS: 62
+priceWorld: 36
 currency: "EUR"
 stock: 20
 available: true
@@ -44,6 +47,7 @@ variants:
       - "Wunschmaß"
 featured: false
 order: 4
+personalizable: true
 ---
 
 einfarbiges Haarkomma,

@@ -1,17 +1,144 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalEnNotice from '../components/LegalEnNotice.astro';
 ---
 
 <BaseLayout title="AGB — Kiehls Klunker" description="Allgemeine Geschäftsbedingungen.">
+  <LegalEnNotice />
   <section class="max-w-3xl mx-auto px-6 md:px-10 py-20 md:py-28">
     <p class="eyebrow mb-4">Rechtliches</p>
     <h1 class="mb-10">Allgemeine Geschäftsbedingungen</h1>
 
-    <div class="text-[var(--color-ink-soft)] leading-relaxed space-y-4">
-      <p class="bg-[var(--color-bone-deep)] px-4 py-3 text-sm text-[var(--color-ink)]">
-        Platzhalter — die AGB werden hier eingefügt, sobald die finale Fassung vorliegt.
+    <div class="agb-body text-[var(--color-ink-soft)] leading-relaxed">
+      <p class="bg-[var(--color-bone-deep)] px-4 py-3 text-sm text-[var(--color-ink)] mb-10">
+        Hinweis: Diese AGB sind ein Entwurf. Vor Shop-Start bitte von einem Fachanwalt
+        oder einem AGB-Service (z. B. IT-Recht.de, eRecht24, Händlerbund) prüfen
+        und die mit <em>[Platzhalter]</em> markierten Stellen ergänzen lassen.
+      </p>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 1 Geltungsbereich &amp; Anbieter</h2>
+        <p class="mb-3">
+          Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Verträge, die zwischen
+          Kathrin Kiehl, Verwaltungsring 12, 04571 Rötha OT Espenhain (nachfolgend „Anbieterin"),
+          und ihren Kundinnen und Kunden (nachfolgend „Kunde") über den Online-Shop
+          <a href="/" class="underline underline-offset-4">kiehls-klunker.de</a> geschlossen werden.
+        </p>
+        <p>Kontakt: info@kiehls-klunker.de</p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 2 Vertragsschluss</h2>
+        <p class="mb-3">
+          Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot,
+          sondern eine Aufforderung zur Bestellung dar. Mit dem Klick auf „Zur Kasse" und
+          dem Abschluss des Zahlungsvorgangs gibt der Kunde ein verbindliches Kaufangebot ab.
+        </p>
+        <p>
+          Die Anbieterin nimmt das Angebot durch Übersendung der Bestellbestätigung per E-Mail
+          an. Mit Zugang dieser Bestätigung kommt der Kaufvertrag zustande.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 3 Preise &amp; Versandkosten</h2>
+        <p class="mb-3">
+          Alle im Shop angegebenen Preise sind Endpreise in Euro (€).
+        </p>
+        <p class="mb-3 font-medium text-[var(--color-ink)]">
+          Als Kleinunternehmerin im Sinne von § 19 UStG erhebt die Anbieterin keine
+          Umsatzsteuer und weist diese daher auch nicht gesondert aus.
+        </p>
+        <p>
+          Zusätzlich zum Kaufpreis fallen Versandkosten in Höhe von 4,90 € pro Bestellung
+          an. Die Versandkosten werden im Warenkorb und vor Abschluss der Bestellung
+          gesondert ausgewiesen.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 4 Zahlungsbedingungen</h2>
+        <p class="mb-3">
+          Die Zahlung erfolgt über den Zahlungsdienstleister Stripe Payments Europe, Ltd.
+          Die zur Verfügung stehenden Zahlungsarten werden im Checkout angezeigt.
+        </p>
+        <p>
+          Der Kaufpreis ist mit Vertragsschluss sofort zur Zahlung fällig.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 5 Lieferung &amp; Versand</h2>
+        <p class="mb-3">
+          Der Versand erfolgt innerhalb von 2–9 Werktagen nach Zahlungseingang per DHL.
+          Die Lieferung erfolgt innerhalb Deutschlands sowie in ausgewählte Länder der
+          Europäischen Union. Lieferung an Packstationen ist möglich.
+        </p>
+        <p>
+          <em>[Platzhalter]</em> Hinweise zu Lieferverzögerungen, Teillieferungen und
+          Versand in Drittländer bitte ergänzen.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 6 Widerrufsrecht</h2>
+        <p class="mb-3">
+          Verbraucherinnen und Verbraucher haben ein gesetzliches Widerrufsrecht. Die
+          ausführlichen Informationen zum Widerrufsrecht einschließlich des
+          Muster-Widerrufsformulars finden sich in der
+          <a href="/widerruf" class="underline underline-offset-4">Widerrufsbelehrung</a>.
+        </p>
+        <p>
+          Bei individuell nach Kundenwunsch angefertigten Produkten (z. B. Sondergrößen
+          oder Sonderfarben, die im Personalisierungsfeld angefragt wurden) besteht
+          kein Widerrufsrecht gemäß § 312g Abs. 2 Nr. 1 BGB.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 7 Eigentumsvorbehalt</h2>
+        <p>
+          Die gelieferte Ware bleibt bis zur vollständigen Bezahlung Eigentum der Anbieterin.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 8 Gewährleistung</h2>
+        <p>
+          Es gelten die gesetzlichen Gewährleistungsrechte.
+          <em>[Platzhalter]</em> Abweichende Regelungen (z. B. verkürzte Fristen bei
+          gebrauchten Waren) hier einfügen.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 9 Streitbeilegung</h2>
+        <p class="mb-3">
+          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit,
+          die unter
+          <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">ec.europa.eu/consumers/odr</a>
+          zu erreichen ist.
+        </p>
+        <p>
+          Die Anbieterin ist weder bereit noch verpflichtet, an einem Streitbeilegungsverfahren
+          vor einer Verbraucherschlichtungsstelle teilzunehmen.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 10 Schlussbestimmungen</h2>
+        <p class="mb-3">
+          Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des
+          UN-Kaufrechts.
+        </p>
+        <p>
+          Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die
+          Wirksamkeit der übrigen Bestimmungen unberührt.
+        </p>
+      </section>
+
+      <p class="text-sm text-[var(--color-ink-mute)] mt-16">
+        Stand: <em>[Platzhalter: Datum der letzten Aktualisierung]</em>
       </p>
     </div>
   </section>

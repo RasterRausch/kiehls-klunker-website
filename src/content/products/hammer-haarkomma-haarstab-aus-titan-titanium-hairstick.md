@@ -2,7 +2,10 @@
 name: "Hammer-Haarkomma, Haarstab aus Titan, titanium hairstick"
 category: "haarstaebe"
 material: "Titan"
-price: 33
+price: 39
+priceDE: 34
+priceUS: 64
+priceWorld: 39
 currency: "EUR"
 stock: 36
 available: true
@@ -43,6 +46,7 @@ variants:
       - "Wunschmaß"
 featured: false
 order: 10
+personalizable: true
 ---
 
 Hammer-Haarkomma,

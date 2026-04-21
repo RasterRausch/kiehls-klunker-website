@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Technische Endpoints nicht indexieren
+Disallow: /api/
+Disallow: /checkout/success
+Disallow: /checkout/cancel
+
+Sitemap: https://kiehls-klunker.de/sitemap-index.xml

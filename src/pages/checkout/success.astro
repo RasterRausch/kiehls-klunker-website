@@ -1,24 +1,30 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getLang, t, localizedPath } from '../../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
+const s = strings.checkout.success;
+const pageTitle = lang === 'en' ? 'Order confirmed — Kiehls Klunker' : 'Bestellung bestätigt — Kiehls Klunker';
+const pageDesc = lang === 'en' ? 'Thank you for your order.' : 'Danke für deine Bestellung.';
+const eyebrow = lang === 'en' ? 'Order confirmed' : 'Bestellung bestätigt';
 ---
 
-<BaseLayout title="Bestellung bestätigt — Kiehls Klunker" description="Danke für deine Bestellung.">
+<BaseLayout title={pageTitle} description={pageDesc}>
   <section class="max-w-2xl mx-auto px-6 md:px-10 py-24 md:py-32 text-center">
-    <p class="eyebrow mb-6">Bestellung bestätigt</p>
-    <h1 class="mb-6">Danke — dein Klunker ist unterwegs.</h1>
+    <p class="eyebrow mb-6">{eyebrow}</p>
+    <h1 class="mb-6">{s.title}</h1>
     <p class="text-[var(--color-ink-soft)] leading-relaxed mb-4">
-      Kathrin hat deine Bestellung erhalten und wird sie sorgfältig für dich versenden.
-      Eine Bestätigung mit allen Details liegt schon in deinem Postfach.
+      {s.thanks}
     </p>
     <p class="text-[var(--color-ink-soft)] leading-relaxed mb-12">
-      Versand per DHL in 7–9 Werktagen — oft schneller.
+      {s.shipping}
     </p>
 
     <div class="flex flex-wrap items-center justify-center gap-4">
-      <a href="/shop" class="btn-primary">Weiter stöbern</a>
-      <a href="/" class="btn-ghost">Zur Startseite</a>
+      <a href={p('/shop')} class="btn-primary">{s.keepShopping}</a>
+      <a href={p('/')} class="btn-ghost">{s.home}</a>
     </div>
   </section>
 

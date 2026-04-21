@@ -2,7 +2,10 @@
 name: "Kugel-Haarkomma, Haarstab aus Titan"
 category: "haarstaebe"
 material: "Titan"
-price: 32
+price: 38
+priceDE: 33
+priceUS: 63
+priceWorld: 38
 currency: "EUR"
 stock: 20
 available: true
@@ -44,6 +47,7 @@ variants:
       - "Wunschlänge"
 featured: false
 order: 6
+personalizable: true
 ---
 
 Das Haarkomma ist ein minimalistischer, super leichter Haarstab aus Titan. Durch seine spezielle Form hält er sehr gut das Haar zusammen.

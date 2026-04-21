@@ -2,7 +2,10 @@
 name: "Kanten-Federforke, Haarforke aus Titan"
 category: "haarforken"
 material: "Titan"
-price: 44
+price: 52
+priceDE: 49
+priceUS: 79
+priceWorld: 52
 currency: "EUR"
 stock: 17
 available: true
@@ -43,6 +46,7 @@ variants:
       - "Wunschmaß"
 featured: false
 order: 7
+personalizable: true
 ---
 
 Hier gibt es eine minimalistische Haarforke aus Titan mit bunter Kante, durch ihre Schlichtheit kann man sie zu allen möglichen Anlässen und Outfits tragen...

@@ -1,8 +1,11 @@
 ---
 name: "Geschmiedete Messing-Haargabel mit runden Zinken"
 category: "haarforken"
-material: "Titan"
-price: 36
+material: "Messing"
+price: 42
+priceDE: 36
+priceUS: 66
+priceWorld: 42
 currency: "EUR"
 stock: 26
 available: true
@@ -26,6 +29,7 @@ variants:
       - "Wunschmaß"
 featured: false
 order: 1
+personalizable: true
 ---
 
 Kompromisslos schlicht und zeitlos kommt diese Haarforke aus Messing daher. Sie besteht aus einem gebogenen Runddraht, der an der Biegung flach geschmiedet wurde. Das macht sie sehr stabil. 
