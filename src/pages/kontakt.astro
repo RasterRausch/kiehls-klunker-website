@@ -1,0 +1,314 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
+---
+
+<BaseLayout title="Kontakt — Kiehls Klunker">
+  <section class="pt-20 pb-20 md:pb-28">
+    <div class="max-w-2xl mx-auto px-6 md:px-10">
+      <!-- HERO -->
+      <div class="text-center mb-14 md:mb-16">
+        <p class="eyebrow mb-4">Kontakt</p>
+        <h1 class="mb-6">Schreib mir.</h1>
+        <p class="text-[var(--color-ink-soft)] leading-relaxed max-w-md mx-auto">
+          Eine Frage zu einem Klunker, ein Sonderwunsch oder ein Einzelstück
+          in Auftrag? Ich freue mich auf deine Nachricht — meist antworte ich
+          innerhalb von ein bis zwei Werktagen persönlich.
+        </p>
+      </div>
+
+      <!-- FORMULAR -->
+      <form id="contact-form" class="contact-form" novalidate>
+        <div class="grid sm:grid-cols-2 gap-5 sm:gap-6">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" required maxlength="100" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="email">E-Mail</label>
+            <input id="email" name="email" type="email" required maxlength="150" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field mt-5 sm:mt-6">
+          <label for="subject">Betreff <span class="optional">(optional)</span></label>
+          <input id="subject" name="subject" type="text" maxlength="200" />
+        </div>
+
+        <div class="field mt-5 sm:mt-6">
+          <label for="message">Nachricht</label>
+          <textarea id="message" name="message" rows="7" required maxlength="5000"></textarea>
+        </div>
+
+        <!-- Honeypot: unsichtbares Feld für Bots -->
+        <div class="hp" aria-hidden="true">
+          <label for="website">Website</label>
+          <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <!-- Turnstile (unsichtbar) — wird nur montiert wenn Key gesetzt -->
+        {turnstileSiteKey && (
+          <div
+            class="cf-turnstile mt-6 flex justify-center"
+            data-sitekey={turnstileSiteKey}
+            data-size="flexible"
+            data-theme="light"
+          ></div>
+        )}
+
+        <div class="mt-8 flex flex-col items-center gap-4">
+          <button
+            type="submit"
+            class="btn-primary w-full sm:w-auto sm:min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span data-btn-label>Senden</span>
+            <span data-btn-loading class="hidden">Wird gesendet…</span>
+          </button>
+          <p class="text-xs text-[var(--color-ink-mute)] text-center max-w-sm leading-relaxed">
+            Deine Daten werden ausschließlich für die Beantwortung
+            deiner Anfrage verwendet.
+          </p>
+        </div>
+
+        <!-- Status-Messages -->
+        <div id="form-status" class="mt-6 hidden" role="status" aria-live="polite"></div>
+      </form>
+
+      <hr class="hairline mt-16 md:mt-20 mb-10" />
+
+      <!-- KONTAKTWEGE — horizontaler Abschluss -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-6 text-sm">
+        <div class="text-center sm:text-left">
+          <p class="eyebrow mb-3">Direkt per Mail</p>
+          <a
+            href="#"
+            class="obf-mail contact-link"
+            data-user="info"
+            data-domain="kiehls-klunker.de"
+            rel="nofollow noopener"
+          >
+            Adresse anzeigen
+          </a>
+        </div>
+
+        <div class="text-center sm:text-left">
+          <p class="eyebrow mb-3">Werkstatt</p>
+          <p class="text-[var(--color-ink-soft)] leading-relaxed">
+            Kathrin Kiehl<br />
+            Verwaltungsring 12<br />
+            04571 Rötha OT Espenhain
+          </p>
+        </div>
+
+        <div class="text-center sm:text-left">
+          <p class="eyebrow mb-3">Auch hier</p>
+          <div class="flex items-center justify-center sm:justify-start gap-4">
+            <a
+              href="https://www.instagram.com/kiehlsklunker/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Kiehls Klunker auf Instagram"
+              class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+            <a
+              href="https://www.facebook.com/kiehlsklunker"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Kiehls Klunker auf Facebook"
+              class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                <path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v3H8v8h3v-8h2.5l.5-3H11V7.5A1.5 1.5 0 0 1 12.5 6H15V3z" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {turnstileSiteKey && (
+    <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+  )}
+
+  <style>
+    .contact-form .field {
+      display: flex;
+      flex-direction: column;
+    }
+    .contact-form label {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-ink);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .contact-form .optional {
+      color: var(--color-ink-mute);
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      background: var(--color-paper);
+      border: 1px solid var(--color-hairline);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      padding: 0.85rem 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .contact-form textarea {
+      resize: vertical;
+      min-height: 180px;
+    }
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+      color: var(--color-ink-mute);
+    }
+    .contact-form input:hover,
+    .contact-form textarea:hover {
+      border-color: var(--color-ink-soft);
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      outline: none;
+      border-color: var(--color-ink);
+      box-shadow: inset 0 0 0 1px var(--color-ink);
+    }
+    .contact-form input.is-invalid,
+    .contact-form textarea.is-invalid {
+      border-color: #a05530;
+    }
+
+    /* Honeypot — komplett versteckt, aber nicht per display:none (manche Bots prüfen das) */
+    .contact-form .hp {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    #form-status {
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      border: 1px solid var(--color-hairline);
+    }
+    #form-status.is-success {
+      background: var(--color-bone);
+      color: var(--color-ink);
+      border-color: var(--color-hairline);
+    }
+    #form-status.is-error {
+      background: #faf1ec;
+      color: var(--color-ink);
+      border-color: #d9b8a3;
+    }
+
+    .contact-link {
+      color: var(--color-ink);
+      border-bottom: 1px solid var(--color-hairline);
+      transition: color 0.2s ease, border-color 0.2s ease;
+      text-decoration: none;
+      padding-bottom: 1px;
+    }
+    .contact-link:hover {
+      color: var(--color-gold-hover);
+      border-color: var(--color-gold-hover);
+    }
+  </style>
+
+  <script is:inline>
+    (() => {
+      // Email-Obfuscation wie gehabt
+      document.querySelectorAll('.obf-mail').forEach((el) => {
+        const u = el.dataset.user;
+        const d = el.dataset.domain;
+        if (!u || !d) return;
+        const addr = u + '@' + d;
+        el.href = 'mailto:' + addr;
+        el.textContent = addr;
+      });
+
+      // —— Kontaktformular ——————————————————————————————
+      const form = document.getElementById('contact-form');
+      if (!form) return;
+      const status = document.getElementById('form-status');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const labelEl = submitBtn?.querySelector('[data-btn-label]');
+      const loadingEl = submitBtn?.querySelector('[data-btn-loading]');
+
+      // Timestamp: wann wurde das Formular gerendert (für Zeit-Check)
+      const formOpenedAt = Date.now();
+
+      const setLoading = (loading) => {
+        if (!submitBtn) return;
+        submitBtn.disabled = loading;
+        labelEl?.classList.toggle('hidden', loading);
+        loadingEl?.classList.toggle('hidden', !loading);
+      };
+
+      const showStatus = (msg, kind) => {
+        if (!status) return;
+        status.textContent = msg;
+        status.classList.remove('hidden', 'is-success', 'is-error');
+        status.classList.add(kind === 'success' ? 'is-success' : 'is-error');
+      };
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          subject: form.subject.value.trim(),
+          message: form.message.value.trim(),
+          website: form.website ? form.website.value : '', // Honeypot
+          ts: formOpenedAt,
+          turnstile: '',
+        };
+
+        // Turnstile-Token einsammeln (falls aktiv)
+        const tsField = form.querySelector('input[name="cf-turnstile-response"]');
+        if (tsField) data.turnstile = tsField.value || '';
+
+        setLoading(true);
+        status?.classList.add('hidden');
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+          const result = await res.json().catch(() => ({}));
+          if (res.ok && result.ok) {
+            form.reset();
+            showStatus('Danke — deine Nachricht ist angekommen. Du bekommst gleich eine Bestätigung per Mail, und ich melde mich persönlich.', 'success');
+            // Turnstile reset, falls aktiv
+            if (window.turnstile) window.turnstile.reset();
+          } else {
+            showStatus(result.error || 'Es ist ein Fehler aufgetreten. Bitte versuche es gleich erneut.', 'error');
+          }
+        } catch (err) {
+          showStatus('Netzwerkfehler. Bitte überprüfe deine Verbindung.', 'error');
+        } finally {
+          setLoading(false);
+        }
+      });
+    })();
+  </script>
+</BaseLayout>

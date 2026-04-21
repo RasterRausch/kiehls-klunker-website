@@ -1,0 +1,448 @@
+---
+export const prerender = true;
+
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const products = await getCollection('products');
+  return products.map((product) => ({
+    params: { slug: product.id },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+const { Content } = await render(product);
+const images = product.data.images;
+
+const materialCopy: Record<string, { headline: string; detail: string }> = {
+  Titan: {
+    headline: 'Reintitan',
+    detail: 'leicht, hypoallergen, korrosionsresistent — ein Leben lang.',
+  },
+  Messing: {
+    headline: 'Massives Messing',
+    detail: 'warm im Ton, edle Patina mit der Zeit.',
+  },
+  Silber: {
+    headline: 'Sterling Silber',
+    detail: 'edel, langlebig, mit dem Charakter echten Silbers.',
+  },
+  Gold: {
+    headline: 'Gold',
+    detail: 'zeitlos, langlebig, ein Erbstück.',
+  },
+};
+const mat = product.data.material ? materialCopy[product.data.material] : null;
+const materialBadge = mat
+  ? { headline: mat.headline, detail: mat.detail }
+  : { headline: 'Hochwertige Materialien', detail: 'sorgfältig ausgewählt, handwerklich verarbeitet.' };
+---
+
+<BaseLayout title={`${product.data.name} — Kiehls Klunker`} description={product.data.tagline}>
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pt-10 pb-4">
+    <a href="/shop" class="link-arrow"><span class="arrow arrow-left">←</span> Zurück zum Shop</a>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pb-24 grid md:grid-cols-2 gap-12 lg:gap-20">
+    <!-- GALLERY -->
+    <div data-gallery>
+      <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-4">
+        {images.map((img, i) => (
+          <Image
+            src={img}
+            alt={product.data.name}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            widths={[480, 720, 960, 1200]}
+            sizes="(min-width: 768px) 45vw, 100vw"
+            class:list={[
+              'gallery-main absolute inset-0 w-full h-full object-cover transition-opacity duration-300',
+              i === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none',
+            ]}
+            data-index={i}
+          />
+        ))}
+      </div>
+      {images.length > 1 && (
+        <div class="grid grid-cols-4 gap-2 md:gap-3">
+          {images.slice(0, 8).map((img, i) => (
+            <button
+              type="button"
+              class:list={['gallery-thumb aspect-square overflow-hidden bg-[var(--color-bone)]', i === 0 && 'is-active']}
+              data-index={i}
+              aria-label={`Bild ${i + 1} anzeigen`}
+            >
+              <Image src={img} alt="" widths={[120, 200, 300]} sizes="(min-width: 768px) 11vw, 22vw" class="w-full h-full object-cover" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- DETAILS -->
+    <div class="md:sticky md:top-8 md:self-start">
+      <p class="eyebrow mb-3">{product.data.category === 'haarforken' ? 'Haarforken' : 'Haarstäbe'}</p>
+      <h1 class="mb-3">{product.data.name}</h1>
+      {product.data.tagline && (
+        <p class="text-lg text-[var(--color-ink-soft)] mb-6 font-serif italic">{product.data.tagline}</p>
+      )}
+      <p class="font-serif text-3xl mb-3">
+        {product.data.price.toFixed(2).replace('.', ',')} €
+      </p>
+      {product.data.stock !== undefined && (
+        <p class="text-xs uppercase tracking-[0.2em] mb-10">
+          {product.data.stock === 0 && (
+            <span class="text-[var(--color-ink)]">● Ausverkauft</span>
+          )}
+          {product.data.stock > 0 && product.data.stock <= 5 && (
+            <span class="text-[var(--color-gold)]">● Noch {product.data.stock} verfügbar</span>
+          )}
+          {product.data.stock > 5 && (
+            <span class="text-[var(--color-ink-soft)]">● Auf Lager</span>
+          )}
+        </p>
+      )}
+
+      {product.data.variants.length > 0 && (
+        <div class="mb-8 space-y-5" data-variant-groups>
+          {product.data.variants.map((variant) => (
+            <div class="variant-field">
+              <label class="eyebrow mb-2 block" for={`variant-${variant.name}`}>
+                {variant.name}
+              </label>
+              <div class="select-wrapper">
+                <select
+                  id={`variant-${variant.name}`}
+                  class="variant-select"
+                  data-variant-name={variant.name}
+                  required
+                >
+                  <option value="">
+                    {variant.name.toLowerCase().includes('farbe') ? 'Farbe wählen' :
+                     variant.name.toLowerCase().includes('länge') || variant.name.toLowerCase().includes('größe') ? 'Größe wählen' :
+                     'Auswählen'}
+                  </option>
+                  {variant.values.map((value) => (
+                    <option value={value}>{value}</option>
+                  ))}
+                </select>
+                <svg class="select-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M3 4.5 6 7.5 9 4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {product.data.stock !== 0 && (
+        <>
+          <div class="flex items-stretch gap-3 mb-2">
+            <div class="flex items-center border border-[var(--color-hairline)]">
+              <button type="button" class="qty-btn" data-pdp-qty-decrease aria-label="Menge verringern">−</button>
+              <span class="min-w-[3rem] text-center text-sm" data-pdp-qty>1</span>
+              <button type="button" class="qty-btn" data-pdp-qty-increase aria-label="Menge erhöhen">+</button>
+            </div>
+            <button
+              type="button"
+              class="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              data-pdp-add-to-cart
+              data-product-id={product.id}
+              data-product-name={product.data.name}
+              data-product-price={product.data.price}
+              data-product-image={product.data.images[0].src}
+              data-product-max-stock={product.data.stock}
+              disabled={product.data.variants.length > 0}
+            >
+              In den Warenkorb
+            </button>
+          </div>
+          {product.data.variants.length > 0 && (
+            <p class="text-xs text-[var(--color-ink-mute)] mb-4" data-variant-hint>
+              Bitte zuerst {product.data.variants.map((v) => v.name.toLowerCase()).join(' und ')} wählen.
+            </p>
+          )}
+        </>
+      )}
+      {product.data.stock === 0 && (
+        <button
+          disabled
+          class="btn-primary w-full mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Ausverkauft
+        </button>
+      )}
+
+      <ul class="space-y-3.5 mb-10 pt-2">
+        <li class="flex items-start gap-3 text-sm text-[var(--color-ink-soft)] leading-relaxed">
+          <svg class="shrink-0 mt-0.5 text-[var(--color-ink)]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m14 4 6 6-3 3-6-6z"/>
+            <path d="m11 7-7 7 3 3 7-7"/>
+            <path d="M3 21h10"/>
+          </svg>
+          <span><span class="text-[var(--color-ink)] font-medium">Handgefertigt in Leipzig</span> — in Kathrins Werkstatt, Stück für Stück.</span>
+        </li>
+        <li class="flex items-start gap-3 text-sm text-[var(--color-ink-soft)] leading-relaxed">
+          <svg class="shrink-0 mt-0.5 text-[var(--color-ink)]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3 4 6v6a9 9 0 0 0 8 9 9 9 0 0 0 8-9V6z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+          <span><span class="text-[var(--color-ink)] font-medium">{materialBadge.headline}</span> — {materialBadge.detail}</span>
+        </li>
+        <li class="flex items-start gap-3 text-sm text-[var(--color-ink-soft)] leading-relaxed">
+          <svg class="shrink-0 mt-0.5 text-[var(--color-ink)]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2.5" y="7.5" width="11" height="9"/>
+            <path d="M13.5 10.5H17l3.5 3V16.5h-7"/>
+            <circle cx="6.5" cy="17.5" r="1.6"/>
+            <circle cx="16" cy="17.5" r="1.6"/>
+          </svg>
+          <span><span class="text-[var(--color-ink)] font-medium">Versand in 7–9 Werktagen</span> — per DHL, oft schneller.</span>
+        </li>
+      </ul>
+
+      <script is:inline>
+        (() => {
+          const qtyEl = document.querySelector('[data-pdp-qty]');
+          const dec = document.querySelector('[data-pdp-qty-decrease]');
+          const inc = document.querySelector('[data-pdp-qty-increase]');
+          const addBtn = document.querySelector('[data-pdp-add-to-cart]');
+          if (!qtyEl || !addBtn) return;
+
+          const maxStock = parseInt(addBtn.dataset.productMaxStock || '99', 10);
+          let qty = 1;
+          const updateQty = (v) => {
+            qty = Math.max(1, Math.min(maxStock, v));
+            qtyEl.textContent = String(qty);
+          };
+          dec.addEventListener('click', () => updateQty(qty - 1));
+          inc.addEventListener('click', () => updateQty(qty + 1));
+
+          // —— Varianten-Auswahl ——————————————————————————————
+          const selects = document.querySelectorAll('.variant-select');
+          const hint = document.querySelector('[data-variant-hint]');
+
+          const allSelected = () => {
+            for (const s of selects) {
+              if (!s.value) return false;
+            }
+            return true;
+          };
+          const collectVariants = () => {
+            const variants = {};
+            selects.forEach((s) => {
+              const name = s.dataset.variantName;
+              if (name && s.value) variants[name] = s.value;
+            });
+            return variants;
+          };
+          const syncButton = () => {
+            const ready = allSelected();
+            addBtn.disabled = !ready;
+            if (hint) hint.classList.toggle('hidden', ready || selects.length === 0);
+          };
+          selects.forEach((s) => s.addEventListener('change', syncButton));
+          syncButton();
+
+          // —— Cart-Key: Produkt + gewählte Varianten ————————————
+          const keyFor = (id, variants) => {
+            const parts = Object.keys(variants).sort().map((k) => `${k}=${variants[k]}`);
+            return parts.length ? `${id}::${parts.join('|')}` : id;
+          };
+
+          addBtn.addEventListener('click', () => {
+            if (addBtn.disabled) return;
+            if (!allSelected()) {
+              // Visuelles Feedback: erstes leeres Select hervorheben
+              for (const s of selects) {
+                if (!s.value) {
+                  s.classList.add('is-invalid');
+                  s.focus();
+                  setTimeout(() => s.classList.remove('is-invalid'), 2000);
+                  break;
+                }
+              }
+              return;
+            }
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const id = addBtn.dataset.productId;
+            const variants = collectVariants();
+            const cartKey = keyFor(id, variants);
+            const existing = cart.find((i) => (i.cartKey || i.id) === cartKey);
+            if (existing) {
+              existing.quantity = Math.min(maxStock, existing.quantity + qty);
+            } else {
+              cart.push({
+                id,
+                cartKey,
+                name: addBtn.dataset.productName,
+                price: parseFloat(addBtn.dataset.productPrice),
+                image: addBtn.dataset.productImage,
+                quantity: qty,
+                variants,
+              });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            window.dispatchEvent(new CustomEvent('cart:changed'));
+            window.dispatchEvent(new CustomEvent('cart:open'));
+          });
+        })();
+      </script>
+
+      <hr class="hairline mb-8" />
+
+      <div class="product-description text-[var(--color-ink-soft)] leading-relaxed">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const gallery = document.querySelector('[data-gallery]');
+      if (!gallery) return;
+      const mains = gallery.querySelectorAll('.gallery-main');
+      const thumbs = gallery.querySelectorAll('.gallery-thumb');
+      thumbs.forEach((thumb) => {
+        thumb.addEventListener('click', () => {
+          const idx = parseInt(thumb.dataset.index, 10);
+          mains.forEach((m, i) => {
+            const active = i === idx;
+            m.classList.toggle('opacity-100', active);
+            m.classList.toggle('opacity-0', !active);
+            m.classList.toggle('pointer-events-none', !active);
+          });
+          thumbs.forEach((t, i) => t.classList.toggle('is-active', i === idx));
+        });
+      });
+    })();
+  </script>
+
+  <style is:global>
+    .gallery-thumb {
+      cursor: pointer;
+      position: relative;
+      transition: opacity 0.25s ease;
+    }
+    .gallery-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid var(--color-ink);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    .gallery-thumb:hover { opacity: 0.85; }
+    .gallery-thumb.is-active::after { opacity: 1; }
+    .gallery-thumb.is-active img { opacity: 0.7; }
+
+    /* —— Varianten-Dropdowns (Größe, Farbe, etc.) —— */
+    .select-wrapper {
+      position: relative;
+    }
+    .variant-select {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--color-paper);
+      border: 1px solid var(--color-hairline);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      line-height: 1.4;
+      padding: 0.8rem 2.4rem 0.8rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+    .variant-select:hover {
+      border-color: var(--color-ink-soft);
+    }
+    .variant-select:focus {
+      outline: none;
+      border-color: var(--color-ink);
+      box-shadow: inset 0 0 0 1px var(--color-ink);
+    }
+    .variant-select.is-invalid {
+      border-color: var(--color-gold);
+      box-shadow: inset 0 0 0 1px var(--color-gold);
+      background: #faf1ec;
+    }
+    /* Leerer State: Placeholder-Option in Mute-Farbe */
+    .variant-select:has(option[value=""]:checked) {
+      color: var(--color-ink-mute);
+    }
+    .variant-select option {
+      color: var(--color-ink);
+    }
+    .variant-select option[value=""] {
+      color: var(--color-ink-mute);
+    }
+    .select-chevron {
+      position: absolute;
+      right: 0.95rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-ink-soft);
+      pointer-events: none;
+    }
+
+    .product-description p {
+      margin-bottom: 1rem;
+    }
+    .product-description p:last-child {
+      margin-bottom: 0;
+    }
+    .product-description h3 {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: 1.15rem;
+      color: var(--color-ink);
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+    }
+    .product-description h3:first-child {
+      margin-top: 0;
+    }
+    .product-description ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem;
+    }
+    .product-description ul li {
+      position: relative;
+      padding-left: 1rem;
+      margin-bottom: 0.35rem;
+    }
+    .product-description ul li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.7em;
+      width: 4px;
+      height: 1px;
+      background: var(--color-ink-mute);
+    }
+    .product-description blockquote {
+      border-left: 1px solid var(--color-hairline);
+      padding: 0.25rem 0 0.25rem 1.25rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: var(--color-ink);
+    }
+    .product-description strong {
+      color: var(--color-ink);
+      font-weight: 500;
+    }
+    .product-description a {
+      color: var(--color-ink);
+      border-bottom: 1px solid var(--color-hairline);
+      transition: border-color 0.2s ease;
+    }
+    .product-description a:hover {
+      border-color: var(--color-ink);
+    }
+  </style>
+</BaseLayout>

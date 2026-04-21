@@ -1,0 +1,324 @@
+---
+export const prerender = true;
+
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const products = (await getCollection('products'))
+  .filter((p) => p.data.available)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const categoryLabels: Record<string, string> = {
+  haarforken: 'Haarforken',
+  haarstaebe: 'Haarstäbe',
+  haarspangen: 'Haarspangen',
+  zopfhalter: 'Zopfhalter',
+  ohrschmuck: 'Ohrschmuck',
+};
+
+const activeCategories = Array.from(new Set(products.map((p) => p.data.category)));
+const categoryCounts = activeCategories.map((key) => ({
+  key,
+  label: categoryLabels[key] ?? key,
+  count: products.filter((p) => p.data.category === key).length,
+}));
+---
+
+<BaseLayout title="Shop — Kiehls Klunker">
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pt-20 pb-12 md:pb-16">
+    <p class="eyebrow mb-3">Shop</p>
+    <h1 class="mb-6">Alle Produkte</h1>
+    <p class="max-w-xl text-[var(--color-ink-soft)] leading-relaxed">
+      Jedes Stück wird einzeln von Hand aus Reintitan gefertigt —
+      leicht, langlebig, hypoallergen.
+    </p>
+  </section>
+
+  <hr class="hairline" />
+
+  <!-- Toolbar: Filter-Toggle + Count -->
+  <div class="max-w-7xl mx-auto px-6 md:px-10 pt-5 md:pt-6 pb-4 flex items-center justify-between">
+    <button
+      type="button"
+      class="filter-toggle"
+      data-filter-toggle
+      aria-expanded="false"
+      aria-controls="shop-filter-panel"
+    >
+      <span class="filter-toggle-icon" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+      <span data-filter-toggle-label>Filter einblenden</span>
+    </button>
+    <p class="text-sm text-[var(--color-ink-mute)]">
+      <span data-product-count>{products.length}</span> Produkte
+    </p>
+  </div>
+
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pb-20 md:pb-28">
+    <div class="shop-layout" data-shop-layout data-filter-open="false">
+      <!-- Filter-Panel -->
+      <aside
+        id="shop-filter-panel"
+        class="shop-filter"
+        data-filter-root
+        aria-hidden="true"
+      >
+        <div class="shop-filter-inner">
+          <p class="eyebrow mb-6">Kategorie</p>
+          <div class="space-y-3">
+            {categoryCounts.map((cat) => (
+              <label class="filter-check flex items-center gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  name="category"
+                  value={cat.key}
+                  class="filter-check-input sr-only"
+                />
+                <span class="filter-check-box" aria-hidden="true"></span>
+                <span class="text-sm text-[var(--color-ink)] group-hover:text-[var(--color-ink-warm)] transition-colors flex-1">
+                  {cat.label}
+                </span>
+                <span class="text-xs text-[var(--color-ink-mute)]">{cat.count}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      <!-- Produkte -->
+      <div class="shop-products">
+        <div
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-7 lg:gap-8"
+          data-product-grid
+        >
+          {products.map((product) => (
+            <a
+              href={`/shop/${product.id}`}
+              class="product-card group/card block"
+              data-category={product.data.category}
+              data-price={product.data.price}
+            >
+              <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-4">
+                <Image
+                  src={product.data.images[0]}
+                  alt={product.data.name}
+                  widths={[300, 480, 640, 900]}
+                  sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 50vw"
+                  class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700"
+                />
+                {product.data.stock === 0 && (
+                  <span class="absolute top-3 left-3 bg-[var(--color-ink)] text-[var(--color-paper)] text-[0.62rem] uppercase tracking-[0.22em] px-2.5 py-1">
+                    Ausverkauft
+                  </span>
+                )}
+                {product.data.stock !== undefined && product.data.stock > 0 && product.data.stock <= 5 && (
+                  <span class="absolute top-3 left-3 bg-[var(--color-paper)]/95 text-[var(--color-ink)] text-[0.62rem] uppercase tracking-[0.22em] px-2.5 py-1 border border-[var(--color-hairline)]">
+                    Noch {product.data.stock} verfügbar
+                  </span>
+                )}
+                <!-- Hover Overlay — slidet von unten rein -->
+                <div class="quick-add">
+                  <span class="quick-add-label">Näher betrachten</span>
+                </div>
+              </div>
+              <h3 class="font-serif text-base md:text-lg leading-snug mb-1">{product.data.name}</h3>
+              {product.data.tagline && (
+                <p class="text-xs md:text-sm text-[var(--color-ink-soft)] mb-2 line-clamp-1">{product.data.tagline}</p>
+              )}
+              <p class="text-sm">
+                {product.data.price.toFixed(2).replace('.', ',')} €
+              </p>
+            </a>
+          ))}
+        </div>
+
+        <p class="hidden mt-16 text-center text-sm text-[var(--color-ink-mute)]" data-empty-state>
+          Keine Produkte entsprechen deinen Filtern. <button type="button" class="underline underline-offset-4 hover:text-[var(--color-ink)] transition-colors" data-filter-reset>Filter zurücksetzen</button>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const layout = document.querySelector('[data-shop-layout]');
+      const grid = document.querySelector('[data-product-grid]');
+      const root = document.querySelector('[data-filter-root]');
+      if (!layout || !grid || !root) return;
+
+      const cards = grid.querySelectorAll('.product-card');
+      const categoryInputs = root.querySelectorAll('input[name="category"]');
+      const countEl = document.querySelector('[data-product-count]');
+      const emptyEl = document.querySelector('[data-empty-state]');
+      const toggleBtn = document.querySelector('[data-filter-toggle]');
+      const toggleLabel = document.querySelector('[data-filter-toggle-label]');
+
+      const apply = () => {
+        const active = [...categoryInputs].filter((i) => i.checked).map((i) => i.value);
+        let shown = 0;
+        cards.forEach((card) => {
+          const visible = active.length === 0 || active.includes(card.dataset.category);
+          card.classList.toggle('hidden', !visible);
+          if (visible) shown++;
+        });
+        if (countEl) countEl.textContent = String(shown);
+        if (emptyEl) emptyEl.classList.toggle('hidden', shown !== 0);
+      };
+
+      const reset = () => {
+        categoryInputs.forEach((i) => (i.checked = false));
+        apply();
+      };
+
+      categoryInputs.forEach((i) => i.addEventListener('change', apply));
+      document.querySelectorAll('[data-filter-reset]').forEach((btn) => {
+        btn.addEventListener('click', reset);
+      });
+
+      // Toggle Filter-Panel
+      const setOpen = (open) => {
+        layout.dataset.filterOpen = String(open);
+        root.setAttribute('aria-hidden', String(!open));
+        toggleBtn?.setAttribute('aria-expanded', String(open));
+        if (toggleLabel) toggleLabel.textContent = open ? 'Filter ausblenden' : 'Filter einblenden';
+        toggleBtn?.classList.toggle('is-open', open);
+      };
+      toggleBtn?.addEventListener('click', () => {
+        setOpen(layout.dataset.filterOpen !== 'true');
+      });
+    })();
+  </script>
+
+  <style>
+    /* —— Shop Layout —— */
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .shop-filter {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.25s ease,
+                  margin-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .shop-layout[data-filter-open="true"] .shop-filter {
+      max-height: 600px;
+      opacity: 1;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .shop-layout {
+        grid-template-columns: 0px 1fr;
+        column-gap: 0px;
+        transition: grid-template-columns 0.5s cubic-bezier(0.33, 1, 0.68, 1),
+                    column-gap 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+        will-change: grid-template-columns;
+      }
+      .shop-layout[data-filter-open="true"] {
+        grid-template-columns: 220px 1fr;
+        column-gap: 40px;
+      }
+      /* Schließen: zuerst Inhalt weg (schnell), dann Layout kollabieren */
+      .shop-filter {
+        max-height: none;
+        opacity: 0;
+        transform: translateX(-6px);
+        transition: opacity 0.18s ease, transform 0.18s ease;
+      }
+      /* Öffnen: Layout zuerst, dann Inhalt einblenden (nach 0.42s) */
+      .shop-layout[data-filter-open="true"] .shop-filter {
+        opacity: 1;
+        transform: translateX(0);
+        margin-bottom: 0;
+        transition: opacity 0.25s ease 0.28s, transform 0.3s ease 0.24s;
+      }
+      .shop-filter-inner {
+        /* kein sticky — Filter-Inhalt bleibt oben im Grid-Cell, kein Versatz */
+      }
+      .shop-products {
+        min-width: 0;
+      }
+    }
+    @media (min-width: 1024px) {
+      .shop-layout[data-filter-open="true"] {
+        grid-template-columns: 240px 1fr;
+        column-gap: 48px;
+      }
+    }
+
+    /* —— Toolbar —— */
+    .filter-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--color-ink);
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+      padding: 0.25rem 0;
+      transition: color 0.25s ease;
+    }
+    .filter-toggle:hover { color: var(--color-gold-hover); }
+    .filter-toggle-icon {
+      width: 14px;
+      height: 10px;
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .filter-toggle-icon span {
+      display: block;
+      height: 1px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+    .filter-toggle-icon span:nth-child(1) { width: 100%; }
+    .filter-toggle-icon span:nth-child(2) { width: 70%; }
+    .filter-toggle-icon span:nth-child(3) { width: 40%; }
+    .filter-toggle.is-open .filter-toggle-icon span:nth-child(2) { width: 100%; }
+    .filter-toggle.is-open .filter-toggle-icon span:nth-child(3) { width: 100%; }
+
+    /* —— Filter-Controls —— */
+    .filter-check-box {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--color-hairline);
+      background: transparent;
+      display: inline-block;
+      position: relative;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+      flex-shrink: 0;
+    }
+    .filter-check:hover .filter-check-box { border-color: var(--color-ink-soft); }
+    .filter-check-input:checked + .filter-check-box {
+      border-color: var(--color-ink);
+      background: var(--color-ink);
+    }
+    .filter-check-input:checked + .filter-check-box::after {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 0px;
+      width: 5px;
+      height: 9px;
+      border: solid var(--color-paper);
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+    .filter-check-input:focus-visible + .filter-check-box {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 2px;
+    }
+  </style>
+</BaseLayout>

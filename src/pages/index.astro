@@ -1,0 +1,456 @@
+---
+export const prerender = true;
+
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import hero from '../assets/images/hero-schmuck.png';
+import soEntsteht from '../assets/images/so-entsteht.jpg';
+
+const products = (await getCollection('products'))
+  .filter((p) => p.data.available)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const sliderProducts = products;
+
+const featuredReviews = (await getCollection('reviews'))
+  .filter((r) => r.data.rating === 5 && r.body?.trim())
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 60);
+---
+
+<BaseLayout title="Kiehls Klunker — Handgefertigter Haarschmuck aus Titan">
+  <!-- HERO: Full-bleed, Bild als Hintergrund, Text links auf weißem Bereich -->
+  <section class="relative w-full">
+    <!-- Desktop: Bild als Hintergrund, Text absolut -->
+    <div class="hidden md:block relative w-full">
+      <Image
+        src={hero}
+        alt="Kiehls Klunker Titan-Haarforke im Dutt"
+        widths={[960, 1440, 1920, 2560]}
+        sizes="100vw"
+        class="hero-image w-full h-[min(62vh,540px)] lg:h-[min(74vh,720px)] xl:h-[min(82vh,840px)] object-cover"
+        loading="eager"
+      />
+      <!-- Scrim: schützt die Headline vor dem Schmuckstück bei engen Viewports -->
+      <div class="hero-scrim" aria-hidden="true"></div>
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full max-w-7xl mx-auto px-6 md:px-10">
+          <div class="max-w-[440px] lg:max-w-[560px] xl:max-w-[620px]">
+            <h1 class="hero-headline mb-6 lg:mb-10">Handmade<br />Jewels.</h1>
+            <p class="font-serif italic text-xl lg:text-2xl xl:text-3xl text-[var(--color-ink-soft)] mb-10 lg:mb-14">
+              for your hair
+            </p>
+            <p class="text-sm lg:text-base xl:text-lg text-[var(--color-ink-soft)] mb-10 leading-relaxed max-w-md">
+              Willkommen bei Kiehls Klunker. Hier findest du funktionalen Haarschmuck,
+              der schlichtes, elegantes Design mit hochwertigen Materialien kombiniert.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <a href="/shop" class="btn-primary">Zum Shop</a>
+              <a href="/ueber-mich" class="btn-ghost">Die Goldschmiedin</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile: Bild oben, Text unten -->
+    <div class="md:hidden">
+      <Image
+        src={hero}
+        alt="Kiehls Klunker Titan-Haarforke im Dutt"
+        widths={[480, 720, 960, 1280]}
+        sizes="100vw"
+        class="hero-image-mobile w-full h-[clamp(220px,38vh,280px)] object-cover"
+        loading="eager"
+      />
+      <div class="px-6 py-14">
+        <h1 class="hero-headline mb-6">Handmade<br />Jewels.</h1>
+        <p class="font-serif italic text-xl text-[var(--color-ink-soft)] mb-10">for your hair</p>
+        <p class="text-base text-[var(--color-ink-soft)] mb-8 leading-relaxed">
+          Willkommen bei Kiehls Klunker. Hier findest du funktionalen Haarschmuck,
+          der schlichtes, elegantes Design mit hochwertigen Materialien kombiniert.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/shop" class="btn-primary">Zum Shop</a>
+          <a href="/ueber-mich" class="btn-ghost">Die Goldschmiedin</a>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      /* Hero-Bild: Anker bei 86 % — hält die gesamte Gabel (Spitzen bis 92 % Quelle)
+         auf allen Breakpoints sichtbar. */
+      .hero-image,
+      .hero-image-mobile {
+        object-position: 86% center;
+      }
+      /* Scrim schützt den Textbereich zuverlässig, auch bei schmalem Desktop */
+      .hero-scrim {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+          to right,
+          var(--color-bone) 0%,
+          rgba(241, 238, 229, 0.94) 28%,
+          rgba(241, 238, 229, 0.6) 44%,
+          rgba(241, 238, 229, 0.2) 58%,
+          transparent 72%
+        );
+      }
+      @media (min-width: 1280px) {
+        .hero-scrim {
+          background: linear-gradient(
+            to right,
+            var(--color-bone) 0%,
+            rgba(241, 238, 229, 0.9) 24%,
+            rgba(241, 238, 229, 0.5) 40%,
+            transparent 60%
+          );
+        }
+      }
+    </style>
+  </section>
+
+  <!-- BRAND-PHILOSOPHY -->
+  <section class="py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-6 md:px-10">
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="eyebrow mb-6">Meine Philosophie</p>
+        <blockquote class="font-serif text-3xl md:text-4xl leading-[1.3] text-[var(--color-ink)]">
+          Ich denke Haarschmuck als das, was er sein sollte: ein Werkzeug, das hält, ein
+          Schmuckstück, das bleibt — kompromisslos schlicht und handgefertigt.
+        </blockquote>
+        <p class="mt-8 text-sm text-[var(--color-ink-soft)]">— Kathrin Kiehl</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- KOLLEKTION: Full-bleed Slider mit Drag + Hover-Arrow + Quick-Add -->
+  <section class="pt-0 pb-24 md:pb-32">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 flex items-end justify-between mb-12">
+      <div>
+        <p class="eyebrow mb-3">Kollektion</p>
+        <h2>Aus der Werkstatt.</h2>
+      </div>
+      <a href="/shop" class="link-arrow">Zum Shop <span class="arrow">→</span></a>
+    </div>
+
+    <!-- Slider wrapper (relative für Arrow-Button) -->
+    <div class="product-slider-wrapper relative group">
+      <div
+        id="product-slider"
+        class="product-slider overflow-x-auto scrollbar-hide"
+      >
+        <div class="flex gap-6 md:gap-8 container-align pb-2">
+          {sliderProducts.map((product, i) => (
+            <a
+              href={`/shop/${product.id}`}
+              class="product-card group/card block shrink-0"
+              style="width: clamp(260px, 26vw, 440px);"
+              data-idx={i}
+            >
+              <div class="relative aspect-square overflow-hidden bg-[var(--color-bone)] mb-6">
+                <Image
+                  src={product.data.images[0]}
+                  alt={product.data.name}
+                  draggable={false}
+                  widths={[300, 480, 640, 900]}
+                  sizes="clamp(260px, 26vw, 440px)"
+                  class="w-full h-full object-cover group-hover/card:scale-[1.04] transition-transform duration-700"
+                />
+                <!-- Hover Overlay -->
+                <div class="quick-add">
+                  <span class="quick-add-label">Näher betrachten</span>
+                </div>
+              </div>
+              <h3 class="text-xl md:text-2xl mb-1">{product.data.name}</h3>
+              <p class="text-sm text-[var(--color-ink-soft)] mb-3">{product.data.tagline}</p>
+              <p class="text-sm">
+                {product.data.price.toFixed(2).replace('.', ',')} €
+              </p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Right Arrow Button -->
+      <button
+        type="button"
+        aria-label="Nächste Produkte"
+        class="slider-nav slider-nav-right"
+        data-slider-next
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/>
+          <polyline points="13 6 19 12 13 18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button
+        type="button"
+        aria-label="Vorherige Produkte"
+        class="slider-nav slider-nav-left"
+        data-slider-prev
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="19" y1="12" x2="5" y2="12" stroke-linecap="round"/>
+          <polyline points="11 6 5 12 11 18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const slider = document.getElementById('product-slider');
+      if (!slider) return;
+
+      // DRAG-TO-SCROLL
+      let isDown = false;
+      let startX = 0;
+      let startScroll = 0;
+      let dragDistance = 0;
+
+      slider.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault(); // verhindert native Image-Drag + Text-Selektion
+        isDown = true;
+        dragDistance = 0;
+        startX = e.pageX;
+        startScroll = slider.scrollLeft;
+        slider.classList.add('is-dragging');
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const walk = e.pageX - startX;
+        dragDistance = Math.abs(walk);
+        slider.scrollLeft = startScroll - walk;
+      });
+      window.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false;
+        setTimeout(() => slider.classList.remove('is-dragging'), 50);
+      });
+
+      // Bei Drag > 5px: Click auf Link verhindern (sonst navigiert er nach Drag)
+      slider.addEventListener('click', (e) => {
+        if (dragDistance > 5) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }, true);
+
+      // ARROW BUTTONS
+      const getStep = () => {
+        const firstCard = slider.querySelector('.product-card');
+        if (!firstCard) return slider.clientWidth * 0.8;
+        const style = getComputedStyle(slider.querySelector('.flex'));
+        const gap = parseInt(style.gap || '24', 10);
+        return firstCard.getBoundingClientRect().width + gap;
+      };
+      document.querySelectorAll('[data-slider-next]').forEach((btn) => {
+        btn.addEventListener('click', () => slider.scrollBy({ left: getStep(), behavior: 'smooth' }));
+      });
+      document.querySelectorAll('[data-slider-prev]').forEach((btn) => {
+        btn.addEventListener('click', () => slider.scrollBy({ left: -getStep(), behavior: 'smooth' }));
+      });
+
+      // Verstecke Prev-Button wenn am Anfang, Next wenn am Ende
+      const updateNavState = () => {
+        const atStart = slider.scrollLeft <= 4;
+        const atEnd = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 4;
+        document.querySelectorAll('[data-slider-prev]').forEach((b) => b.classList.toggle('is-hidden', atStart));
+        document.querySelectorAll('[data-slider-next]').forEach((b) => b.classList.toggle('is-hidden', atEnd));
+      };
+      slider.addEventListener('scroll', updateNavState, { passive: true });
+      window.addEventListener('resize', updateNavState);
+      updateNavState();
+    })();
+  </script>
+
+  <hr class="hairline" />
+
+  <!-- REVIEWS — Slider mit Drag + Arrows -->
+  {featuredReviews.length > 0 && (
+    <section class="py-24 md:py-32">
+      <div class="max-w-7xl mx-auto px-6 md:px-10 text-center mb-12 md:mb-16">
+        <p class="eyebrow mb-3">Bewertungen</p>
+        <h2>Was Kundinnen sagen.</h2>
+        <p class="mt-4 text-sm text-[var(--color-ink-mute)]">
+          Verifizierte Bewertungen direkt von Etsy.
+        </p>
+      </div>
+
+      <div class="product-slider-wrapper relative group">
+        <div
+          id="review-slider"
+          class="product-slider overflow-x-auto scrollbar-hide"
+        >
+          <div class="flex gap-6 md:gap-8 container-align pb-2 items-stretch">
+            {featuredReviews.map((review) => (
+              <div
+                class="shrink-0 w-[clamp(280px,28vw,400px)]"
+                style="width: clamp(280px, 28vw, 400px);"
+              >
+                <ReviewCard
+                  author={review.data.author}
+                  rating={review.data.rating}
+                  date={review.data.date}
+                  productName={review.data.productName}
+                  body={review.body?.trim() || ''}
+                  verified={review.data.verified}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Arrow Buttons -->
+        <button
+          type="button"
+          aria-label="Nächste Bewertungen"
+          class="slider-nav slider-nav-right"
+          data-review-next
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/>
+            <polyline points="13 6 19 12 13 18" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button
+          type="button"
+          aria-label="Vorherige Bewertungen"
+          class="slider-nav slider-nav-left"
+          data-review-prev
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="19" y1="12" x2="5" y2="12" stroke-linecap="round"/>
+            <polyline points="11 6 5 12 11 18" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+  )}
+
+  <script is:inline>
+    (() => {
+      const slider = document.getElementById('review-slider');
+      if (!slider) return;
+
+      // Drag-to-scroll
+      let isDown = false, startX = 0, startScroll = 0, dragDistance = 0;
+      slider.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        isDown = true;
+        dragDistance = 0;
+        startX = e.pageX;
+        startScroll = slider.scrollLeft;
+        slider.classList.add('is-dragging');
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const walk = e.pageX - startX;
+        dragDistance = Math.abs(walk);
+        slider.scrollLeft = startScroll - walk;
+      });
+      window.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false;
+        setTimeout(() => slider.classList.remove('is-dragging'), 50);
+      });
+
+      // Arrows
+      const getStep = () => {
+        const card = slider.querySelector('.snap-start');
+        if (!card) return slider.clientWidth * 0.8;
+        const style = getComputedStyle(slider.querySelector('.flex'));
+        const gap = parseInt(style.gap || '24', 10);
+        return card.getBoundingClientRect().width + gap;
+      };
+      document.querySelectorAll('[data-review-next]').forEach((b) =>
+        b.addEventListener('click', () => slider.scrollBy({ left: getStep(), behavior: 'smooth' }))
+      );
+      document.querySelectorAll('[data-review-prev]').forEach((b) =>
+        b.addEventListener('click', () => slider.scrollBy({ left: -getStep(), behavior: 'smooth' }))
+      );
+
+      const updateNavState = () => {
+        const atStart = slider.scrollLeft <= 4;
+        const atEnd = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 4;
+        document.querySelectorAll('[data-review-prev]').forEach((b) => b.classList.toggle('is-hidden', atStart));
+        document.querySelectorAll('[data-review-next]').forEach((b) => b.classList.toggle('is-hidden', atEnd));
+      };
+      slider.addEventListener('scroll', updateNavState, { passive: true });
+      window.addEventListener('resize', updateNavState);
+      updateNavState();
+    })();
+  </script>
+
+  <!-- USP / Trust-Badges -->
+  <section class="py-20 md:py-24">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 grid md:grid-cols-3 gap-12 md:gap-10">
+      <div>
+        <svg class="mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3l8 3v6c0 4.5-3.2 8.3-8 9-4.8-0.7-8-4.5-8-9V6l8-3z" />
+        </svg>
+        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">Sichere Zahlungen</h3>
+        <p class="text-[var(--color-ink-soft)] leading-relaxed">
+          Alle Transaktionen werden sicher verschlüsselt.
+        </p>
+      </div>
+      <div>
+        <svg class="mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="1.5" y="7" width="12" height="9" />
+          <path d="M13.5 10h4l3 3v3h-7" />
+          <circle cx="6" cy="18" r="1.7" />
+          <circle cx="17" cy="18" r="1.7" />
+        </svg>
+        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">Versicherter Versand</h3>
+        <p class="text-[var(--color-ink-soft)] leading-relaxed">
+          Bearbeitungszeit in der Regel 7–9 Werktage — oft geht es schneller.
+          Versand versichert mit DHL, Lieferung an Packstationen möglich.
+        </p>
+      </div>
+      <div>
+        <svg class="mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M8.5 14c0.9 1.3 2.1 2 3.5 2s2.6-0.7 3.5-2" />
+          <circle cx="9" cy="10" r="0.6" fill="currentColor" />
+          <circle cx="15" cy="10" r="0.6" fill="currentColor" />
+        </svg>
+        <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">Über 2900 zufriedene Kunden</h3>
+        <p class="text-[var(--color-ink-soft)] leading-relaxed">
+          Seit 2016 entstehen die Klunker in meiner Werkstatt — mehr als 2900
+          Kundinnen und Kunden tragen ihren schon.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAKING-OF -->
+  <section class="bg-[var(--color-bone)]">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 py-24 md:py-32 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+      <div class="order-2 md:order-1">
+        <Image src={soEntsteht} alt="Titan wird von Hand in Form geschmiedet" widths={[480, 720, 960, 1200]} sizes="(min-width: 768px) 50vw, 100vw" class="w-full h-auto" />
+      </div>
+      <div class="order-1 md:order-2">
+        <p class="eyebrow mb-4">Handwerk</p>
+        <h2 class="mb-6">So entsteht dein Klunker.</h2>
+        <p class="text-[var(--color-ink-soft)] leading-relaxed mb-4">
+          Jedes Stück wird aus Reintitan in meiner Werkstatt von Hand geschmiedet —
+          sägen, biegen, mit dem Hammer in Form bringen. Die besondere Oberfläche entsteht
+          durch das Schlagmuster, das jedem Klunker seinen eigenen Charakter gibt.
+        </p>
+        <p class="text-[var(--color-ink-soft)] leading-relaxed mb-8">
+          Titan ist extrem leicht, antiallergen, korrosionsbeständig und nahezu unverwüstlich.
+          Ein echtes Weltraummetall für ein Leben lang.
+        </p>
+        <a href="/ueber-mich" class="link-arrow">Mehr über Kathrin <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

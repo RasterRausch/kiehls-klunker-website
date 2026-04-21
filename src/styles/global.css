@@ -1,0 +1,339 @@
+@import "tailwindcss";
+
+/* ======================================================================
+   THEME: Moos & Kupfer (aktuell)
+   Rückweg zur alten Palette → siehe "LEGACY" unten: einfach die Werte
+   in @theme überschreiben.
+   ====================================================================== */
+
+/* —— LEGACY: Stone Warm ——————————————————————————————————————————
+   --color-paper: #ffffff;
+   --color-bone: #f6f4f0;
+   --color-bone-deep: #eae6dd;
+   --color-hairline: #ddd8cf;
+   --color-ink: #1c1c1a;
+   --color-ink-warm: #2d2a24;
+   --color-ink-soft: #5a544a;
+   --color-ink-mute: #a09a8e;
+   --color-gold: #8a7a66;
+   --color-gold-hover: #6d5f4d;
+   ————————————————————————————————————————————————————————————————— */
+
+@theme {
+  /* —— Moos & Kupfer Palette —— */
+  --color-paper: #fcfbf8;        /* warmes off-white, Hauch grün */
+  --color-bone: #f1eee5;         /* Pergament / Moos-Bone */
+  --color-bone-deep: #e3ddd0;    /* ghost-button base, etwas satter */
+  --color-hairline: #c8c2b1;     /* sichtbarere Struktur-Linien */
+
+  --color-ink: #1a1d17;          /* warm-near-black mit Mooston */
+  --color-ink-warm: #272a22;     /* primary hover */
+  --color-ink-soft: #4f5247;
+  --color-ink-mute: #8f9181;
+
+  /* Dunkle Flächen (Announcement-Bar, Footer, Cart-Badge): Midnight-Petrol
+     — kühles Tiefblau, starker Kontrast zum Kupfer-Akzent */
+  --color-surface-dark: #0d1e2c;
+
+  --color-gold: #a05530;         /* Kupfer statt Taupe — richtiger Akzent */
+  --color-gold-hover: #7a3d1d;   /* tiefes, oxidiertes Kupfer */
+
+  /* Buttons — dezente warme Töne, Hover nur eine Nuance dunkler */
+  --color-btn-rest: #e3ddd0;     /* entspricht bone-deep */
+  --color-btn-hover: #d3ccba;    /* ≈ 5 % dunkler, kaum wahrnehmbar, fühlt sich "satter" an */
+
+  --font-serif: "instrument-serif", "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "DM Sans", "Inter", system-ui, -apple-system, sans-serif;
+
+  --tracking-wide-label: 0.18em;
+  --tracking-tight-head: -0.02em;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: var(--tracking-tight-head);
+    color: var(--color-ink);
+    line-height: 1.15;
+  }
+
+  h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
+  h2 { font-size: clamp(2rem, 3.5vw, 3rem); }
+  h3 { font-size: clamp(1.25rem, 1.8vw, 1.5rem); }
+}
+
+@layer components {
+  .eyebrow {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide-label);
+    color: var(--color-gold);
+    font-weight: 500;
+  }
+
+  .hairline {
+    height: 1px;
+    background: var(--color-hairline);
+    border: 0;
+  }
+
+  /* Premium Buttons: Fill-Slide von unten, ruhige Palette, keine Größenänderung */
+  .btn-primary,
+  .btn-ghost {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.05rem 2.4rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-ink);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: border-color 0.22s ease;
+  }
+  .btn-primary::before,
+  .btn-ghost::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: translateY(101%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-primary:hover::before,
+  .btn-ghost:hover::before {
+    transform: translateY(0);
+  }
+  .btn-primary:disabled,
+  .btn-ghost:disabled {
+    pointer-events: none;
+  }
+
+  /* Primary: füllter Ruheton mit leichtem Edge → Hover eine Nuance satter */
+  .btn-primary {
+    background: var(--color-btn-rest);
+    border-color: var(--color-btn-hover);
+  }
+  .btn-primary::before {
+    background: var(--color-btn-hover);
+  }
+  .btn-primary:hover {
+    border-color: var(--color-btn-hover);
+  }
+
+  /* Ghost: flüsterleiser Outline → füllt sich dezent mit bone-deep */
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--color-ink-mute);
+  }
+  .btn-ghost::before {
+    background: var(--color-btn-rest);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-ink-mute);
+  }
+
+  .link-arrow {
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-wide-label);
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+  .link-arrow:hover { color: var(--color-gold-hover); }
+  .link-arrow .arrow {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  .link-arrow:hover .arrow { transform: translateX(6px); }
+  .link-arrow:hover .arrow-left { transform: translateX(-6px); }
+
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+  /* Aligns a full-bleed element's inner padding with the max-w-7xl container edge.
+     Inhalt beginnt exakt dort, wo auch .max-w-7xl.mx-auto.px-6 md:px-10 beginnt. */
+  .container-align {
+    padding-left: max(1.5rem, calc((100vw - 80rem) / 2 + 1.5rem));
+    padding-right: max(1.5rem, calc((100vw - 80rem) / 2 + 1.5rem));
+  }
+
+  /* Produkt-Slider */
+  .product-slider {
+    cursor: grab;
+    user-select: none;
+    scroll-padding-inline-start: max(1.5rem, calc((100vw - 80rem) / 2 + 1.5rem));
+  }
+  .product-slider.is-dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
+  .product-slider img {
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+
+  .slider-nav {
+    position: absolute;
+    top: calc(50% - 3rem);
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border-radius: 999px;
+    box-shadow: 0 2px 18px rgba(28, 28, 26, 0.08);
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .slider-nav-right { right: 1.5rem; }
+  .slider-nav-left { left: 1.5rem; }
+
+  .product-slider-wrapper:hover .slider-nav:not(.is-hidden) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .slider-nav:hover {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .slider-nav.is-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Quick-Add Overlay */
+  .quick-add {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translateY(100%);
+    transition: transform 0.35s ease;
+    background: rgba(246, 244, 240, 0.96);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 0.9rem 1rem;
+    text-align: center;
+    pointer-events: none;
+  }
+  .group\/card:hover .quick-add { transform: translateY(0); }
+  .quick-add-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .hero-headline {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(3.5rem, 9vw, 9rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
+  }
+
+  .nav-link {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    font-weight: 400;
+    color: var(--color-ink);
+    position: relative;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0.2rem;
+    height: 1px;
+    width: 0;
+    background: var(--color-gold);
+    transition: width 0.3s ease;
+  }
+  .nav-link:hover { color: var(--color-gold-hover); }
+  .nav-link:hover::after { width: 100%; }
+
+  .nav-link-active { color: var(--color-gold-hover); }
+  .nav-link-active::after { width: 100%; }
+
+  .icon-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-ink);
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    transition: color 0.25s ease;
+  }
+  .icon-btn:hover { color: var(--color-gold-hover); }
+
+  .cart-badge {
+    position: absolute;
+    top: 0.1rem;
+    right: 0.1rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 0.3rem;
+    border-radius: 999px;
+    background: var(--color-surface-dark);
+    color: var(--color-paper);
+    font-size: 0.62rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-align {
+    padding-left: max(2.5rem, calc((100vw - 80rem) / 2 + 2.5rem));
+    padding-right: max(2.5rem, calc((100vw - 80rem) / 2 + 2.5rem));
+  }
+  .product-slider { scroll-padding-inline-start: max(2.5rem, calc((100vw - 80rem) / 2 + 2.5rem)); }
+  .slider-nav { width: 3.5rem; height: 3.5rem; }
+  .slider-nav-right { right: 2rem; }
+  .slider-nav-left { left: 2rem; }
+}

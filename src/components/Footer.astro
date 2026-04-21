@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logos/Kiehls-Klunker-Vector-Logo-clean.svg';
+
+const year = new Date().getFullYear();
+---
+
+<!-- Newsletter-Postkarte — eigener Block vor dem Footer -->
+<section class="bg-[var(--color-bone)] py-20 md:py-28">
+  <div class="max-w-7xl mx-auto px-6 md:px-10">
+    <div class="max-w-4xl mx-auto bg-[var(--color-paper)] border border-[var(--color-hairline)] shadow-[0_2px_30px_rgba(28,28,26,0.04)]">
+      <!-- Innerer „Postkarten-Rahmen" -->
+      <div class="m-2 border border-[var(--color-hairline)]/60 px-8 py-10 md:px-14 md:py-14">
+        <div class="md:grid md:grid-cols-[1.15fr_auto_1fr] md:gap-10 md:items-center">
+          <!-- Nachricht -->
+          <div>
+            <p class="eyebrow mb-4">Ein kleiner Gruß</p>
+            <p class="font-serif italic text-2xl md:text-[1.85rem] leading-[1.3] mb-4 text-[var(--color-ink)]">
+              Neues aus der Werkstatt.
+            </p>
+            <p class="text-sm text-[var(--color-ink-soft)] leading-relaxed max-w-sm">
+              Etwa alle zwei Monate schicke ich eine kleine Post — neue Klunker,
+              Markttermine, Inspirationen. Kein Spam, jederzeit abbestellbar.
+            </p>
+          </div>
+
+          <!-- Postkarten-Trennlinie -->
+          <div class="hidden md:block h-28 border-l border-dashed border-[var(--color-hairline)]" aria-hidden="true"></div>
+
+          <!-- Adressfeld -->
+          <form class="mt-10 md:mt-0 space-y-4" onsubmit="return false;">
+            <label class="sr-only" for="newsletter-email">E-Mail-Adresse</label>
+            <input
+              id="newsletter-email"
+              type="email"
+              required
+              placeholder="deine@email.de"
+              class="w-full bg-transparent border-0 border-b border-[var(--color-hairline)] focus:border-[var(--color-ink)] focus:outline-none text-[var(--color-ink)] placeholder:text-[var(--color-ink-mute)] px-0 py-3 text-sm transition-colors"
+            />
+            <button
+              type="submit"
+              disabled
+              title="Backend folgt"
+              class="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Anmelden
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-[var(--color-surface-dark)] text-[var(--color-paper)]">
+  <div class="max-w-7xl mx-auto px-6 md:px-10 py-16 grid gap-12 md:grid-cols-4">
+    <div class="md:col-span-2">
+      <Image src={logo} alt="Kiehls Klunker" class="h-6 md:h-7 w-auto mb-5 brightness-0 invert opacity-90" />
+      <p class="text-sm text-[var(--color-paper)]/65 max-w-xs leading-relaxed mb-6">
+        Handgefertigter Haarschmuck aus Titan. Seit 2016 in der Werkstatt von Kathrin Kiehl.
+      </p>
+      <div class="flex items-center gap-4">
+        <a
+          href="https://www.instagram.com/kiehlsklunker/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Kiehls Klunker auf Instagram"
+          class="text-[var(--color-paper)]/60 hover:text-[var(--color-paper)] transition-colors"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none" />
+          </svg>
+        </a>
+        <a
+          href="https://www.facebook.com/kiehlsklunker"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Kiehls Klunker auf Facebook"
+          class="text-[var(--color-paper)]/60 hover:text-[var(--color-paper)] transition-colors"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v3H8v8h3v-8h2.5l.5-3H11V7.5A1.5 1.5 0 0 1 12.5 6H15V3z" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div>
+      <p class="eyebrow mb-4 !text-[#c9b99e]">Shop</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href="/shop" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Alle Produkte</a></li>
+        <li><a href="/ueber-mich" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Über mich</a></li>
+        <li><a href="/kontakt" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Kontakt</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="eyebrow mb-4 !text-[#c9b99e]">Rechtliches</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href="/impressum" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Impressum</a></li>
+        <li><a href="/datenschutz" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">Datenschutz</a></li>
+        <li><a href="/agb" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">AGB</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-[var(--color-paper)]/10">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-[var(--color-paper)]/45">
+      <p>© {year} Kiehls Klunker · Kathrin Kiehl</p>
+      <p>Handgefertigt in Leipzig</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logos/Kiehls-Klunker-Vector-Logo-clean.svg';
+
+const nav = [
+  { href: '/ueber-mich', label: 'Über mich' },
+  { href: '/kontakt', label: 'Kontakt' },
+  { href: '/shop', label: 'Shop' },
+];
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+---
+
+<header class="sticky top-0 z-50 bg-[var(--color-paper)]/95 backdrop-blur-sm">
+  <!-- Announcement Bar -->
+  <div class="bg-[var(--color-surface-dark)] text-[var(--color-paper)] text-center py-2.5">
+    <p class="text-[0.68rem] uppercase tracking-[0.24em] font-light">
+      Handgefertigt in Leipzig · Versand in 7–9 Werktagen · Oft schneller
+    </p>
+  </div>
+
+  <!-- Main Header -->
+  <div class="max-w-7xl mx-auto px-6 md:px-10">
+    <div class="flex items-center justify-between h-20 md:h-24 gap-6">
+      <!-- Logo left -->
+      <a href="/" class="shrink-0 transition-opacity hover:opacity-70" aria-label="Kiehls Klunker Startseite">
+        <Image src={logo} alt="Kiehls Klunker" class="h-[18px] md:h-[22px] lg:h-[26px] w-auto" />
+      </a>
+
+      <!-- Nav + Cart (right) -->
+      <div class="flex items-center gap-6 md:gap-10 lg:gap-14">
+        <nav class="hidden md:flex items-center gap-8 lg:gap-12">
+          {nav.map((item) => (
+            <a
+              href={item.href}
+              class:list={[
+                'nav-link',
+                isActive(item.href) && 'nav-link-active',
+              ]}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <button
+          type="button"
+          aria-label="Warenkorb öffnen"
+          class="icon-btn relative group"
+          data-cart-open
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="transition-transform group-hover:scale-105">
+            <path d="M4.5 7h15l-1.3 12.4a2 2 0 0 1-2 1.6H7.8a2 2 0 0 1-2-1.6L4.5 7z" stroke-linejoin="round"/>
+            <path d="M9 7V5.5a3 3 0 0 1 6 0V7" stroke-linecap="round"/>
+          </svg>
+          <span class="cart-badge hidden" data-cart-badge>0</span>
+        </button>
+
+        <!-- Mobile menu button -->
+        <button
+          type="button"
+          aria-label="Menü"
+          class="md:hidden icon-btn"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25">
+            <line x1="3" y1="7" x2="21" y2="7" stroke-linecap="round"/>
+            <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/>
+            <line x1="3" y1="17" x2="21" y2="17" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Hairline bottom -->
+  <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-hairline)] to-transparent"></div>
+</header>
+
+<script is:inline>
+  (() => {
+    const badge = document.querySelector('[data-cart-badge]');
+    if (!badge) return;
+    const updateBadge = () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const total = cart.reduce((sum, i) => sum + (i.quantity || 0), 0);
+      badge.textContent = String(total);
+      badge.classList.toggle('hidden', total === 0);
+    };
+    updateBadge();
+    window.addEventListener('cart:changed', updateBadge);
+    window.addEventListener('storage', (e) => { if (e.key === 'cart') updateBadge(); });
+  })();
+</script>

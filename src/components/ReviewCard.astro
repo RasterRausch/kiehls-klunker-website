@@ -1,0 +1,68 @@
+---
+interface Props {
+  author: string;
+  rating: number;
+  date: Date;
+  productName?: string;
+  body: string;
+  verified?: boolean;
+}
+
+const { author, rating, date, productName, body, verified = true } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat('de-DE', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+}).format(date);
+
+const stars = Array.from({ length: 5 }, (_, i) => i < rating);
+const isLong = body.length > 160;
+const toggleId = `review-${Math.random().toString(36).slice(2, 9)}`;
+const showAuthor = author && author !== 'Etsy-Kundin';
+---
+
+<article class="review-card flex flex-col gap-3 p-6 bg-[var(--color-bone)] border border-[var(--color-hairline)] h-full">
+  <div class="flex items-center gap-1 text-[var(--color-gold)]">
+    {stars.map((filled) => (
+      <span class="text-sm">{filled ? '★' : '☆'}</span>
+    ))}
+  </div>
+
+  {isLong ? (
+    <div class="review-expand">
+      <input type="checkbox" id={toggleId} class="review-expand-input sr-only" />
+      <blockquote class="review-body font-serif text-lg leading-snug text-[var(--color-ink)] line-clamp-5">
+        „{body}"
+      </blockquote>
+      <label for={toggleId} class="review-expand-toggle inline-block mt-2 text-xs uppercase tracking-[0.2em] text-[var(--color-ink-soft)] cursor-pointer hover:text-[var(--color-ink)] transition-colors">
+        <span class="review-expand-more">Mehr lesen</span>
+        <span class="review-expand-less">Weniger</span>
+      </label>
+    </div>
+  ) : (
+    <blockquote class="font-serif text-lg leading-snug text-[var(--color-ink)]">
+      „{body}"
+    </blockquote>
+  )}
+
+  <div class="mt-auto pt-3 border-t border-[var(--color-hairline)]">
+    {showAuthor && (
+      <p class="text-sm font-medium text-[var(--color-ink)] mb-0.5">{author}</p>
+    )}
+    <p class="text-xs text-[var(--color-ink-soft)]">
+      {formattedDate}
+      {verified && <span class="ml-2 text-[var(--color-gold)]">· Verifizierter Kauf</span>}
+    </p>
+    {productName && (
+      <p class="mt-1.5 text-xs text-[var(--color-ink-mute)] italic line-clamp-1">{productName}</p>
+    )}
+  </div>
+</article>
+
+<style is:global>
+  .review-expand-input:checked ~ .review-body { -webkit-line-clamp: unset; line-clamp: unset; display: block; }
+  .review-expand-less { display: none; }
+  .review-expand-input:checked ~ .review-expand-toggle .review-expand-more { display: none; }
+  .review-expand-input:checked ~ .review-expand-toggle .review-expand-less { display: inline; }
+</style>

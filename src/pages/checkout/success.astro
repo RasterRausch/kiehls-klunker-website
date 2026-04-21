@@ -1,0 +1,30 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Bestellung bestätigt — Kiehls Klunker" description="Danke für deine Bestellung.">
+  <section class="max-w-2xl mx-auto px-6 md:px-10 py-24 md:py-32 text-center">
+    <p class="eyebrow mb-6">Bestellung bestätigt</p>
+    <h1 class="mb-6">Danke — dein Klunker ist unterwegs.</h1>
+    <p class="text-[var(--color-ink-soft)] leading-relaxed mb-4">
+      Kathrin hat deine Bestellung erhalten und wird sie sorgfältig für dich versenden.
+      Eine Bestätigung mit allen Details liegt schon in deinem Postfach.
+    </p>
+    <p class="text-[var(--color-ink-soft)] leading-relaxed mb-12">
+      Versand per DHL in 7–9 Werktagen — oft schneller.
+    </p>
+
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <a href="/shop" class="btn-primary">Weiter stöbern</a>
+      <a href="/" class="btn-ghost">Zur Startseite</a>
+    </div>
+  </section>
+
+  <script is:inline>
+    // Warenkorb leeren, Header-Badge aktualisieren
+    localStorage.removeItem('cart');
+    window.dispatchEvent(new CustomEvent('cart:changed'));
+  </script>
+</BaseLayout>
