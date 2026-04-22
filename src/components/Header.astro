@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logos/Kiehls-Klunker-Vector-Logo-clean.svg';
+import logoSmall from '../assets/logos/KK-Logo-small.svg';
 import { getLang, t, localizedPath } from '../i18n';
 
 const lang = getLang(Astro);
@@ -24,23 +25,24 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
 
 <header class="sticky top-0 z-50 bg-[var(--color-paper)]/95 backdrop-blur-sm">
   <!-- Announcement Bar -->
-  <div class="bg-[var(--color-surface-dark)] text-[var(--color-paper)] text-center py-2.5">
-    <p class="text-[0.68rem] uppercase tracking-[0.24em] font-light">
+  <div class="bg-[var(--color-surface-dark)] text-[var(--color-paper)] text-center py-2 px-3 min-[480px]:py-2.5 overflow-hidden" role="region" aria-label={lang === 'en' ? 'Shop announcement' : 'Shop-Hinweis'}>
+    <p class="text-[0.6rem] tracking-[0.08em] min-[400px]:text-[0.62rem] min-[400px]:tracking-[0.14em] min-[480px]:text-[0.68rem] min-[480px]:tracking-[0.24em] uppercase font-light whitespace-nowrap">
       {strings.header.announcement}
     </p>
   </div>
 
   <!-- Main Header -->
-  <div class="max-w-7xl mx-auto px-6 md:px-10">
-    <div class="flex items-center justify-between h-20 md:h-24 gap-6">
-      <!-- Logo left -->
+  <div class="max-w-7xl mx-auto px-4 min-[480px]:px-6 md:px-10">
+    <div class="flex items-center justify-between h-14 min-[480px]:h-20 md:h-24 gap-3 min-[480px]:gap-6">
+      <!-- Logo left — klein unter 480px, breite Schreibschrift ab 480px -->
       <a href={p('/')} class="shrink-0 transition-opacity hover:opacity-70" aria-label={`Kiehls Klunker — ${strings.nav.home}`}>
-        <Image src={logo} alt="Kiehls Klunker" class="h-[18px] md:h-[22px] lg:h-[26px] w-auto" />
+        <Image src={logoSmall} alt="" class="h-8 w-auto block min-[480px]:hidden" />
+        <Image src={logo} alt="" class="hidden min-[480px]:block h-[18px] md:h-[22px] lg:h-[26px] w-auto" />
       </a>
 
       <!-- Nav + Cart (right) -->
-      <div class="flex items-center gap-5 md:gap-8 lg:gap-10">
-        <nav class="hidden md:flex items-center gap-8 lg:gap-12">
+      <div class="flex items-center gap-3 min-[480px]:gap-5 md:gap-6 lg:gap-10">
+        <nav class="hidden min-[880px]:flex items-center gap-6 lg:gap-12">
           {nav.map((item) => (
             <a
               href={item.href}
@@ -84,11 +86,14 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
           >EN</a>
         </div>
 
-        <!-- Mobile menu button -->
+        <!-- Mobile menu button — öffnet den Drawer unten -->
         <button
           type="button"
-          aria-label={lang === 'en' ? 'Menu' : 'Menü'}
-          class="md:hidden icon-btn"
+          aria-label={lang === 'en' ? 'Open menu' : 'Menü öffnen'}
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          class="min-[880px]:hidden icon-btn"
+          data-menu-open
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25">
             <line x1="3" y1="7" x2="21" y2="7" stroke-linecap="round"/>
@@ -102,6 +107,140 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
   <!-- Hairline bottom -->
   <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-hairline)] to-transparent"></div>
 </header>
+
+<!-- Mobile Menu Drawer (nur sichtbar wenn per Button geöffnet) -->
+<aside
+  id="mobile-menu"
+  class="mobile-menu min-[880px]:hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label={lang === 'en' ? 'Main navigation' : 'Hauptnavigation'}
+  aria-hidden="true"
+  data-mobile-menu
+>
+  <div class="mobile-menu-backdrop" data-menu-close></div>
+  <div class="mobile-menu-panel">
+    <!-- Header-Zeile -->
+    <div class="flex items-center justify-between px-6 h-14 border-b border-[var(--color-hairline)] shrink-0">
+      <span class="text-[0.68rem] uppercase tracking-[0.22em] text-[var(--color-ink-soft)]">
+        {lang === 'en' ? 'Menu' : 'Menü'}
+      </span>
+      <button
+        type="button"
+        aria-label={lang === 'en' ? 'Close menu' : 'Menü schließen'}
+        class="icon-btn"
+        data-menu-close
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+          <path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Scrollbarer Body -->
+    <div class="flex-1 overflow-y-auto flex flex-col">
+      <!-- Nav -->
+      <nav class="px-6 pt-8 pb-6 flex flex-col gap-5" aria-label={lang === 'en' ? 'Main' : 'Hauptnavigation'}>
+        {nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'mobile-nav-link',
+              isActive(item.href) && 'is-active',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))}
+        <!-- Warenkorb: öffnet CartDrawer, schließt Mobile-Menu automatisch über mobile-nav-link-Handler -->
+        <button
+          type="button"
+          class="mobile-nav-link mobile-nav-cart"
+          data-cart-open
+          data-menu-close
+        >
+          <span>{strings.cart.title}</span>
+          <span class="mobile-nav-cart-count hidden" data-cart-badge aria-hidden="true">0</span>
+        </button>
+      </nav>
+
+      <hr class="mx-6 border-0 h-px bg-[var(--color-hairline)]" />
+
+      <!-- Kontakt-Sektion -->
+      <div class="px-6 py-6">
+        <p class="eyebrow mb-3">{strings.nav.contact}</p>
+        <a
+          href="#"
+          class="obf-mail text-[var(--color-ink)] border-b border-[var(--color-hairline)] hover:border-[var(--color-gold-hover)] hover:text-[var(--color-gold-hover)] transition-colors text-sm inline-block pb-0.5"
+          data-user="info"
+          data-domain="kiehls-klunker.de"
+          rel="nofollow noopener"
+        >
+          {strings.contact.directMailCta}
+        </a>
+        <div class="flex items-center gap-4 mt-4">
+          <a
+            href="https://www.instagram.com/kiehlsklunker/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Kiehls Klunker — Instagram"
+            class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
+          <a
+            href="https://www.facebook.com/kiehlsklunker"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Kiehls Klunker — Facebook"
+            class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v3H8v8h3v-8h2.5l.5-3H11V7.5A1.5 1.5 0 0 1 12.5 6H15V3z" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <hr class="mx-6 border-0 h-px bg-[var(--color-hairline)]" />
+
+      <!-- Sprache -->
+      <div class="px-6 py-6">
+        <p class="eyebrow mb-3">{lang === 'en' ? 'Language' : 'Sprache'}</p>
+        <div class="lang-switcher" role="group" aria-label={strings.langSwitcher.label}>
+          <a
+            href={switchToDE}
+            class:list={['lang-option', lang === 'de' && 'is-active']}
+            data-lang="de"
+            aria-current={lang === 'de' ? 'true' : undefined}
+          >DE</a>
+          <span class="lang-sep" aria-hidden="true">/</span>
+          <a
+            href={switchToEN}
+            class:list={['lang-option', lang === 'en' && 'is-active']}
+            data-lang="en"
+            aria-current={lang === 'en' ? 'true' : undefined}
+          >EN</a>
+        </div>
+      </div>
+
+      <!-- Flex-Spacer schiebt Signatur nach unten -->
+      <div class="flex-1"></div>
+
+      <!-- Signatur-Abschluss -->
+      <div class="px-6 py-6 border-t border-[var(--color-hairline)] text-center">
+        <Image src={logo} alt="" class="h-5 w-auto mx-auto mb-2 opacity-70" />
+        <p class="text-xs text-[var(--color-ink-mute)] tracking-wide">
+          {lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzig'}
+        </p>
+      </div>
+    </div>
+  </div>
+</aside>
 
 <style>
   .lang-switcher {
@@ -126,22 +265,122 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
   .lang-sep {
     color: var(--color-hairline);
   }
+
+  /* Mobile Menu Drawer ============================================== */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    visibility: hidden;
+    transition: visibility 0s linear 0.28s;
+  }
+  .mobile-menu.is-open {
+    pointer-events: auto;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .mobile-menu-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(13, 30, 44, 0.35);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .mobile-menu.is-open .mobile-menu-backdrop {
+    opacity: 1;
+  }
+  .mobile-menu-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(290px, 86vw);
+    background: var(--color-paper);
+    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.08);
+    transform: translateX(100%);
+    transition: transform 0.28s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-menu.is-open .mobile-menu-panel {
+    transform: translateX(0);
+  }
+  /* Mobile-Nav-Links: gleicher Schrift-Duktus wie Desktop-Nav (DM Sans uppercase
+     gespreizt), nur etwas größer, weil im Drawer alleinstehend statt inline. */
+  .mobile-nav-link {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 500;
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: color 0.25s ease;
+    background: transparent;
+    border: 0;
+    padding: 0.4rem 0;
+    cursor: pointer;
+    text-align: left;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .mobile-nav-link:hover {
+    color: var(--color-gold-hover);
+  }
+  .mobile-nav-link.is-active {
+    color: var(--color-gold);
+  }
+  .mobile-nav-cart-count {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    color: var(--color-ink-mute);
+    padding: 0.1rem 0.45rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: 999px;
+  }
+  .mobile-nav-cart-count {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--color-ink-mute);
+    padding: 0.1rem 0.45rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: 999px;
+  }
 </style>
 
 <script is:inline>
   (() => {
-    const badge = document.querySelector('[data-cart-badge]');
-    if (badge) {
-      const updateBadge = () => {
+    // Cart-Badge aktualisiert mehrere Stellen (Header-Icon + Mobile-Menu-Eintrag)
+    const badges = document.querySelectorAll('[data-cart-badge]');
+    if (badges.length > 0) {
+      const updateBadges = () => {
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
         const total = cart.reduce((sum, i) => sum + (i.quantity || 0), 0);
-        badge.textContent = String(total);
-        badge.classList.toggle('hidden', total === 0);
+        badges.forEach((el) => {
+          el.textContent = String(total);
+          el.classList.toggle('hidden', total === 0);
+        });
       };
-      updateBadge();
-      window.addEventListener('cart:changed', updateBadge);
-      window.addEventListener('storage', (e) => { if (e.key === 'cart') updateBadge(); });
+      updateBadges();
+      window.addEventListener('cart:changed', updateBadges);
+      window.addEventListener('storage', (e) => { if (e.key === 'cart') updateBadges(); });
     }
+
+    // E-Mail-Obfuscation (wird auch auf kontakt-Seite genutzt — doppelte
+    // Ausführung schadet nicht, weil textContent idempotent gesetzt wird)
+    document.querySelectorAll('.obf-mail').forEach((el) => {
+      const u = el.dataset.user;
+      const d = el.dataset.domain;
+      if (!u || !d) return;
+      const addr = u + '@' + d;
+      el.href = 'mailto:' + addr;
+      el.textContent = addr;
+    });
 
     // Sprach-Klick: Cookie setzen, damit die Wahl beim nächsten Seitenaufruf erhalten bleibt
     document.querySelectorAll('[data-lang]').forEach((el) => {
@@ -151,6 +390,63 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
           document.cookie = 'kk_lang=' + choice + '; path=/; max-age=' + (60 * 60 * 24 * 365);
         }
       });
+    });
+
+    // Mobile Menu Drawer mit Focus-Trap + Focus-Restore
+    const menu = document.querySelector('[data-mobile-menu]');
+    const openers = document.querySelectorAll('[data-menu-open]');
+    const closers = document.querySelectorAll('[data-menu-close]');
+    const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    let previouslyFocusedMenu = null;
+    const getMenuFocusables = () => menu ? Array.from(menu.querySelectorAll(FOCUSABLE)).filter((el) => !el.hidden && el.offsetParent !== null) : [];
+    const trapMenuFocus = (e) => {
+      if (e.key !== 'Tab' || !menu?.classList.contains('is-open')) return;
+      const focusables = getMenuFocusables();
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    const openMenu = () => {
+      if (!menu) return;
+      previouslyFocusedMenu = document.activeElement;
+      menu.classList.add('is-open');
+      menu.setAttribute('aria-hidden', 'false');
+      openers.forEach((b) => b.setAttribute('aria-expanded', 'true'));
+      document.body.style.overflow = 'hidden';
+      // Fokus nach Slide-In ins Menü verschieben (erster fokussierbarer = Close-Button)
+      setTimeout(() => {
+        const first = getMenuFocusables()[0];
+        first?.focus();
+      }, 120);
+    };
+    const closeMenu = () => {
+      if (!menu) return;
+      menu.classList.remove('is-open');
+      menu.setAttribute('aria-hidden', 'true');
+      openers.forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      document.body.style.overflow = '';
+      if (previouslyFocusedMenu && typeof previouslyFocusedMenu.focus === 'function') {
+        previouslyFocusedMenu.focus();
+      }
+      previouslyFocusedMenu = null;
+    };
+    openers.forEach((b) => b.addEventListener('click', openMenu));
+    closers.forEach((b) => b.addEventListener('click', closeMenu));
+    // Nav-Link im Drawer schließt das Menü automatisch (SPA-Feeling auf Multi-Page)
+    menu?.querySelectorAll('.mobile-nav-link').forEach((a) => {
+      a.addEventListener('click', closeMenu);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!menu?.classList.contains('is-open')) return;
+      if (e.key === 'Escape') closeMenu();
+      else trapMenuFocus(e);
     });
   })();
 </script>

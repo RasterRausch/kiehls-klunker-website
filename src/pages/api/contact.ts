@@ -124,10 +124,20 @@ function getClientIp(request: Request): string {
 // ——— Endpoint ———————————————————————————————————————————————
 export const POST: APIRoute = async ({ request, url }) => {
   try {
-    // 0) Origin-Check (nur unsere Domain darf posten)
+    // 0) Origin-Check (nur unsere Domain darf posten).
+    // Hinter einem Reverse-Proxy (Mittwald) zeigt url.hostname auf "localhost",
+    // deshalb vergleichen wir primär gegen PUBLIC_SITE_URL aus der env.
     const origin = request.headers.get('origin') || '';
-    if (origin && !origin.includes(url.hostname) && !origin.includes('localhost')) {
-      return json({ error: 'Ungültige Herkunft.' }, 403);
+    if (origin) {
+      const publicSiteUrl = (process.env.PUBLIC_SITE_URL || (import.meta.env as any).PUBLIC_SITE_URL || '').replace(/\/$/, '');
+      const publicHost = publicSiteUrl ? new URL(publicSiteUrl).hostname : '';
+      const isAllowed = origin.includes('localhost')
+        || origin.includes('127.0.0.1')
+        || (publicHost && origin.includes(publicHost))
+        || origin.includes(url.hostname);
+      if (!isAllowed) {
+        return json({ error: 'Ungültige Herkunft.' }, 403);
+      }
     }
 
     const ip = getClientIp(request);

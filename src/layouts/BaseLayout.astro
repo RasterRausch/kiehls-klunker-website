@@ -43,8 +43,11 @@ const hrefEN = siteUrl + (pathNoLang === '/' ? '/en' : `/en${pathNoLang}`);
     <title>{title}</title>
   </head>
   <body class="min-h-screen flex flex-col">
+    <a href="#main-content" class="skip-link">
+      {lang === 'en' ? 'Skip to main content' : 'Zum Hauptinhalt'}
+    </a>
     <Header />
-    <main class="flex-1 min-w-0">
+    <main id="main-content" tabindex="-1" class="flex-1 min-w-0">
       <slot />
     </main>
     <Footer />

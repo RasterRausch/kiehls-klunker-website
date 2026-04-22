@@ -29,7 +29,7 @@
   --color-ink: #1a1d17;          /* warm-near-black mit Mooston */
   --color-ink-warm: #272a22;     /* primary hover */
   --color-ink-soft: #4f5247;
-  --color-ink-mute: #8f9181;
+  --color-ink-mute: #6b6e5f;     /* WCAG-AA konform auf paper (~4.7:1) */
 
   /* Dunkle Flächen (Announcement-Bar, Footer, Cart-Badge): Midnight-Petrol
      — kühles Tiefblau, starker Kontrast zum Kupfer-Akzent */
@@ -63,6 +63,7 @@
   body {
     font-size: 16px;
     line-height: 1.6;
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4 {
@@ -76,6 +77,72 @@
   h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
   h2 { font-size: clamp(2rem, 3.5vw, 3rem); }
   h3 { font-size: clamp(1.25rem, 1.8vw, 1.5rem); }
+}
+
+/* =================================================================
+   FOCUS — sichtbarer Tastatur-Fokus. Außerhalb @layer base, damit
+   die Regel über Tailwind-Utilities-Layer gewinnt (z. B. beim
+   Newsletter-Input, der focus:outline-none trägt).
+   ================================================================= */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+/* Kontaktformular hat eigenen Focus-Stil (box-shadow) — dort keinen
+   doppelten Ring */
+.contact-form input:focus-visible,
+.contact-form textarea:focus-visible {
+  outline: none;
+}
+/* Main darf tabindex=-1 haben, aber kein sichtbarer Fokus-Ring dort */
+main:focus {
+  outline: none;
+}
+
+/* =================================================================
+   REDUCED MOTION — System-Einstellung respektieren. Slider-Scrolls,
+   Transitions und Hover-Animationen werden auf das Minimum reduziert.
+   ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =================================================================
+   SKIP-LINK — versteckt bis Fokus, springt an den Main-Content.
+   ================================================================= */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-120%);
+  transition: transform 0.2s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
 }
 
 @layer components {
@@ -222,7 +289,11 @@
   .slider-nav-right { right: 1.5rem; }
   .slider-nav-left { left: 1.5rem; }
 
-  .product-slider-wrapper:hover .slider-nav:not(.is-hidden) {
+  /* Pfeile sichtbar bei Maus-Hover UND wenn Tastatur-Fokus im Slider-Bereich
+     liegt (damit Keyboard-User die Buttons auch sehen + erreichen). */
+  .product-slider-wrapper:hover .slider-nav:not(.is-hidden),
+  .product-slider-wrapper:focus-within .slider-nav:not(.is-hidden),
+  .slider-nav:focus-visible {
     opacity: 1;
     pointer-events: auto;
   }

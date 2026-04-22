@@ -10,7 +10,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
 ---
 
 <BaseLayout title={c.pageTitle}>
-  <section class="pt-20 pb-20 md:pb-28">
+  <section class="py-12 md:py-20 lg:py-28">
     <div class="max-w-2xl mx-auto px-6 md:px-10">
       <!-- HERO -->
       <div class="text-center mb-14 md:mb-16">
@@ -274,6 +274,37 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
         status.classList.add(kind === 'success' ? 'is-success' : 'is-error');
       };
 
+      // Invalid-Markierung entfernen, sobald der User tippt (Live-Feedback)
+      ['name', 'email', 'message'].forEach((n) => {
+        form[n]?.addEventListener('input', () => {
+          form[n].removeAttribute('aria-invalid');
+          form[n].classList.remove('is-invalid');
+        });
+      });
+
+      // Feld-Validierung: setze aria-invalid + .is-invalid bei Problemen,
+      // fokussiere das erste fehlerhafte Feld.
+      const validateFields = (data) => {
+        const checks = [
+          { field: form.name, ok: data.name.length > 0 && data.name.length <= 100 },
+          { field: form.email, ok: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email) },
+          { field: form.message, ok: data.message.length > 0 && data.message.length <= 5000 },
+        ];
+        let firstInvalid = null;
+        for (const { field, ok } of checks) {
+          if (!field) continue;
+          if (ok) {
+            field.removeAttribute('aria-invalid');
+            field.classList.remove('is-invalid');
+          } else {
+            field.setAttribute('aria-invalid', 'true');
+            field.classList.add('is-invalid');
+            if (!firstInvalid) firstInvalid = field;
+          }
+        }
+        return firstInvalid;
+      };
+
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const data = {
@@ -285,6 +316,14 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
           ts: formOpenedAt,
           turnstile: '',
         };
+
+        // Client-Validierung: bei Fehler aria-invalid setzen, erstes Feld fokussieren,
+        // Status-Hinweis anzeigen — kein Server-Request.
+        const firstInvalid = validateFields(data);
+        if (firstInvalid) {
+          firstInvalid.focus();
+          return;
+        }
 
         // Turnstile-Token einsammeln (falls aktiv)
         const tsField = form.querySelector('input[name="cf-turnstile-response"]');

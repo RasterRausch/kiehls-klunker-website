@@ -1,11 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ReviewCard from '../components/ReviewCard.astro';
 import { displayPrice } from '../lib/price';
 import { getLang, t, localizedPath } from '../i18n';
 import hero from '../assets/images/hero-schmuck.png';
+import heroMobile from '../assets/images/hero-mobile.jpg';
+import heroSmartphone from '../assets/images/hero-smartphone.jpg';
 import soEntsteht from '../assets/images/so-entsteht.jpg';
 
 const lang = getLang(Astro);
@@ -23,13 +25,28 @@ const featuredReviews = (await getCollection('reviews'))
   .filter((r) => r.data.rating === 5 && r.body?.trim())
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 60);
+
+// Hero: drei Bilder per <picture>, damit der Browser nur das passende lädt.
+// - < 450px:  hero-smartphone (enger Crop)
+// - 450–1023: hero-mobile (Querformat)
+// - ≥ 1024:   hero-schmuck (Desktop-Background mit Scrim, separat unten)
+const heroSmartphoneOpt = await getImage({
+  src: heroSmartphone,
+  widths: [360, 450, 540, 720],
+  format: 'webp',
+});
+const heroMobileOpt = await getImage({
+  src: heroMobile,
+  widths: [480, 720, 960, 1280, 1600],
+  format: 'webp',
+});
 ---
 
 <BaseLayout title={h.pageTitle}>
   <!-- HERO: Full-bleed, Bild als Hintergrund, Text links auf weißem Bereich -->
   <section class="relative w-full">
-    <!-- Desktop: Bild als Hintergrund, Text absolut -->
-    <div class="hidden md:block relative w-full">
+    <!-- Desktop: Bild als Hintergrund, Text absolut (ab lg, 1024px+) -->
+    <div class="hidden lg:block relative w-full">
       <Image
         src={hero}
         alt={h.heroImageAlt}
@@ -59,23 +76,36 @@ const featuredReviews = (await getCollection('reviews'))
       </div>
     </div>
 
-    <!-- Mobile: Bild oben, Text unten -->
-    <div class="md:hidden">
-      <Image
-        src={hero}
-        alt={h.heroImageAlt}
-        widths={[480, 720, 960, 1280]}
-        sizes="100vw"
-        class="hero-image-mobile w-full h-[clamp(220px,38vh,280px)] object-cover"
-        loading="eager"
-      />
-      <div class="px-6 py-14">
-        <h1 class="hero-headline mb-6">Handmade<br />Jewels.</h1>
-        <p class="font-serif italic text-xl text-[var(--color-ink-soft)] mb-10">{h.heroSubtitle}</p>
+    <!-- Mobile + Tablet: Bild oben, Text unten (< lg, < 1024px) -->
+    <div class="lg:hidden">
+      <picture>
+        <!-- Ab 450px: Mobile/Tablet-Querformat -->
+        <source
+          media="(min-width: 450px)"
+          srcset={heroMobileOpt.srcSet.attribute}
+          sizes="100vw"
+        />
+        <!-- Fallback (< 450px): Smartphone-Zuschnitt -->
+        <img
+          src={heroSmartphoneOpt.src}
+          srcset={heroSmartphoneOpt.srcSet.attribute}
+          sizes="100vw"
+          alt={h.heroImageAlt}
+          width="900"
+          height="428"
+          class="hero-image-mobile w-full aspect-[450/214] object-cover"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
+      <div class="px-6 md:px-10 py-12 md:py-20 md:max-w-3xl md:mx-auto text-center">
+        <h1 class="hero-headline mb-3">Handmade Jewels.</h1>
+        <p class="font-serif italic text-xl text-[var(--color-ink-soft)] mb-8">{h.heroSubtitle}</p>
         <p class="text-base text-[var(--color-ink-soft)] mb-8 leading-relaxed">
           {h.heroBody}
         </p>
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-col items-stretch gap-3 max-w-[280px] mx-auto">
           <a href={p('/shop')} class="btn-primary">{h.heroCta}</a>
           <a href={p('/ueber-mich')} class="btn-ghost">{h.heroCtaSecondary}</a>
         </div>
@@ -83,11 +113,13 @@ const featuredReviews = (await getCollection('reviews'))
     </div>
 
     <style>
-      /* Hero-Bild: Anker bei 86 % — hält die gesamte Gabel (Spitzen bis 92 % Quelle)
-         auf allen Breakpoints sichtbar. */
-      .hero-image,
-      .hero-image-mobile {
+      /* Desktop-Hero: Anker bei 86 % — Scrim liegt links, Gabel soll rechts sichtbar
+         bleiben. Mobile: kein Scrim, also zentrieren. */
+      .hero-image {
         object-position: 86% center;
+      }
+      .hero-image-mobile {
+        object-position: center center;
       }
       /* Scrim schützt den Textbereich zuverlässig, auch bei schmalem Desktop */
       .hero-scrim {
@@ -117,8 +149,8 @@ const featuredReviews = (await getCollection('reviews'))
     </style>
   </section>
 
-  <!-- BRAND-PHILOSOPHY -->
-  <section class="py-12 md:py-16">
+  <!-- BRAND-PHILOSOPHY (S — kurzer, ruhiger Moment) -->
+  <section class="py-8 md:py-12 lg:py-16">
     <div class="max-w-7xl mx-auto px-6 md:px-10">
       <div class="max-w-3xl mx-auto text-center">
         <p class="eyebrow mb-6">{h.philosophyEyebrow}</p>
@@ -130,14 +162,14 @@ const featuredReviews = (await getCollection('reviews'))
     </div>
   </section>
 
-  <!-- KOLLEKTION: Full-bleed Slider mit Drag + Hover-Arrow + Quick-Add -->
-  <section class="pt-0 pb-24 md:pb-32">
-    <div class="max-w-7xl mx-auto px-6 md:px-10 flex items-end justify-between mb-12">
+  <!-- KOLLEKTION: Full-bleed Slider (M) -->
+  <section class="pt-0 pb-12 md:pb-20 lg:pb-28">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 flex flex-col md:flex-row md:items-end md:justify-between gap-5 md:gap-0 mb-8 md:mb-12 text-center md:text-left">
       <div>
         <p class="eyebrow mb-3">{h.collectionEyebrow}</p>
         <h2>{h.collectionHeadline}</h2>
       </div>
-      <a href={p('/shop')} class="link-arrow">{h.collectionCta} <span class="arrow">→</span></a>
+      <a href={p('/shop')} class="link-arrow whitespace-nowrap self-center md:self-auto">{h.collectionCta} <span class="arrow">→</span></a>
     </div>
 
     <!-- Slider wrapper (relative für Arrow-Button) -->
@@ -145,6 +177,10 @@ const featuredReviews = (await getCollection('reviews'))
       <div
         id="product-slider"
         class="product-slider overflow-x-auto scrollbar-hide"
+        role="region"
+        aria-roledescription={strings.home.sliderRoleDescription}
+        aria-label={strings.home.collectionHeadline}
+        tabindex="0"
       >
         <div class="flex gap-6 md:gap-8 container-align pb-2">
           {sliderProducts.map((product, i) => (
@@ -157,7 +193,7 @@ const featuredReviews = (await getCollection('reviews'))
               <div class="relative aspect-square overflow-hidden bg-[var(--color-bone)] mb-6">
                 <Image
                   src={product.data.images[0]}
-                  alt={product.data.name}
+                  alt=""
                   draggable={false}
                   widths={[300, 480, 640, 900]}
                   sizes="clamp(260px, 26vw, 440px)"
@@ -252,11 +288,13 @@ const featuredReviews = (await getCollection('reviews'))
         const gap = parseInt(style.gap || '24', 10);
         return firstCard.getBoundingClientRect().width + gap;
       };
+      // prefers-reduced-motion respektieren: smooth → auto
+      const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.querySelectorAll('[data-slider-next]').forEach((btn) => {
-        btn.addEventListener('click', () => slider.scrollBy({ left: getStep(), behavior: 'smooth' }));
+        btn.addEventListener('click', () => slider.scrollBy({ left: getStep(), behavior: reduceMotion() ? 'auto' : 'smooth' }));
       });
       document.querySelectorAll('[data-slider-prev]').forEach((btn) => {
-        btn.addEventListener('click', () => slider.scrollBy({ left: -getStep(), behavior: 'smooth' }));
+        btn.addEventListener('click', () => slider.scrollBy({ left: -getStep(), behavior: reduceMotion() ? 'auto' : 'smooth' }));
       });
 
       // Verstecke Prev-Button wenn am Anfang, Next wenn am Ende
@@ -274,9 +312,9 @@ const featuredReviews = (await getCollection('reviews'))
 
   <hr class="hairline" />
 
-  <!-- REVIEWS — Slider mit Drag + Arrows -->
+  <!-- REVIEWS — Slider mit Drag + Arrows (M) -->
   {featuredReviews.length > 0 && (
-    <section class="py-24 md:py-32">
+    <section class="py-12 md:py-20 lg:py-28">
       <div class="max-w-7xl mx-auto px-6 md:px-10 text-center mb-12 md:mb-16">
         <p class="eyebrow mb-3">{h.reviewsEyebrow}</p>
         <h2>{h.reviewsHeadline}</h2>
@@ -289,6 +327,10 @@ const featuredReviews = (await getCollection('reviews'))
         <div
           id="review-slider"
           class="product-slider overflow-x-auto scrollbar-hide"
+          role="region"
+          aria-roledescription={strings.home.sliderRoleDescription}
+          aria-label={strings.home.reviewsHeadline}
+          tabindex="0"
         >
           <div class="flex gap-6 md:gap-8 container-align pb-2 items-stretch">
             {featuredReviews.map((review) => (
@@ -372,11 +414,13 @@ const featuredReviews = (await getCollection('reviews'))
         const gap = parseInt(style.gap || '24', 10);
         return card.getBoundingClientRect().width + gap;
       };
+      // prefers-reduced-motion respektieren
+      const reduceMotionR = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.querySelectorAll('[data-review-next]').forEach((b) =>
-        b.addEventListener('click', () => slider.scrollBy({ left: getStep(), behavior: 'smooth' }))
+        b.addEventListener('click', () => slider.scrollBy({ left: getStep(), behavior: reduceMotionR() ? 'auto' : 'smooth' }))
       );
       document.querySelectorAll('[data-review-prev]').forEach((b) =>
-        b.addEventListener('click', () => slider.scrollBy({ left: -getStep(), behavior: 'smooth' }))
+        b.addEventListener('click', () => slider.scrollBy({ left: -getStep(), behavior: reduceMotionR() ? 'auto' : 'smooth' }))
       );
 
       const updateNavState = () => {
@@ -391,11 +435,11 @@ const featuredReviews = (await getCollection('reviews'))
     })();
   </script>
 
-  <!-- USP / Trust-Badges -->
-  <section class="py-20 md:py-24">
-    <div class="max-w-7xl mx-auto px-6 md:px-10 grid md:grid-cols-3 gap-12 md:gap-10">
-      <div>
-        <svg class="mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- USP / Trust-Badges (S — supportive) -->
+  <section class="py-8 md:py-12 lg:py-16">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 grid md:grid-cols-3 gap-10 md:gap-12">
+      <div class="text-center md:text-left">
+        <svg class="block mx-auto md:mx-0 mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 3l8 3v6c0 4.5-3.2 8.3-8 9-4.8-0.7-8-4.5-8-9V6l8-3z" />
         </svg>
         <h3 class="font-serif text-2xl md:text-[1.7rem] mb-3">{h.uspPaymentsHeadline}</h3>
@@ -403,8 +447,8 @@ const featuredReviews = (await getCollection('reviews'))
           {h.uspPaymentsBody}
         </p>
       </div>
-      <div>
-        <svg class="mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <div class="text-center md:text-left">
+        <svg class="block mx-auto md:mx-0 mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="1.5" y="7" width="12" height="9" />
           <path d="M13.5 10h4l3 3v3h-7" />
           <circle cx="6" cy="18" r="1.7" />
@@ -415,8 +459,8 @@ const featuredReviews = (await getCollection('reviews'))
           {h.uspShippingBody}
         </p>
       </div>
-      <div>
-        <svg class="mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <div class="text-center md:text-left">
+        <svg class="block mx-auto md:mx-0 mb-6 text-[var(--color-ink-soft)]" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="9" />
           <path d="M8.5 14c0.9 1.3 2.1 2 3.5 2s2.6-0.7 3.5-2" />
           <circle cx="9" cy="10" r="0.6" fill="currentColor" />
@@ -430,13 +474,13 @@ const featuredReviews = (await getCollection('reviews'))
     </div>
   </section>
 
-  <!-- MAKING-OF -->
+  <!-- MAKING-OF (M) -->
   <section class="bg-[var(--color-bone)]">
-    <div class="max-w-7xl mx-auto px-6 md:px-10 py-24 md:py-32 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 py-12 md:py-20 lg:py-28 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
       <div class="order-2 md:order-1">
         <Image src={soEntsteht} alt={h.craftImageAlt} widths={[480, 720, 960, 1200]} sizes="(min-width: 768px) 50vw, 100vw" class="w-full h-auto" />
       </div>
-      <div class="order-1 md:order-2">
+      <div class="order-1 md:order-2 text-center md:text-left">
         <p class="eyebrow mb-4">{h.craftEyebrow}</p>
         <h2 class="mb-6">{h.craftHeadline}</h2>
         <p class="text-[var(--color-ink-soft)] leading-relaxed mb-4">

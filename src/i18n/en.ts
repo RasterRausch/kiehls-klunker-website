@@ -170,6 +170,7 @@ export const en: typeof de = {
     cardHoverLabel: 'Take a closer look',
     sliderNextProducts: 'Next products',
     sliderPrevProducts: 'Previous products',
+    sliderRoleDescription: 'Carousel',
     reviewsEyebrow: 'Reviews',
     reviewsHeadline: 'What customers say.',
     reviewsSub: 'Verified reviews straight from Etsy.',

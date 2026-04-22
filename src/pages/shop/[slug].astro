@@ -40,18 +40,18 @@ const placeholderFor = (variantName: string) => {
 ---
 
 <BaseLayout title={`${product.data.name} — Kiehls Klunker`} description={product.data.tagline}>
-  <section class="max-w-7xl mx-auto px-6 md:px-10 pt-10 pb-4">
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pt-6 md:pt-10 pb-4">
     <a href={p('/shop')} class="link-arrow"><span class="arrow arrow-left">←</span> {strings.product.backToShop}</a>
   </section>
 
-  <section class="max-w-7xl mx-auto px-6 md:px-10 pb-24 grid md:grid-cols-2 gap-12 lg:gap-20">
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pb-12 md:pb-20 lg:pb-28 grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-20">
     <!-- GALLERY -->
     <div data-gallery>
       <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-4">
         {images.map((img, i) => (
           <Image
             src={img}
-            alt={product.data.name}
+            alt=""
             loading={i === 0 ? 'eager' : 'lazy'}
             widths={[480, 720, 960, 1200]}
             sizes="(min-width: 768px) 45vw, 100vw"
@@ -140,7 +140,7 @@ const placeholderFor = (variantName: string) => {
           </button>
           <div id="personalization-panel" class="personalization-panel" data-personalization-panel hidden>
             <label class="eyebrow mb-2 block" for="personalization-input">{strings.product.personalizationLabel}</label>
-            <p class="text-sm text-[var(--color-ink-soft)] mb-3 leading-relaxed">
+            <p id="personalization-prompt" class="text-sm text-[var(--color-ink-soft)] mb-3 leading-relaxed">
               {product.data.personalizationPrompt ?? strings.product.personalizationPromptDefault}
             </p>
             <textarea
@@ -148,6 +148,7 @@ const placeholderFor = (variantName: string) => {
               class="personalization-input"
               rows="3"
               maxlength="256"
+              aria-describedby="personalization-prompt"
               data-personalization-input
             ></textarea>
             <p class="personalization-counter text-xs text-[var(--color-ink-mute)] mt-1 text-right">

@@ -24,6 +24,8 @@ const p = (path: string) => localizedPath(path, lang);
 <aside
   id="cart-drawer"
   class="fixed top-0 right-0 bottom-0 w-full sm:w-[440px] bg-[var(--color-paper)] z-[100] flex flex-col shadow-[-10px_0_40px_rgba(28,28,26,0.08)]"
+  role="dialog"
+  aria-modal="true"
   aria-labelledby="cart-drawer-title"
   aria-hidden="true"
 >
@@ -75,7 +77,7 @@ const p = (path: string) => localizedPath(path, lang);
       </span>
     </label>
 
-    <p id="cart-drawer-error" class="hidden text-xs text-[var(--color-ink)] bg-[var(--color-bone-deep)] px-3 py-2 mb-3"></p>
+    <p id="cart-drawer-error" role="alert" aria-live="assertive" class="hidden text-xs text-[var(--color-ink)] bg-[var(--color-bone-deep)] px-3 py-2 mb-3"></p>
     <button
       type="button"
       id="cart-drawer-checkout"
@@ -234,13 +236,39 @@ const p = (path: string) => localizedPath(path, lang);
       }
     };
 
+    // Focus-Trap: speichere das vorher fokussierte Element, fange Tab im Drawer ab,
+    // gib Fokus zurück beim Schließen.
+    const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    let previouslyFocused = null;
+    const getFocusables = () => Array.from(drawer.querySelectorAll(FOCUSABLE)).filter((el) => !el.hidden && el.offsetParent !== null);
+    const trapFocus = (e) => {
+      if (e.key !== 'Tab' || drawer.dataset.open !== 'true') return;
+      const focusables = getFocusables();
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
     const open = () => {
+      previouslyFocused = document.activeElement;
       render();
       drawer.dataset.open = 'true';
       overlay.dataset.open = 'true';
       drawer.setAttribute('aria-hidden', 'false');
       overlay.setAttribute('aria-hidden', 'false');
       document.body.dataset.cartOpen = 'true';
+      // Fokus nach Slide-In ins Drawer verschieben (erster fokussierbarer = Close-Button)
+      setTimeout(() => {
+        const first = getFocusables()[0];
+        first?.focus();
+      }, 120);
     };
     const close = () => {
       drawer.dataset.open = 'false';
@@ -248,13 +276,22 @@ const p = (path: string) => localizedPath(path, lang);
       drawer.setAttribute('aria-hidden', 'true');
       overlay.setAttribute('aria-hidden', 'true');
       document.body.dataset.cartOpen = 'false';
+      // Fokus zurück auf das Element, das den Drawer geöffnet hat
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+        previouslyFocused.focus();
+      }
+      previouslyFocused = null;
     };
 
     // Events
     window.addEventListener('cart:open', open);
     window.addEventListener('cart:close', close);
     window.addEventListener('cart:changed', () => { if (drawer.dataset.open === 'true') render(); });
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer.dataset.open === 'true') close(); });
+    window.addEventListener('keydown', (e) => {
+      if (drawer.dataset.open !== 'true') return;
+      if (e.key === 'Escape') close();
+      else trapFocus(e);
+    });
 
     // Open-Trigger (Header-Cart-Icon etc.)
     document.querySelectorAll('[data-cart-open]').forEach((btn) => {

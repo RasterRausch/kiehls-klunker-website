@@ -33,20 +33,20 @@ const brandDesc = lang === 'en' ? brandDescEN : brandDescDE;
 const tagline = lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzig';
 ---
 
-<!-- Newsletter-Postkarte — eigener Block vor dem Footer -->
-<section class="bg-[var(--color-bone)] py-20 md:py-28">
+<!-- Newsletter-Postkarte (M) — eigener Block vor dem Footer -->
+<section class="bg-[var(--color-bone)] py-12 md:py-20 lg:py-28">
   <div class="max-w-7xl mx-auto px-6 md:px-10">
     <div class="max-w-4xl mx-auto bg-[var(--color-paper)] border border-[var(--color-hairline)] shadow-[0_2px_30px_rgba(28,28,26,0.04)]">
       <!-- Innerer „Postkarten-Rahmen" -->
       <div class="m-2 border border-[var(--color-hairline)]/60 px-8 py-10 md:px-14 md:py-14">
         <div class="md:grid md:grid-cols-[1.15fr_auto_1fr] md:gap-10 md:items-center">
           <!-- Nachricht -->
-          <div>
+          <div class="text-center md:text-left">
             <p class="eyebrow mb-4">{n.eyebrow}</p>
             <p class="font-serif italic text-2xl md:text-[1.85rem] leading-[1.3] mb-4 text-[var(--color-ink)]">
               {n.headline}
             </p>
-            <p class="text-sm text-[var(--color-ink-soft)] leading-relaxed max-w-sm">
+            <p class="text-sm text-[var(--color-ink-soft)] leading-relaxed max-w-sm mx-auto md:mx-0">
               {n.body}
             </p>
           </div>
@@ -80,13 +80,13 @@ const tagline = lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzi
 </section>
 
 <footer class="bg-[var(--color-surface-dark)] text-[var(--color-paper)]">
-  <div class="max-w-7xl mx-auto px-6 md:px-10 py-16 grid gap-12 md:grid-cols-4">
+  <div class="max-w-7xl mx-auto px-6 md:px-10 py-8 md:py-12 lg:py-16 grid gap-10 md:gap-12 md:grid-cols-4 text-center md:text-left">
     <div class="md:col-span-2">
-      <Image src={logo} alt="Kiehls Klunker" class="h-6 md:h-7 w-auto mb-5 brightness-0 invert opacity-90" />
-      <p class="text-sm text-[var(--color-paper)]/65 max-w-xs leading-relaxed mb-6">
+      <Image src={logo} alt="" class="h-6 md:h-7 w-auto mb-5 brightness-0 invert opacity-90 mx-auto md:mx-0" />
+      <p class="text-sm text-[var(--color-paper)]/85 max-w-xs leading-relaxed mb-6 mx-auto md:mx-0">
         {brandDesc}
       </p>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center justify-center md:justify-start gap-4">
         <a
           href="https://www.instagram.com/kiehlsklunker/"
           target="_blank"
@@ -131,7 +131,7 @@ const tagline = lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzi
     </div>
   </div>
   <div class="border-t border-[var(--color-paper)]/10">
-    <div class="max-w-7xl mx-auto px-6 md:px-10 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-[var(--color-paper)]/45">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-[var(--color-paper)]/75">
       <p>{interpolate(strings.footer.copyright, { year })}</p>
       <p>{tagline}</p>
     </div>

@@ -167,6 +167,7 @@ export const de = {
     cardHoverLabel: 'Näher betrachten',
     sliderNextProducts: 'Nächste Produkte',
     sliderPrevProducts: 'Vorherige Produkte',
+    sliderRoleDescription: 'Karussell',
     reviewsEyebrow: 'Bewertungen',
     reviewsHeadline: 'Was Kundinnen sagen.',
     reviewsSub: 'Verifizierte Bewertungen direkt von Etsy.',
