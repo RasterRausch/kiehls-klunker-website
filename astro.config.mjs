@@ -1,15 +1,16 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { loadEnv } from 'vite';
 
 import tailwindcss from '@tailwindcss/vite';
 import svelte from '@astrojs/svelte';
 import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
 
-// Site-URL ist pro Umgebung unterschiedlich — auf Staging z. B.
-// https://p-bn7b5m.project.space/, auf Production https://kiehls-klunker.de.
-// Steuerbar über .env → PUBLIC_SITE_URL.
-const siteUrl = process.env.PUBLIC_SITE_URL || 'https://kiehls-klunker.de';
+// .env wird beim Build nicht automatisch in die Astro-Config geladen,
+// deshalb holen wir PUBLIC_SITE_URL explizit über Vite's loadEnv.
+const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
+const siteUrl = env.PUBLIC_SITE_URL || 'https://kiehls-klunker.de';
 
 export default defineConfig({
   site: siteUrl,
