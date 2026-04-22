@@ -161,6 +161,16 @@ export const en: typeof de = {
   legalNotice: {
     body: 'Legal information in German only — please contact us with any questions.',
   },
+  notFound: {
+    pageTitle: 'Page not found — Kiehls Klunker',
+    eyebrow: 'Error 404',
+    headline: 'Nothing here.',
+    body: 'This page doesn\'t exist (anymore). Maybe the link was outdated, or a letter went astray. A few friendly ways back:',
+    linkHome: 'Back to home',
+    linkShop: 'To the shop',
+    linkEinzelstuecke: 'See one-offs',
+    linkContact: 'Get in touch',
+  },
   home: {
     pageTitle: 'Kiehls Klunker — Handmade titanium hair jewelry',
     heroSubtitle: 'for your hair',

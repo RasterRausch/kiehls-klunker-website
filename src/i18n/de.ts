@@ -158,6 +158,16 @@ export const de = {
   legalNotice: {
     body: 'Legal information in German only — please contact us with any questions.',
   },
+  notFound: {
+    pageTitle: 'Seite nicht gefunden — Kiehls Klunker',
+    eyebrow: 'Fehler 404',
+    headline: 'Hier ist nichts.',
+    body: 'Diese Seite gibt es nicht (mehr). Vielleicht war der Link veraltet, oder ein Buchstabe hat sich verirrt. Hier ein paar freundliche Wege zurück:',
+    linkHome: 'Zur Startseite',
+    linkShop: 'In den Shop',
+    linkEinzelstuecke: 'Einzelstücke ansehen',
+    linkContact: 'Kontakt aufnehmen',
+  },
   home: {
     pageTitle: 'Kiehls Klunker — Handgefertigter Haarschmuck aus Titan',
     heroSubtitle: 'for your hair',
