@@ -40,7 +40,12 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const products = await getCollection('products');
     const productMap = new Map(products.map((p) => [p.id, p]));
 
-    const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+    // Hinter einem Reverse-Proxy (Mittwald) sieht Node nur die interne URL
+    // (localhost:3000). Für Stripe-Redirects & Bild-URLs brauchen wir die
+    // öffentliche Domain — aus PUBLIC_SITE_URL, mit url.origin als Fallback.
+    const publicSiteUrl = (process.env.PUBLIC_SITE_URL || (import.meta.env as any).PUBLIC_SITE_URL || '').replace(/\/$/, '');
+    const origin = publicSiteUrl || url.origin;
+    const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(origin);
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     for (const raw of items) {
@@ -62,7 +67,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
 
       const imgSrc = product.data.images?.[0]?.src;
       const imageUrl = imgSrc && !isLocalhost
-        ? new URL(imgSrc, url.origin).toString()
+        ? new URL(imgSrc, origin).toString()
         : undefined;
 
       // Varianten validieren & als String aufbereiten
@@ -121,8 +126,8 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
       mode: 'payment',
       line_items: lineItems,
       locale: lang === 'en' ? 'en' : 'de',
-      success_url: `${url.origin}${langPrefix}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${url.origin}${langPrefix}/checkout/cancel`,
+      success_url: `${origin}${langPrefix}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}${langPrefix}/checkout/cancel`,
       shipping_address_collection: { allowed_countries: [...ALLOWED_COUNTRIES] },
       shipping_options: [
         {
