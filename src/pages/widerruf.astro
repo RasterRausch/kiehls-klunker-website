@@ -3,16 +3,160 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import LegalEnNotice from '../components/LegalEnNotice.astro';
 ---
 
-<BaseLayout title="Widerrufsbelehrung — Kiehls Klunker" description="Widerrufsbelehrung für Verbraucher.">
+<BaseLayout title="Widerrufsbelehrung — Kiehls Klunker" description="Widerrufsbelehrung für Verbraucher und Muster-Widerrufsformular.">
   <LegalEnNotice />
   <section class="max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-20 lg:py-28">
-    <p class="eyebrow mb-4">Rechtliches</p>
-    <h1 class="mb-10">Widerrufsbelehrung</h1>
+    <div class="max-w-2xl mx-auto text-center mb-10 md:mb-12">
+      <p class="eyebrow mb-4">Rechtliches</p>
+      <h1>Widerrufsbelehrung</h1>
+    </div>
 
-    <div class="text-[var(--color-ink-soft)] leading-relaxed space-y-4">
-      <p class="bg-[var(--color-bone-deep)] px-4 py-3 text-sm text-[var(--color-ink)]">
-        Platzhalter — die Widerrufsbelehrung wird hier eingefügt, sobald die finale Fassung vorliegt.
+    <div class="widerruf-body text-[var(--color-ink-soft)] leading-relaxed">
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">Widerrufsrecht</h2>
+        <p class="mb-4">
+          Verbraucherinnen und Verbraucher haben das Recht, binnen vierzehn Tagen ohne
+          Angabe von Gründen diesen Vertrag zu widerrufen.
+        </p>
+        <p class="mb-4">
+          Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ihnen
+          benannter Dritter, der nicht der Beförderer ist, die Ware in Besitz genommen
+          haben bzw. hat. Bei einer Bestellung mehrerer Waren im Rahmen einer einheitlichen
+          Bestellung, die getrennt geliefert werden, beginnt die Frist erst mit dem Tag,
+          an dem Sie oder ein von Ihnen benannter Dritter, der nicht der Beförderer ist,
+          die letzte Ware in Besitz genommen haben bzw. hat.
+        </p>
+        <p class="mb-4">
+          Um Ihr Widerrufsrecht auszuüben, müssen Sie uns
+        </p>
+        <p class="mb-4 pl-4 border-l border-[var(--color-hairline)]">
+          <span class="ink-strong">Kathrin Kiehl — Kiehls Klunker</span><br />
+          Verwaltungsring 12<br />
+          04571 Rötha OT Espenhain<br />
+          Deutschland<br />
+          E-Mail: info@kiehls-klunker.de<br />
+          Telefon: +49 177 3868982
+        </p>
+        <p class="mb-4">
+          mittels einer eindeutigen Erklärung (z.&nbsp;B. ein mit der Post versandter Brief
+          oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.
+          Sie können dafür das beigefügte Muster-Widerrufsformular verwenden, das jedoch
+          nicht vorgeschrieben ist.
+        </p>
+        <p>
+          Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die
+          Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">Folgen des Widerrufs</h2>
+        <p class="mb-4">
+          Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von
+          Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der
+          zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der
+          Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt
+          haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag
+          zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei
+          uns eingegangen ist.
+        </p>
+        <p class="mb-4">
+          Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der
+          ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde
+          ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen
+          dieser Rückzahlung Entgelte berechnet.
+        </p>
+        <p class="mb-4">
+          Wir können die Rückzahlung verweigern, bis wir die Waren wieder zurückerhalten
+          haben oder bis Sie den Nachweis erbracht haben, dass Sie die Waren zurückgesandt
+          haben, je nachdem, welches der frühere Zeitpunkt ist.
+        </p>
+        <p class="mb-4">
+          Sie haben die Waren unverzüglich und in jedem Fall spätestens binnen vierzehn
+          Tagen ab dem Tag, an dem Sie uns über den Widerruf dieses Vertrags unterrichten,
+          an uns zurückzusenden oder zu übergeben. Die Frist ist gewahrt, wenn Sie die
+          Waren vor Ablauf der Frist von vierzehn Tagen absenden.
+        </p>
+        <p class="mb-4 ink-strong">
+          Sie tragen die unmittelbaren Kosten der Rücksendung der Waren.
+        </p>
+        <p>
+          Sie müssen für einen etwaigen Wertverlust der Waren nur aufkommen, wenn dieser
+          Wertverlust auf einen zur Prüfung der Beschaffenheit, Eigenschaften und
+          Funktionsweise der Waren nicht notwendigen Umgang mit ihnen zurückzuführen ist.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">Ausschluss des Widerrufsrechts</h2>
+        <p class="mb-4">
+          Das Widerrufsrecht besteht gemäß § 312g Abs. 2 BGB nicht bei Verträgen
+        </p>
+        <ul class="list-disc pl-6 space-y-2 mb-4">
+          <li>
+            zur Lieferung von Waren, die nicht vorgefertigt sind und für deren Herstellung
+            eine individuelle Auswahl oder Bestimmung durch den Verbraucher maßgeblich ist
+            oder die eindeutig auf die persönlichen Bedürfnisse des Verbrauchers zugeschnitten
+            sind (Nr.&nbsp;1).
+          </li>
+        </ul>
+        <p>
+          Dies betrifft insbesondere Klunker, die auf Kundenwunsch in einer Sondergröße,
+          Sonderfarbe oder sonstigen individuellen Ausführung angefertigt werden (z.&nbsp;B.
+          Eingaben im Personalisierungsfeld „Wunschmaß" oder „Wunschfarbe"). Standardartikel
+          aus dem Sortiment, die ausschließlich in einer bereits vorgegebenen Variante
+          (Länge, Farbe) bestellt wurden, sind von diesem Ausschluss nicht erfasst.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">Muster-Widerrufsformular</h2>
+        <p class="mb-4 text-sm italic">
+          Wenn Sie den Vertrag widerrufen wollen, können Sie dieses Formular ausfüllen und
+          zurücksenden. Die Verwendung ist freiwillig.
+        </p>
+
+        <div class="bg-[var(--color-bone-deep)] px-5 py-5 md:px-6 md:py-6 text-sm text-[var(--color-ink)] space-y-3">
+          <p>An:</p>
+          <p class="pl-4">
+            Kathrin Kiehl — Kiehls Klunker<br />
+            Verwaltungsring 12<br />
+            04571 Rötha OT Espenhain<br />
+            Deutschland<br />
+            E-Mail: info@kiehls-klunker.de
+          </p>
+          <hr class="border-[var(--color-hairline)]" />
+          <p>
+            Hiermit widerrufe(n) ich/wir <span class="text-[var(--color-ink-mute)]">(*)</span> den
+            von mir/uns <span class="text-[var(--color-ink-mute)]">(*)</span> abgeschlossenen Vertrag
+            über den Kauf der folgenden Waren <span class="text-[var(--color-ink-mute)]">(*)</span> /
+            die Erbringung der folgenden Dienstleistung <span class="text-[var(--color-ink-mute)]">(*)</span>:
+          </p>
+          <p>___________________________________________</p>
+          <p>Bestellt am <span class="text-[var(--color-ink-mute)]">(*)</span> / erhalten am <span class="text-[var(--color-ink-mute)]">(*)</span>:</p>
+          <p>___________________________________________</p>
+          <p>Name des/der Verbraucher(s):</p>
+          <p>___________________________________________</p>
+          <p>Anschrift des/der Verbraucher(s):</p>
+          <p>___________________________________________</p>
+          <p>Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier):</p>
+          <p>___________________________________________</p>
+          <p>Datum:</p>
+          <p>___________________________________________</p>
+          <p class="text-xs text-[var(--color-ink-mute)] pt-2">
+            <span>(*)</span> Unzutreffendes streichen.
+          </p>
+        </div>
+      </section>
+
+      <p class="text-sm text-[var(--color-ink-mute)] mt-16">
+        Stand: 22. April 2026
       </p>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .widerruf-body .ink-strong { color: var(--color-ink); font-weight: 500; }
+</style>

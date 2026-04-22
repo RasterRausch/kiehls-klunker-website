@@ -30,7 +30,7 @@ export const en: typeof de = {
     title: 'Shop',
     allProducts: 'All products',
     headline: 'Hair jewelry, handmade.',
-    subheadline: 'Every piece is handcrafted individually from pure titanium — light, durable, hypoallergenic.',
+    subheadline: 'Every piece is handcrafted individually — in titanium or brass, durable and full of character.',
     categoryAll: 'All',
     category: {
       haarforken: 'Hair forks',
@@ -49,6 +49,12 @@ export const en: typeof de = {
   },
   product: {
     backToShop: 'Back to shop',
+    galleryLabel: 'Product gallery',
+    galleryThumbLabel: 'Show image {index}',
+    mainPrev: 'Previous image',
+    mainNext: 'Next image',
+    thumbsPrev: 'Previous images',
+    thumbsNext: 'More images',
     soldOut: 'Sold out',
     inStock: 'In stock',
     onlyLeft: 'Only {count} left',

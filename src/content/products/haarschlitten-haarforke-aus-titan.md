@@ -1,5 +1,28 @@
 ---
 name: "Haarschlitten, Haarforke aus Titan"
+nameEn: "Haarschlitten — titanium hair fork (curved)"
+bodyEn: |
+  The Haarschlitten ("hair sled") is a pared-back titanium hair fork. Once tucked in, the curve of the fork wraps around the loop of your bun and disappears under the hairstyle — so it looks as if you were wearing two separate sticks.
+  The surface is matte, only the edge and tips are polished.
+
+  Happy to shorten it free of charge, or forge a longer version on request.
+
+  The Haarschlitten can also be anodized in various colors. Just get in touch for color info.
+  (Possible: brown, purple, dark and light blue, lilac/pink, mint green, yellow, rainbow, a mix — or of course the surprise mix!)
+
+
+  ### Measurements
+
+  - 11.5 cm × 2 cm (× 2.2 cm) / 4.5″ × 0.79″ (× 0.87″)
+  - Usable length = overall length
+
+  ### Material
+
+  Titanium
+
+  ### How it's made
+
+  Goldsmithing
 category: "haarforken"
 material: "Titan"
 price: 43

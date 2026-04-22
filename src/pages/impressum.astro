@@ -6,9 +6,11 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
 <BaseLayout title="Impressum — Kiehls Klunker" description="Impressum und Anbieterkennzeichnung von Kiehls Klunker.">
   <LegalEnNotice />
   <section class="max-w-7xl mx-auto px-6 md:px-10 py-12 md:py-20 lg:py-28">
-    <div class="impressum">
-      <p class="eyebrow mb-4">Rechtliches</p>
-      <h1 class="mb-14">Impressum</h1>
+    <div class="impressum mx-auto">
+      <div class="max-w-2xl mx-auto text-center mb-10 md:mb-14">
+        <p class="eyebrow mb-4">Rechtliches</p>
+        <h1>Impressum</h1>
+      </div>
 
       <div class="impressum-body">
         <section>
@@ -46,10 +48,14 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
         </section>
 
         <section>
-          <h2>Umsatzsteuer-ID</h2>
-          <p>
+          <h2>Umsatzsteuer</h2>
+          <p class="mb-3">
             Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br />
             <span class="ink-strong">DE274123989</span>
+          </p>
+          <p>
+            Gemäß § 19 UStG (Kleinunternehmerregelung) wird keine Umsatzsteuer berechnet
+            und daher nicht gesondert ausgewiesen.
           </p>
         </section>
 

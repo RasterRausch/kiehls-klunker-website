@@ -1,5 +1,26 @@
 ---
 name: "Federforke, Haarforke aus Titan, einfarbig"
+nameEn: "Feather fork — titanium hair fork, solid color"
+bodyEn: |
+  The Federforke is an ultra-minimalist titanium hair fork. In your hair it looks as delicate as a sheet of paper — but looks are deceiving. Titanium is a remarkably strong material, so this little thing holds firm. On top of that it's feather-light and completely corrosion-resistant: washable, comfortable to wear, a proper space-age metal.
+
+  Available in a range of colors and sizes. Custom sizes and color combinations on request, happy to make it work :-)
+  Questions always welcome!
+
+  ### Measurements
+
+  - **small** — 11 cm × 2 cm (usable length: 9 cm) / 4.3″ × 0.79″
+  - **medium** — 12.5 cm × 2 cm (usable length: 10.5 cm) / 4.9″ × 0.79″
+  - **large** — 14 cm × 2 cm (usable length: 12 cm) / 5.5″ × 0.79″
+  - **Weight** — 8–10 g depending on size
+
+  ### Material
+
+  Titanium
+
+  ### How it's made
+
+  Classic goldsmithing techniques
 category: "haarforken"
 material: "Titan"
 price: 49

@@ -6,14 +6,19 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
 <BaseLayout title="AGB — Kiehls Klunker" description="Allgemeine Geschäftsbedingungen.">
   <LegalEnNotice />
   <section class="max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-20 lg:py-28">
-    <p class="eyebrow mb-4">Rechtliches</p>
-    <h1 class="mb-10">Allgemeine Geschäftsbedingungen</h1>
+    <div class="max-w-2xl mx-auto text-center mb-10 md:mb-12">
+      <p class="eyebrow mb-4">Rechtliches</p>
+      <h1>Allgemeine Geschäftsbedingungen</h1>
+    </div>
 
     <div class="agb-body text-[var(--color-ink-soft)] leading-relaxed">
       <p class="bg-[var(--color-bone-deep)] px-4 py-3 text-sm text-[var(--color-ink)] mb-10">
-        Hinweis: Diese AGB sind ein Entwurf. Vor Shop-Start bitte von einem Fachanwalt
-        oder einem AGB-Service (z. B. IT-Recht.de, eRecht24, Händlerbund) prüfen
-        und die mit <em>[Platzhalter]</em> markierten Stellen ergänzen lassen.
+        Hinweis: Diese AGB wurden sorgfältig für einen Kleinunternehmer-Handwerksshop
+        formuliert. Vor Shop-Start empfehlen wir trotzdem eine Prüfung durch einen
+        Fachanwalt für IT-/Handelsrecht oder einen AGB-Service
+        (z.&nbsp;B. <a href="https://www.it-recht-kanzlei.de/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">IT-Recht-Kanzlei</a>,
+        <a href="https://www.e-recht24.de/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">eRecht24</a>,
+        <a href="https://www.haendlerbund.de/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">Händlerbund</a>).
       </p>
 
       <section class="mb-10">
@@ -70,13 +75,29 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       <section class="mb-10">
         <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 5 Lieferung &amp; Versand</h2>
         <p class="mb-3">
-          Der Versand erfolgt innerhalb von 2–9 Werktagen nach Zahlungseingang per DHL.
-          Die Lieferung erfolgt innerhalb Deutschlands sowie in ausgewählte Länder der
-          Europäischen Union. Lieferung an Packstationen ist möglich.
+          Der Versand erfolgt in der Regel innerhalb von 2–9 Werktagen nach Zahlungseingang
+          per DHL. Da jedes Stück handgefertigt wird, kann die Bearbeitungszeit in
+          Einzelfällen abweichen; der Kunde wird in diesem Fall per E-Mail informiert.
+          Lieferung an DHL-Packstationen ist möglich.
+        </p>
+        <p class="mb-3">
+          Die Lieferung erfolgt innerhalb Deutschlands sowie in folgende Länder der
+          Europäischen Union: Österreich, Belgien, Tschechische Republik, Dänemark,
+          Spanien, Finnland, Frankreich, Ungarn, Irland, Italien, Luxemburg, Niederlande,
+          Polen, Portugal, Schweden, Slowenien, Slowakei. Lieferungen in die Schweiz
+          sowie in weitere Länder sind auf Anfrage möglich; die genauen Konditionen
+          werden vorab individuell abgestimmt.
+        </p>
+        <p class="mb-3">
+          Bei Bestellungen mehrerer Artikel ist eine Teillieferung grundsätzlich nicht
+          vorgesehen — sollte ein Artikel ausnahmsweise verzögert werden, stimmen wir
+          uns mit dem Kunden ab. Zusätzliche Kosten entstehen dem Kunden durch eine
+          Teillieferung nicht.
         </p>
         <p>
-          <em>[Platzhalter]</em> Hinweise zu Lieferverzögerungen, Teillieferungen und
-          Versand in Drittländer bitte ergänzen.
+          Die Gefahr des zufälligen Untergangs oder der zufälligen Verschlechterung der
+          Ware geht bei Verbrauchern erst mit Übergabe der Ware an den Kunden oder eine
+          empfangsberechtigte Person über (§&nbsp;446 BGB).
         </p>
       </section>
 
@@ -104,10 +125,19 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
 
       <section class="mb-10">
         <h2 class="font-serif text-2xl mb-4 text-[var(--color-ink)]">§ 8 Gewährleistung</h2>
+        <p class="mb-3">
+          Es gelten die gesetzlichen Gewährleistungsrechte. Die Gewährleistungsfrist
+          beträgt bei neuen Waren zwei Jahre ab Erhalt der Ware.
+        </p>
+        <p class="mb-3">
+          Da jedes Stück handgefertigt ist, können leichte Abweichungen in Form, Farbe und
+          Oberflächen­struktur auftreten; diese sind ein Ausdruck der Einzelanfertigung und
+          stellen keinen Mangel im Rechtssinne dar.
+        </p>
         <p>
-          Es gelten die gesetzlichen Gewährleistungsrechte.
-          <em>[Platzhalter]</em> Abweichende Regelungen (z. B. verkürzte Fristen bei
-          gebrauchten Waren) hier einfügen.
+          Beanstandungen richten Verbraucher bitte formlos per E-Mail an
+          info@kiehls-klunker.de oder postalisch an die im Impressum genannte Anschrift.
+          Wir bemühen uns, gemeinsam eine faire und zügige Lösung zu finden.
         </p>
       </section>
 
@@ -138,7 +168,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <p class="text-sm text-[var(--color-ink-mute)] mt-16">
-        Stand: <em>[Platzhalter: Datum der letzten Aktualisierung]</em>
+        Stand: 22. April 2026
       </p>
     </div>
   </section>

@@ -134,94 +134,6 @@ function yamlString(s) {
   return `"${s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 }
 
-// —— Varianten-Normalisierung —————————————————————————————————————
-// Property-Namen → deutsche, konsistente Bezeichnung
-const VARIANT_NAME_MAP = {
-  'primary color': 'Farbe',
-  'secondary color': 'Farbe',
-  'color': 'Farbe',
-  'colour': 'Farbe',
-  'farbe': 'Farbe',
-  'length': 'Länge',
-  'länge': 'Länge',
-  'size': 'Größe',
-  'größe': 'Größe',
-  'material': 'Material',
-  'hair type': 'Haartyp',
-  'style': 'Stil',
-};
-function normalizeVariantName(raw) {
-  const key = raw.trim().toLowerCase();
-  return VARIANT_NAME_MAP[key] ?? raw.trim();
-}
-
-// Werte säubern: führende Sortier-Nummer entfernen ("0 ohne" → "ohne"),
-// aber NICHT bei Maß-Gruppen (da sind Zahlen echte Maße: "10 cm").
-// Leerzeichen/Smileys trimmen, leere Fragezeichen-Placeholder zu "Wunschmaß"
-function cleanVariantValue(raw, groupName = '') {
-  let v = String(raw).trim();
-  const isMeasure = /länge|größe|length|size/i.test(groupName);
-  if (!isMeasure) {
-    // Sortier-Präfix wegputzen: "0 ", "11 ", "1. ", "01 - "
-    v = v.replace(/^\s*\d+[.)\s-]+/, '').trim();
-  }
-  // Emoji + Smileys am Ende entfernen
-  v = v.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
-  v = v.replace(/\s*:-?\)\s*$/, '').trim();
-  // Typische "Wunsch"-Platzhalter einheitlich
-  if (/^\?+\s*(cm)?$/i.test(v) || /^\?\s*-\s*länge/i.test(v)) return 'Wunschmaß';
-  return v;
-}
-
-// —— Beschreibungs-Normalisierung ————————————————————————————————
-// Konservativ: Nur klar erkennbare Struktur (Maße/Material/Herstellungsart)
-// in Markdown-Sektionen umschreiben. Alles andere bleibt wie es ist.
-function normalizeDescription(raw) {
-  let desc = (raw || '').trim();
-  if (!desc) return desc;
-
-  // Trailing-Anker ergänzen, damit Sektionen am Dokumenten-Ende auch matchen
-  desc += '\n\n';
-
-  // 1) "!!! ... !!!"-Hinweise → kursive Betonung
-  desc = desc.replace(/!!!\s*([^!]+?)\s*!!!/g, '*$1*');
-
-  // 2) Typografie: "11cm x 2cm" → "11cm × 2cm"
-  desc = desc.replace(
-    /(\d[\d,]*\s*(?:cm|mm)?)\s*[xX]\s*(\d[\d,]*\s*(?:cm|mm))/gi,
-    '$1 × $2',
-  );
-
-  // 3) Strukturierte Sektionen: Header: + Content bis zum nächsten Header/Leerzeile
-  //    (kein /m Flag → $ ≠ Zeilenende; Sektionsende nur via \n\n oder nächstem Header)
-  const headers = ['Maße', 'Material', 'Herstellungsart'];
-  for (const header of headers) {
-    const stopPattern = headers.map((h) => `${h}:`).join('|');
-    const re = new RegExp(
-      `(^|\\n)${header}:\\s*\\n([\\s\\S]+?)(?=\\n\\s*(?:${stopPattern})|\\n{2,})`,
-    );
-    desc = desc.replace(re, (_m, prefix, content) => {
-      const lines = content
-        .split(/\n+/)
-        .map((l) => l.trim())
-        .filter(Boolean);
-      // Single-Liner ohne ":" → als Absatz
-      if (lines.length === 1 && !/:/.test(lines[0])) {
-        return `${prefix}### ${header}\n\n${lines[0]}`;
-      }
-      // Mehrzeilig / Key-Value → Liste
-      const items = lines.map((line) => {
-        const m = line.match(/^([^:]+):\s*(.+)$/);
-        if (m) return `- **${m[1].trim()}** — ${m[2].trim()}`;
-        return `- ${line}`;
-      });
-      return `${prefix}### ${header}\n\n${items.join('\n')}`;
-    });
-  }
-
-  return desc.trim();
-}
-
 // Werte sortieren: Längen numerisch aufsteigend, Farben alphabetisch,
 // "Wunsch..."-Einträge ans Ende
 function sortVariantValue(groupName, a, b) {
@@ -313,16 +225,15 @@ async function syncProducts() {
     const variants = [];
     try {
       const inv = await etsy(`/listings/${listing.listing_id}/inventory`);
-      const byName = new Map(); // normalisierter Name → Set<value>
+      const byName = new Map(); // Property-Name → Set<value> (1:1 aus Etsy)
       for (const prod of inv.products || []) {
         for (const pv of prod.property_values || []) {
-          const rawName = (pv.property_name || '').trim();
-          if (!rawName) continue;
-          const name = normalizeVariantName(rawName);
+          const name = (pv.property_name || '').trim();
+          if (!name) continue;
           const values = Array.isArray(pv.values) ? pv.values : [];
           if (!byName.has(name)) byName.set(name, new Set());
           for (const v of values) {
-            const vt = cleanVariantValue(String(v), name);
+            const vt = String(v).trim();
             if (vt) byName.get(name).add(vt);
           }
         }
@@ -435,7 +346,7 @@ async function syncProducts() {
       ...(preservedPersonalizationPrompt ? [`personalizationPrompt: ${yamlString(preservedPersonalizationPrompt)}`] : []),
       '---',
       '',
-      normalizeDescription(listing.description || ''),
+      (listing.description || '').trim(),
       '',
     ];
 

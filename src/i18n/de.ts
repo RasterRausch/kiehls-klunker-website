@@ -27,7 +27,7 @@ export const de = {
     title: 'Shop',
     allProducts: 'Alle Produkte',
     headline: 'Haarschmuck, handgefertigt.',
-    subheadline: 'Jedes Stück wird einzeln von Hand aus Reintitan gefertigt — leicht, langlebig, hypoallergen.',
+    subheadline: 'Jedes Stück wird einzeln von Hand geschmiedet — aus Titan oder Messing, langlebig und mit Charakter.',
     categoryAll: 'Alle',
     category: {
       haarforken: 'Haarforken',
@@ -46,6 +46,12 @@ export const de = {
   },
   product: {
     backToShop: 'Zurück zum Shop',
+    galleryLabel: 'Produktgalerie',
+    galleryThumbLabel: 'Bild {index} anzeigen',
+    mainPrev: 'Vorheriges Bild',
+    mainNext: 'Nächstes Bild',
+    thumbsPrev: 'Vorherige Bilder',
+    thumbsNext: 'Weitere Bilder',
     soldOut: 'Ausverkauft',
     inStock: 'Auf Lager',
     onlyLeft: 'Noch {count} verfügbar',

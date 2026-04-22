@@ -1,5 +1,25 @@
 ---
 name: "Haarnudel, Haarforke aus Titan, titanium hair fork"
+nameEn: "Haarnudel — titanium hair fork (hammered)"
+bodyEn: |
+  Haarnudel ("hair noodle")
+
+  The Haarnudel is a titanium hair fork forged and bent from a single piece of metal. It carries a bold hammer-mark pattern that can be anodized in a variety of colors. The edges are colored too. The main surface is matte, only the edges and tips are polished.
+  At just 9 g and with its broad, smooth contact surface, it's remarkably comfortable to wear.
+
+  Available in other lengths and/or color combinations — just ask.
+
+  ### Measurements
+
+  12.5 cm × 2.5 cm (4.9″ × 0.98″)
+
+  ### Material
+
+  Titanium
+
+  ### How it's made
+
+  Classic goldsmithing techniques
 category: "haarforken"
 material: "Titan"
 price: 49

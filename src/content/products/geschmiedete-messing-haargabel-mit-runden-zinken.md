@@ -1,5 +1,27 @@
 ---
 name: "Geschmiedete Messing-Haargabel mit runden Zinken"
+nameEn: "Forged brass hair fork with rounded prongs"
+bodyEn: |
+  Uncompromisingly simple and timeless — a hair fork made of solid brass. It's forged from a single bent round wire, hand-flattened at the bend, which makes it seriously sturdy.
+  Works beautifully whether your hair is fine or thick, and even handles straight, heavy hair with ease. Also available in titanium — just search my shop (and find it)!
+
+  *Please note your preferred size (small, medium, large) with your order.*
+  Other sizes are of course possible — just drop me a line.
+
+
+
+  **Measurements**
+  small:  10.5 cm × approx. 2 cm (4.1″ × 0.79″)
+  medium: 12.4 cm × approx. 2 cm (4.9″ × 0.79″)
+  large:  14 cm × approx. 2 cm (5.5″ × 0.79″)
+  Wire diameter: 3 mm (0.12″)
+  (fork width may vary by 2–3 mm, as every piece is 100% handmade)
+
+  **Material**
+  Brass
+
+  **How it's made**
+  Saw, bend, whack it with a hammer…
 category: "haarforken"
 material: "Messing"
 price: 42

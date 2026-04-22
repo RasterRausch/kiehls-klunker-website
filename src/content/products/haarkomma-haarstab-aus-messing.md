@@ -1,5 +1,27 @@
 ---
 name: "Haarkomma, Haarstab aus Messing"
+nameEn: "Brass hair comma (hairstick)"
+bodyEn: |
+  The Haarkomma is a minimalist, lightweight hairstick made of brass. Its distinctive shape holds your hair reliably in place.
+  With its simple design and warm golden brass hue, the stick feels timeless and elegant — a chic hair accessory for pretty much any occasion or outfit.
+  Available in a smooth matte finish or a hammered variation (see photos).
+  The surface is matte or hammered, edges and tips are polished — gentle on your hair.
+
+  Other sizes are available on request — just get in touch!
+  Not sure what length you need? Feel free to message me.
+
+
+  ### Measurements
+
+  - 9 cm / 10.5 cm / 12 cm / custom length × 1.5 cm (3.5″ / 4.1″ / 4.7″ / custom × 0.59″)
+  - Usable length = overall length
+  - **Weight** — around 14 g (depending on length)
+
+  Material
+  Brass
+
+  How it's made
+  Goldsmithing
 category: "haarstaebe"
 material: "Messing"
 price: 36

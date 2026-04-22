@@ -5,6 +5,11 @@ const productSchema = ({ image }: { image: () => ReturnType<typeof z.any> }) =>
   z.object({
     name: z.string(),
     tagline: z.string().optional(),
+    // Englische Übersetzungen — manuell gepflegt bis Etsy-EN-Sync bereitsteht.
+    // Fehlt ein Feld, fällt der EN-Shop auf den DE-Inhalt zurück.
+    nameEn: z.string().optional(),
+    taglineEn: z.string().optional(),
+    bodyEn: z.string().optional(),
     category: z.enum(['haarforken', 'haarstaebe', 'haarspangen', 'zopfhalter', 'ohrschmuck']),
     price: z.number(),
     priceDE: z.number().optional(),

@@ -1,5 +1,28 @@
 ---
 name: "Haarforke aus Titan, geschmiedet"
+nameEn: "Forged titanium hair fork"
+bodyEn: |
+  Titanium hair fork
+
+
+  Uncompromisingly simple and timeless — a hair fork forged from pure titanium. It's made from a single bent round wire, hand-flattened at the bend.
+  Titanium is extraordinarily strong and remarkably light, which makes these forks feather-light (6–8 g!) while still rock-solid — a great choice for fine or thin hair. As an added bonus, titanium is highly corrosion-resistant, so feel free to take it swimming with you.
+
+  *Please note your preferred size (small, medium, large) with your order.*
+  Other sizes are of course possible — just drop me a line.
+
+  **Measurements**
+  small:  10.5 cm × approx. 1.6 cm (4.1″ × 0.63″)
+  medium: 12.4 cm × approx. 1.6 cm (4.9″ × 0.63″)
+  large:  14 cm × approx. 1.6 cm (5.5″ × 0.63″)
+  Wire diameter: 3 mm (0.12″)
+  (fork width may vary by 2–3 mm, as every piece is 100% handmade)
+
+  **Material**
+  Titanium
+
+  **How it's made**
+  Saw, bend, whack it with a hammer…
 category: "haarforken"
 material: "Titan"
 price: 46

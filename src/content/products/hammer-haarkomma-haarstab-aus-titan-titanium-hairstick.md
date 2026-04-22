@@ -1,5 +1,30 @@
 ---
 name: "Hammer-Haarkomma, Haarstab aus Titan, titanium hairstick"
+nameEn: "Hammered titanium hair comma (hairstick)"
+bodyEn: |
+  Hammered hair comma
+
+  The Haarkomma is a minimalist, ultra-light hairstick made of titanium. Its distinctive shape holds your hair reliably in place.
+  At just about 8 g, it's well suited for fine or thin hair.
+  True to its name, the Hammer-Haarkomma has a hammer-mark pattern that gives the stick its distinctive texture. It can also be anodized in a range of colors (see photos) for different looks.
+  The surface is matte, edges and tips are polished — gentle on your hair.
+
+  Other sizes are available on request — just get in touch!
+  Not sure what length you need? Feel free to message me.
+
+
+  ### Measurements
+
+  - Your chosen length × 1.5 cm (0.59″)
+  - Usable length = overall length
+
+  ### Material
+
+  Titanium
+
+  ### How it's made
+
+  Classic goldsmithing techniques
 category: "haarstaebe"
 material: "Titan"
 price: 39

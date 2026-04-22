@@ -55,12 +55,13 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
       if (!product) {
         return json({ error: interpolate(s.errorUnknownProduct, { id }) }, 400);
       }
+      const displayName = (lang === 'en' && product.data.nameEn) ? product.data.nameEn : product.data.name;
       if (!product.data.available) {
-        return json({ error: interpolate(s.errorUnavailable, { name: product.data.name }) }, 400);
+        return json({ error: interpolate(s.errorUnavailable, { name: displayName }) }, 400);
       }
       if (product.data.stock !== undefined && product.data.stock < qty) {
         return json(
-          { error: interpolate(s.errorStock, { name: product.data.name, stock: product.data.stock }) },
+          { error: interpolate(s.errorStock, { name: displayName, stock: product.data.stock }) },
           400,
         );
       }
@@ -77,10 +78,10 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
         for (const group of product.data.variants) {
           const chosen = String(rawVariants[group.name] ?? '').trim();
           if (!chosen) {
-            return json({ error: interpolate(s.errorVariantMissing, { name: product.data.name, group: group.name }) }, 400);
+            return json({ error: interpolate(s.errorVariantMissing, { name: displayName, group: group.name }) }, 400);
           }
           if (!group.values.includes(chosen)) {
-            return json({ error: interpolate(s.errorVariantInvalid, { name: product.data.name, group: group.name }) }, 400);
+            return json({ error: interpolate(s.errorVariantInvalid, { name: displayName, group: group.name }) }, 400);
           }
           validatedVariants[group.name] = chosen;
         }
@@ -90,8 +91,8 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
         .map((k) => `${k}: ${validatedVariants[k]}`)
         .join(' · ');
       const productName = variantLabel
-        ? `${product.data.name} — ${variantLabel}`
-        : product.data.name;
+        ? `${displayName} — ${variantLabel}`
+        : displayName;
 
       // Personalisierungstext nur übernehmen, wenn Produkt auch personalisierbar ist
       const rawPersonalization =

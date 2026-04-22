@@ -1,5 +1,27 @@
 ---
 name: "Hammerforke, Haarforke aus Titan"
+nameEn: "Hammered titanium hair fork"
+bodyEn: |
+  A minimalist titanium hair fork with a hammer-mark pattern, forged from a single piece of metal.
+  Titanium is a remarkably strong yet lightweight material, which makes the Hammerforke a sturdy hair holder despite its delicate look. You barely notice it in your hair. On top of that, titanium is extremely corrosion-resistant — you can take the fork pretty much anywhere: into the shower, into the sea, behind Niagara Falls, into a steel mill, into outer space, even inside your own body (though that one might get tricky — not because of the fork).
+
+  Available in a range of colors and sizes. Custom sizes on request, happy to make it work :-)
+  Questions always welcome!
+
+  ### Measurements
+
+  - **small** — 11 cm (usable length: 9 cm) / 4.3″
+  - **medium** — 12.5 cm (usable length: 10.5 cm) / 4.9″
+  - **large** — 14 cm (usable length: 12 cm) / 5.5″
+  - **Weight** — 8–10 g depending on size
+
+  ### Material
+
+  Titanium
+
+  ### How it's made
+
+  Classic goldsmithing techniques
 category: "haarforken"
 material: "Titan"
 price: 52
