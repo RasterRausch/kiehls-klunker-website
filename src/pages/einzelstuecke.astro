@@ -119,7 +119,7 @@ const piecesWithLightboxSrcs = await Promise.all(
       <!-- Grid -->
       <div class="shop-products">
         <div
-          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-7 lg:gap-8"
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-start gap-5 md:gap-7 lg:gap-8"
           data-piece-grid
         >
           {piecesWithLightboxSrcs.map(({ piece, materialLabel }, idx) => (
@@ -389,13 +389,22 @@ const piecesWithLightboxSrcs = await Promise.all(
   </script>
 
   <style>
-    /* Kachel — Basis wie Shop-Card, aber Button statt a */
+    /* Kachel — Button als Flex-Column mit EXPLIZITEM justify-content: flex-start.
+       Safari setzt bei <button> intern `justify-content: center` als Default,
+       wodurch der Content vertikal zentriert wird wenn das Grid die Zelle
+       stretcht. Deshalb hier explizit flex-start erzwingen. */
     .piece-card {
       background: none;
       border: 0;
       padding: 0;
       width: 100%;
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      align-self: start;
+      text-align: left;
     }
     .piece-card:focus-visible {
       outline: 2px solid var(--color-gold);
