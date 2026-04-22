@@ -4,6 +4,7 @@ import type { de } from './de';
 export const en: typeof de = {
   nav: {
     shop: 'Shop',
+    einzelstuecke: 'One-offs',
     about: 'About',
     contact: 'Contact',
     cart: 'Cart',
@@ -197,6 +198,32 @@ export const en: typeof de = {
   },
   shopPage: {
     pageTitle: 'Shop — Kiehls Klunker',
+  },
+  einzelstuecke: {
+    pageTitle: 'One-offs — Kiehls Klunker',
+    title: 'One-offs',
+    headline: 'Unique pieces from the studio.',
+    subheadline: 'The pieces shown here have already been sold. Feel free to draw inspiration and enquire about a variation or a custom remake.',
+    materialLabel: 'Material',
+    materialAll: 'All',
+    materials: {
+      Titan: 'Titanium',
+      Messing: 'Brass',
+      Silber: 'Silver',
+      Neusilber: 'Nickel silver',
+      Bronze: 'Bronze',
+    },
+    filterShow: 'Show filters',
+    filterHide: 'Hide filters',
+    piecesCount: 'one-offs',
+    filterEmpty: 'No one-offs match your filter.',
+    filterReset: 'Reset filter',
+    inquireCta: 'Request a remake',
+    lightboxClose: 'Close',
+    lightboxPrev: 'Previous image',
+    lightboxNext: 'Next image',
+    lightboxCounter: '{index} / {total}',
+    cardViewLabel: 'View images',
   },
   about: {
     pageTitle: 'About — Kiehls Klunker',

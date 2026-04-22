@@ -1,6 +1,7 @@
 export const de = {
   nav: {
     shop: 'Shop',
+    einzelstuecke: 'Einzelstücke',
     about: 'Über mich',
     contact: 'Kontakt',
     cart: 'Warenkorb',
@@ -194,6 +195,32 @@ export const de = {
   },
   shopPage: {
     pageTitle: 'Shop — Kiehls Klunker',
+  },
+  einzelstuecke: {
+    pageTitle: 'Einzelstücke — Kiehls Klunker',
+    title: 'Einzelstücke',
+    headline: 'Unikate aus der Werkstatt.',
+    subheadline: 'Die hier gezeigten Einzelstücke sind bereits verkauft, gern kannst Du Dich inspirieren lassen und eine Variation oder einen Nachbau anfragen.',
+    materialLabel: 'Material',
+    materialAll: 'Alle',
+    materials: {
+      Titan: 'Titan',
+      Messing: 'Messing',
+      Silber: 'Silber',
+      Neusilber: 'Neusilber',
+      Bronze: 'Bronze',
+    },
+    filterShow: 'Filter einblenden',
+    filterHide: 'Filter ausblenden',
+    piecesCount: 'Einzelstücke',
+    filterEmpty: 'Keine Einzelstücke entsprechen deinem Filter.',
+    filterReset: 'Filter zurücksetzen',
+    inquireCta: 'Nachbau anfragen',
+    lightboxClose: 'Schließen',
+    lightboxPrev: 'Vorheriges Bild',
+    lightboxNext: 'Nächstes Bild',
+    lightboxCounter: '{index} / {total}',
+    cardViewLabel: 'Bilder ansehen',
   },
   about: {
     pageTitle: 'Über mich — Kiehls Klunker',

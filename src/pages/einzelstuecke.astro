@@ -1,0 +1,595 @@
+---
+import { getCollection } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getLang, t, localizedPath } from '../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const p = (path: string) => localizedPath(path, lang);
+const e = strings.einzelstuecke;
+
+const allPieces = (await getCollection('einzelstuecke'))
+  .sort((a, b) => a.data.order - b.data.order);
+
+// Materialien in fester Reihenfolge (wie die alte Seite).
+const materialOrder = ['Silber', 'Titan', 'Messing', 'Neusilber', 'Bronze'] as const;
+
+const activeMaterials = materialOrder.filter((m) =>
+  allPieces.some((p) => p.data.material === m),
+);
+const materialCounts = activeMaterials.map((m) => ({
+  key: m,
+  label: (e.materials as Record<string, string>)[m] ?? m,
+  count: allPieces.filter((p) => p.data.material === m).length,
+}));
+
+const materialMap = e.materials as Record<string, string>;
+
+// Bilder als optimierte Varianten vorbereiten — die Lightbox lädt diese direkt.
+// Für die Grid-Kachel reicht Astros <Image> mit Widths/Sizes.
+const piecesWithLightboxSrcs = await Promise.all(
+  allPieces.map(async (piece) => {
+    const lightboxImages = await Promise.all(
+      piece.data.images.map(async (img) => {
+        const opt = await getImage({
+          src: img,
+          widths: [800, 1200, 1600, 2000],
+          sizes: '(min-width: 768px) 90vw, 100vw',
+          format: 'webp',
+        });
+        return {
+          src: opt.src,
+          srcset: opt.srcSet.attribute,
+        };
+      }),
+    );
+    const materialLabel = materialMap[piece.data.material] ?? piece.data.material;
+    return { piece, lightboxImages, materialLabel };
+  }),
+);
+---
+
+<BaseLayout title={e.pageTitle} description={e.subheadline}>
+  <!-- Header -->
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pt-12 md:pt-20 lg:pt-28 pb-8 md:pb-12">
+    <div class="max-w-2xl mx-auto text-center">
+      <p class="eyebrow mb-3">{e.title}</p>
+      <h1 class="mb-6">{e.headline}</h1>
+      <p class="text-[var(--color-ink-soft)] leading-relaxed">
+        {e.subheadline}
+      </p>
+    </div>
+  </section>
+
+  <hr class="hairline" />
+
+  <!-- Toolbar: Filter-Toggle + Count -->
+  <div class="max-w-7xl mx-auto px-6 md:px-10 pt-5 md:pt-6 pb-4 flex items-center justify-between">
+    <button
+      type="button"
+      class="filter-toggle"
+      data-filter-toggle
+      aria-expanded="false"
+      aria-controls="einzelstuecke-filter-panel"
+    >
+      <span class="filter-toggle-icon" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+      <span data-filter-toggle-label>{e.filterShow}</span>
+    </button>
+    <p class="text-sm text-[var(--color-ink-mute)]">
+      <span data-piece-count>{allPieces.length}</span> {e.piecesCount}
+    </p>
+  </div>
+
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pb-12 md:pb-20 lg:pb-28">
+    <div class="shop-layout" data-shop-layout data-filter-open="false">
+      <!-- Filter-Panel -->
+      <aside
+        id="einzelstuecke-filter-panel"
+        class="shop-filter"
+        data-filter-root
+        aria-hidden="true"
+      >
+        <div class="shop-filter-inner">
+          <p class="eyebrow mb-6">{e.materialLabel}</p>
+          <div class="space-y-3">
+            {materialCounts.map((mat) => (
+              <label class="filter-check flex items-center gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  name="material"
+                  value={mat.key}
+                  class="filter-check-input sr-only"
+                />
+                <span class="filter-check-box" aria-hidden="true"></span>
+                <span class="text-sm text-[var(--color-ink)] group-hover:text-[var(--color-ink-warm)] transition-colors">
+                  {mat.label}
+                </span>
+                <span class="text-xs text-[var(--color-ink-mute)]">{mat.count}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      <!-- Grid -->
+      <div class="shop-products">
+        <div
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-7 lg:gap-8"
+          data-piece-grid
+        >
+          {piecesWithLightboxSrcs.map(({ piece, materialLabel }, idx) => (
+              <button
+                type="button"
+                class="piece-card group/card block text-left"
+                data-material={piece.data.material}
+                data-piece-idx={idx}
+                aria-label={`${piece.data.name} — ${e.cardViewLabel}`}
+              >
+                <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-3">
+                  <Image
+                    src={piece.data.images[0]}
+                    alt=""
+                    widths={[300, 480, 640, 900]}
+                    sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 50vw"
+                    class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700"
+                  />
+                  {piece.data.images.length > 1 && (
+                    <span class="piece-count-badge" aria-hidden="true">
+                      {piece.data.images.length}
+                    </span>
+                  )}
+                </div>
+                <h3 class="font-sans text-[0.95rem] md:text-base font-medium leading-snug tracking-normal mb-1 text-[var(--color-ink)]">{piece.data.name}</h3>
+                <p class="text-xs md:text-sm text-[var(--color-ink-soft)]">
+                  {materialLabel}{piece.data.stones ? ` · ${piece.data.stones}` : ''}
+                </p>
+              </button>
+          ))}
+        </div>
+
+        <p class="hidden mt-16 text-center text-sm text-[var(--color-ink-mute)]" data-empty-state>
+          {e.filterEmpty} <button type="button" class="underline underline-offset-4 hover:text-[var(--color-ink)] transition-colors" data-filter-reset>{e.filterReset}</button>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- JSON-Daten für die Lightbox: für jedes Piece alle Bilder mit Varianten -->
+  <script type="application/json" id="einzelstuecke-data" set:html={JSON.stringify(
+    piecesWithLightboxSrcs.map(({ piece, lightboxImages }) => ({
+      id: piece.id,
+      name: piece.data.name,
+      material: (e.materials as Record<string, string>)[piece.data.material] ?? piece.data.material,
+      stones: piece.data.stones ?? '',
+      images: lightboxImages,
+    })),
+  )}></script>
+
+  <!-- Lightbox -->
+  <div
+    class="lightbox"
+    id="einzelstuecke-lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="lightbox-title"
+    aria-hidden="true"
+    data-lightbox
+    hidden
+  >
+    <button
+      type="button"
+      class="lightbox-close"
+      aria-label={e.lightboxClose}
+      data-lightbox-close
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <line x1="6" y1="6" x2="18" y2="18" stroke-linecap="round"/>
+        <line x1="18" y1="6" x2="6" y2="18" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="lightbox-nav lightbox-prev"
+      aria-label={e.lightboxPrev}
+      data-lightbox-prev
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <line x1="19" y1="12" x2="5" y2="12" stroke-linecap="round"/>
+        <polyline points="11 6 5 12 11 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="lightbox-stage" data-lightbox-stage>
+      <div class="lightbox-frame">
+        <img class="lightbox-img" alt="" data-lightbox-img />
+        <div class="lightbox-info">
+          <div class="lightbox-meta">
+            <h2 id="lightbox-title" class="lightbox-title" data-lightbox-title></h2>
+            <p class="lightbox-sub" data-lightbox-sub></p>
+          </div>
+          <div class="lightbox-actions">
+            <span class="lightbox-counter" data-lightbox-counter aria-live="polite"></span>
+            <a
+              href={p('/kontakt')}
+              class="lightbox-inquire"
+              data-lightbox-inquire
+            >
+              {e.inquireCta} <span class="arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="lightbox-nav lightbox-next"
+      aria-label={e.lightboxNext}
+      data-lightbox-next
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/>
+        <polyline points="13 6 19 12 13 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <script is:inline define:vars={{
+    filterShow: e.filterShow,
+    filterHide: e.filterHide,
+    lightboxCounterTpl: e.lightboxCounter,
+  }}>
+    (() => {
+      // —— Filter (Material) ————————————————————————————————
+      const layout = document.querySelector('[data-shop-layout]');
+      const grid = document.querySelector('[data-piece-grid]');
+      const root = document.querySelector('[data-filter-root]');
+      if (!layout || !grid || !root) return;
+
+      const cards = grid.querySelectorAll('.piece-card');
+      const materialInputs = root.querySelectorAll('input[name="material"]');
+      const countEl = document.querySelector('[data-piece-count]');
+      const emptyEl = document.querySelector('[data-empty-state]');
+      const toggleBtn = document.querySelector('[data-filter-toggle]');
+      const toggleLabel = document.querySelector('[data-filter-toggle-label]');
+
+      const apply = () => {
+        const active = [...materialInputs].filter((i) => i.checked).map((i) => i.value);
+        let shown = 0;
+        cards.forEach((card) => {
+          const visible = active.length === 0 || active.includes(card.dataset.material);
+          card.classList.toggle('hidden', !visible);
+          if (visible) shown++;
+        });
+        if (countEl) countEl.textContent = String(shown);
+        if (emptyEl) emptyEl.classList.toggle('hidden', shown !== 0);
+      };
+      const reset = () => {
+        materialInputs.forEach((i) => (i.checked = false));
+        apply();
+      };
+
+      materialInputs.forEach((i) => i.addEventListener('change', apply));
+      document.querySelectorAll('[data-filter-reset]').forEach((btn) => {
+        btn.addEventListener('click', reset);
+      });
+
+      const setOpen = (open) => {
+        layout.dataset.filterOpen = String(open);
+        root.setAttribute('aria-hidden', String(!open));
+        toggleBtn?.setAttribute('aria-expanded', String(open));
+        if (toggleLabel) toggleLabel.textContent = open ? filterHide : filterShow;
+        toggleBtn?.classList.toggle('is-open', open);
+      };
+      toggleBtn?.addEventListener('click', () => {
+        setOpen(layout.dataset.filterOpen !== 'true');
+      });
+
+      // —— Lightbox ——————————————————————————————————————————
+      const dataEl = document.getElementById('einzelstuecke-data');
+      if (!dataEl) return;
+      const pieces = JSON.parse(dataEl.textContent);
+
+      const lightbox = document.querySelector('[data-lightbox]');
+      const lbImg = lightbox?.querySelector('[data-lightbox-img]');
+      const lbTitle = lightbox?.querySelector('[data-lightbox-title]');
+      const lbSub = lightbox?.querySelector('[data-lightbox-sub]');
+      const lbCounter = lightbox?.querySelector('[data-lightbox-counter]');
+      const lbPrev = lightbox?.querySelector('[data-lightbox-prev]');
+      const lbNext = lightbox?.querySelector('[data-lightbox-next]');
+      const lbClose = lightbox?.querySelector('[data-lightbox-close]');
+      if (!lightbox || !lbImg) return;
+
+      let currentPieceIdx = 0;
+      let currentImgIdx = 0;
+      let previouslyFocused = null;
+      const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const setImage = () => {
+        const piece = pieces[currentPieceIdx];
+        if (!piece) return;
+        const img = piece.images[currentImgIdx];
+        if (!img) return;
+        lbImg.src = img.src;
+        lbImg.srcset = img.srcset;
+        lbImg.sizes = '(min-width: 768px) 90vw, 100vw';
+        lbImg.alt = piece.name;
+        lbTitle.textContent = piece.name;
+        lbSub.textContent = piece.material + (piece.stones ? ' · ' + piece.stones : '');
+        const total = piece.images.length;
+        lbCounter.textContent = total > 1 ? lightboxCounterTpl.replace('{index}', String(currentImgIdx + 1)).replace('{total}', String(total)) : '';
+        // Nav-Buttons nur zeigen wenn mehrere Bilder
+        [lbPrev, lbNext].forEach((btn) => {
+          if (!btn) return;
+          btn.style.display = total > 1 ? '' : 'none';
+        });
+      };
+
+      const openLightbox = (pieceIdx) => {
+        currentPieceIdx = pieceIdx;
+        currentImgIdx = 0;
+        previouslyFocused = document.activeElement;
+        setImage();
+        lightbox.hidden = false;
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        // Focus auf Close-Button
+        setTimeout(() => lbClose?.focus(), 10);
+      };
+
+      const closeLightbox = () => {
+        lightbox.hidden = true;
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        previouslyFocused?.focus?.();
+      };
+
+      const next = () => {
+        const total = pieces[currentPieceIdx]?.images.length ?? 1;
+        currentImgIdx = (currentImgIdx + 1) % total;
+        setImage();
+      };
+      const prev = () => {
+        const total = pieces[currentPieceIdx]?.images.length ?? 1;
+        currentImgIdx = (currentImgIdx - 1 + total) % total;
+        setImage();
+      };
+
+      cards.forEach((card) => {
+        card.addEventListener('click', () => {
+          const idx = parseInt(card.dataset.pieceIdx, 10);
+          if (!isNaN(idx)) openLightbox(idx);
+        });
+      });
+
+      lbClose?.addEventListener('click', closeLightbox);
+      lbPrev?.addEventListener('click', prev);
+      lbNext?.addEventListener('click', next);
+
+      // Tastatur-Navigation
+      document.addEventListener('keydown', (ev) => {
+        if (lightbox.hidden) return;
+        if (ev.key === 'Escape') { ev.preventDefault(); closeLightbox(); }
+        else if (ev.key === 'ArrowLeft') { ev.preventDefault(); prev(); }
+        else if (ev.key === 'ArrowRight') { ev.preventDefault(); next(); }
+      });
+
+      // Klick auf Backdrop (oder Stage-Leerraum außerhalb Frame/Buttons) schließt
+      lightbox.addEventListener('click', (ev) => {
+        if (ev.target.closest('.lightbox-frame, .lightbox-nav, .lightbox-close')) return;
+        closeLightbox();
+      });
+    })();
+  </script>
+
+  <style>
+    /* Kachel — Basis wie Shop-Card, aber Button statt a */
+    .piece-card {
+      background: none;
+      border: 0;
+      padding: 0;
+      width: 100%;
+      cursor: pointer;
+    }
+    .piece-card:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 4px;
+    }
+
+    /* Badge mit Bildanzahl, wenn mehr als 1 Foto vorhanden */
+    .piece-count-badge {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      min-width: 1.5rem;
+      height: 1.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0.4rem;
+      background: rgba(252, 251, 248, 0.92);
+      color: var(--color-ink);
+      font-size: 0.7rem;
+      border: 1px solid var(--color-hairline);
+      border-radius: 999px;
+    }
+
+    /* —— Lightbox —————————————————————————————————— */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(28, 28, 26, 0.92);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: lightbox-in 0.2s ease;
+    }
+    .lightbox[hidden] { display: none; }
+    @keyframes lightbox-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .lightbox { animation: none; }
+    }
+
+    .lightbox-stage {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(3rem, 7vh, 4rem) clamp(3.5rem, 6vw, 5rem);
+      overflow-y: auto;
+    }
+
+    /* Frame: Bild + Info-Card gestacked, gemeinsam zentriert. */
+    .lightbox-frame {
+      display: flex;
+      flex-direction: column;
+      max-width: min(100%, 640px);
+      width: 100%;
+    }
+    @media (min-width: 1024px) {
+      .lightbox-frame {
+        max-width: min(100%, 720px);
+      }
+    }
+
+    /* Cap auf maximale Darstellungsgröße — verhindert Upscaling auf großen
+       Displays, wichtig bei Bildmaterial mit begrenzter Auflösung. */
+    .lightbox-img {
+      display: block;
+      width: 100%;
+      max-height: min(60vh, 520px);
+      object-fit: contain;
+      background: var(--color-bone);
+    }
+
+    /* Info-Card sitzt direkt unter dem Bild (keine Lücke, optisch zusammen). */
+    .lightbox-info {
+      background: var(--color-paper);
+      color: var(--color-ink);
+      padding: 1rem 1.25rem 1.1rem;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1.5rem;
+      border-top: 1px solid var(--color-hairline);
+    }
+    .lightbox-meta { min-width: 0; }
+    .lightbox-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+      font-weight: 400;
+      margin: 0 0 0.25rem;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      color: var(--color-ink);
+    }
+    .lightbox-sub {
+      font-size: 0.82rem;
+      color: var(--color-ink-soft);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .lightbox-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .lightbox-counter {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--color-ink-mute);
+    }
+    .lightbox-inquire {
+      color: var(--color-ink);
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--color-hairline);
+      padding-bottom: 2px;
+      transition: border-color 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+    }
+    .lightbox-inquire:hover {
+      border-color: var(--color-ink);
+      color: var(--color-gold-hover);
+    }
+    .lightbox-inquire .arrow {
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+    .lightbox-inquire:hover .arrow {
+      transform: translateX(3px);
+    }
+
+    .lightbox-close,
+    .lightbox-nav {
+      background: rgba(252, 251, 248, 0.12);
+      color: var(--color-paper);
+      border: 1px solid rgba(252, 251, 248, 0.24);
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .lightbox-close:hover,
+    .lightbox-nav:hover {
+      background: rgba(252, 251, 248, 0.22);
+      border-color: rgba(252, 251, 248, 0.4);
+    }
+    .lightbox-close:focus-visible,
+    .lightbox-nav:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 2;
+    }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
+    .lightbox-prev { left: 1rem; }
+    .lightbox-next { right: 1rem; }
+
+    /* Mobile: Info-Card stacked intern */
+    @media (max-width: 640px) {
+      .lightbox-info {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+      }
+      .lightbox-actions {
+        justify-content: space-between;
+      }
+      .lightbox-nav {
+        width: 2.25rem;
+        height: 2.25rem;
+      }
+      .lightbox-img {
+        max-height: 50vh;
+      }
+    }
+  </style>
+</BaseLayout>

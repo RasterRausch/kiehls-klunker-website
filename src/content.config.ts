@@ -46,6 +46,23 @@ const products = defineCollection({
   schema: productSchema,
 });
 
+// Einzelstücke — bereits verkaufte Unikate, nur zur Inspiration auf
+// /einzelstuecke. Kein Preis, keine Varianten, keine Produktseite.
+const einzelstuecke = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/einzelstuecke' }),
+  schema: ({ image }) =>
+    z.object({
+      name: z.string(),
+      material: z.enum(['Titan', 'Messing', 'Silber', 'Neusilber', 'Bronze']),
+      // Zusätzliche Beschreibung zu Stein/Einlage, optional
+      stones: z.string().optional(),
+      images: z.array(image()).min(1),
+      order: z.number().default(0),
+      // Wenn Kathrin das Material / den Namen verifizieren muss
+      needsReview: z.boolean().default(false),
+    }),
+});
+
 const reviews = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/reviews' }),
   schema: z.object({
@@ -60,4 +77,4 @@ const reviews = defineCollection({
   }),
 });
 
-export const collections = { products, reviews };
+export const collections = { products, einzelstuecke, reviews };
