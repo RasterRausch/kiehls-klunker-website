@@ -46,13 +46,13 @@ const heroMobileOpt = await getImage({
   <!-- HERO: Full-bleed, Bild als Hintergrund, Text links auf weißem Bereich -->
   <section class="relative w-full">
     <!-- Desktop: Bild als Hintergrund, Text absolut (ab lg, 1024px+) -->
-    <div class="hidden lg:block relative w-full">
+    <div class="hero-desktop hidden lg:block relative w-full">
       <Image
         src={hero}
         alt={h.heroImageAlt}
         widths={[960, 1440, 1920, 2560]}
         sizes="100vw"
-        class="hero-image w-full h-[min(62vh,540px)] lg:h-[min(74vh,720px)] xl:h-[min(82vh,840px)] object-cover"
+        class="hero-image w-full h-[min(62vh,540px)] lg:h-[min(74vh,680px)] xl:h-[min(82vh,820px)] object-cover"
         loading="eager"
       />
       <!-- Scrim: schützt die Headline vor dem Schmuckstück bei engen Viewports -->
@@ -60,11 +60,11 @@ const heroMobileOpt = await getImage({
       <div class="absolute inset-0 flex items-center">
         <div class="w-full max-w-7xl mx-auto px-6 md:px-10">
           <div class="max-w-[440px] lg:max-w-[560px] xl:max-w-[620px]">
-            <h1 class="hero-headline mb-6 lg:mb-10">Handmade<br />Jewels.</h1>
-            <p class="font-serif italic text-xl lg:text-2xl xl:text-3xl text-[var(--color-ink-soft)] mb-10 lg:mb-14">
+            <h1 class="hero-headline hero-title mb-6 lg:mb-10">Handmade<br />Jewels.</h1>
+            <p class="hero-subtitle font-serif italic text-xl lg:text-2xl xl:text-3xl text-[var(--color-ink-soft)] mb-10 lg:mb-14">
               {h.heroSubtitle}
             </p>
-            <p class="text-sm lg:text-base xl:text-lg text-[var(--color-ink-soft)] mb-10 leading-relaxed max-w-md">
+            <p class="hero-body text-sm lg:text-base xl:text-lg text-[var(--color-ink-soft)] mb-10 leading-relaxed max-w-md">
               {h.heroBody}
             </p>
             <div class="flex flex-wrap gap-3">
@@ -144,6 +144,34 @@ const heroMobileOpt = await getImage({
             rgba(241, 238, 229, 0.5) 40%,
             transparent 60%
           );
+        }
+      }
+
+      /* Short-Viewport-Optimierung: MacBook 13"/14" mit ~800–900px Höhe.
+         Headline ist schon via clamp(..., 13vh, ...) höhenabhängig;
+         hier nur noch die vertikalen Abstände straffen. */
+      @media (min-width: 1024px) and (max-height: 860px) {
+        .hero-desktop .hero-title {
+          margin-bottom: 1.25rem;
+        }
+        .hero-desktop .hero-subtitle {
+          margin-bottom: 1.75rem;
+          font-size: 1.375rem; /* text-xl */
+        }
+        .hero-desktop .hero-body {
+          margin-bottom: 1.75rem;
+          font-size: 0.9375rem;
+        }
+      }
+      @media (min-width: 1024px) and (max-height: 760px) {
+        .hero-desktop .hero-title {
+          margin-bottom: 1rem;
+        }
+        .hero-desktop .hero-subtitle {
+          margin-bottom: 1.25rem;
+        }
+        .hero-desktop .hero-body {
+          margin-bottom: 1.5rem;
         }
       }
     </style>

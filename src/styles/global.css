@@ -333,7 +333,9 @@ main:focus {
   .hero-headline {
     font-family: var(--font-serif);
     font-weight: 400;
-    font-size: clamp(3.5rem, 9vw, 9rem);
+    /* min(9vw, 13vh) — bei kurzen Viewports (MacBook 13"/900px) schrumpft
+       die Headline mit der Höhe mit, damit der Desktop-Hero nicht "gequetscht" wirkt. */
+    font-size: clamp(3.5rem, min(9vw, 13vh), 9rem);
     line-height: 0.92;
     letter-spacing: -0.035em;
     color: var(--color-ink);
