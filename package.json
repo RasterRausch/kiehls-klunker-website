@@ -9,11 +9,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "start": "node dist/server/entry.mjs",
+    "start": "astro build && node dist/server/entry.mjs",
     "astro": "astro",
     "auth:etsy": "node scripts/etsy-auth.mjs",
-    "sync:etsy": "node scripts/etsy-sync.mjs",
-    "postinstall": "node -e \"if(process.env.NODE_ENV==='production')require('child_process').execSync('npm run build',{stdio:'inherit'})\""
+    "sync:etsy": "node scripts/etsy-sync.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^10.0.5",
