@@ -1,5 +1,6 @@
 ---
 name: "Blauer Federkiel-Haarstab"
+nameEn: "Blue quill hairstick"
 material: "Titan"
 order: 8
 needsReview: true

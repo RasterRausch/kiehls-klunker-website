@@ -1,5 +1,6 @@
 ---
 name: "Krawatten-Haarforke"
+nameEn: "Tie hair fork"
 material: "Messing"
 order: 25
 needsReview: true

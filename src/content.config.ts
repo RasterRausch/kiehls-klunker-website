@@ -53,9 +53,11 @@ const einzelstuecke = defineCollection({
   schema: ({ image }) =>
     z.object({
       name: z.string(),
+      nameEn: z.string().optional(),
       material: z.enum(['Titan', 'Messing', 'Silber', 'Neusilber', 'Bronze']),
       // Zusätzliche Beschreibung zu Stein/Einlage, optional
       stones: z.string().optional(),
+      stonesEn: z.string().optional(),
       images: z.array(image()).min(1),
       order: z.number().default(0),
       // Wenn Kathrin das Material / den Namen verifizieren muss

@@ -1,5 +1,6 @@
 ---
 name: "Ramen-Haarforke"
+nameEn: "Ramen hair fork"
 material: "Messing"
 order: 34
 images:

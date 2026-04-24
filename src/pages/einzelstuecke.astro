@@ -45,7 +45,9 @@ const piecesWithLightboxSrcs = await Promise.all(
       }),
     );
     const materialLabel = materialMap[piece.data.material] ?? piece.data.material;
-    return { piece, lightboxImages, materialLabel };
+    const displayName = (lang === 'en' && piece.data.nameEn) ? piece.data.nameEn : piece.data.name;
+    const displayStones = (lang === 'en' && piece.data.stonesEn) ? piece.data.stonesEn : piece.data.stones;
+    return { piece, lightboxImages, materialLabel, displayName, displayStones };
   }),
 );
 ---
@@ -53,7 +55,7 @@ const piecesWithLightboxSrcs = await Promise.all(
 <BaseLayout title={e.pageTitle} description={e.subheadline}>
   <!-- Header -->
   <section class="max-w-7xl mx-auto px-6 md:px-10 pt-12 md:pt-20 lg:pt-28 pb-8 md:pb-12">
-    <div class="max-w-2xl mx-auto text-center">
+    <div class="max-w-2xl mx-auto md:mx-0 text-center md:text-left">
       <p class="eyebrow mb-3">{e.title}</p>
       <h1 class="mb-6">{e.headline}</h1>
       <p class="text-[var(--color-ink-soft)] leading-relaxed">
@@ -122,13 +124,13 @@ const piecesWithLightboxSrcs = await Promise.all(
           class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-start gap-5 md:gap-7 lg:gap-8"
           data-piece-grid
         >
-          {piecesWithLightboxSrcs.map(({ piece, materialLabel }, idx) => (
+          {piecesWithLightboxSrcs.map(({ piece, materialLabel, displayName, displayStones }, idx) => (
               <button
                 type="button"
                 class="piece-card group/card block text-left"
                 data-material={piece.data.material}
                 data-piece-idx={idx}
-                aria-label={`${piece.data.name} — ${e.cardViewLabel}`}
+                aria-label={`${displayName} — ${e.cardViewLabel}`}
               >
                 <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-3">
                   <Image
@@ -144,9 +146,9 @@ const piecesWithLightboxSrcs = await Promise.all(
                     </span>
                   )}
                 </div>
-                <h3 class="font-sans text-[0.95rem] md:text-base font-medium leading-snug tracking-normal mb-1 text-[var(--color-ink)]">{piece.data.name}</h3>
+                <h3 class="font-sans text-[0.95rem] md:text-base font-medium leading-snug tracking-normal mb-1 text-[var(--color-ink)]">{displayName}</h3>
                 <p class="text-xs md:text-sm text-[var(--color-ink-soft)]">
-                  {materialLabel}{piece.data.stones ? ` · ${piece.data.stones}` : ''}
+                  {materialLabel}{displayStones ? ` · ${displayStones}` : ''}
                 </p>
               </button>
           ))}
@@ -161,11 +163,11 @@ const piecesWithLightboxSrcs = await Promise.all(
 
   <!-- JSON-Daten für die Lightbox: für jedes Piece alle Bilder mit Varianten -->
   <script type="application/json" id="einzelstuecke-data" set:html={JSON.stringify(
-    piecesWithLightboxSrcs.map(({ piece, lightboxImages }) => ({
+    piecesWithLightboxSrcs.map(({ piece, lightboxImages, displayName, displayStones }) => ({
       id: piece.id,
-      name: piece.data.name,
+      name: displayName,
       material: (e.materials as Record<string, string>)[piece.data.material] ?? piece.data.material,
-      stones: piece.data.stones ?? '',
+      stones: displayStones ?? '',
       images: lightboxImages,
     })),
   )}></script>
@@ -193,21 +195,33 @@ const piecesWithLightboxSrcs = await Promise.all(
       </svg>
     </button>
 
-    <button
-      type="button"
-      class="lightbox-nav lightbox-prev"
-      aria-label={e.lightboxPrev}
-      data-lightbox-prev
-    >
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-        <line x1="19" y1="12" x2="5" y2="12" stroke-linecap="round"/>
-        <polyline points="11 6 5 12 11 18" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-
     <div class="lightbox-stage" data-lightbox-stage>
       <div class="lightbox-frame">
-        <img class="lightbox-img" alt="" data-lightbox-img />
+        <div class="lightbox-img-wrap">
+          <img class="lightbox-img" alt="" data-lightbox-img />
+          <button
+            type="button"
+            class="lightbox-nav lightbox-prev"
+            aria-label={e.lightboxPrev}
+            data-lightbox-prev
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12" stroke-linecap="round"/>
+              <polyline points="11 6 5 12 11 18" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="lightbox-nav lightbox-next"
+            aria-label={e.lightboxNext}
+            data-lightbox-next
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/>
+              <polyline points="13 6 19 12 13 18" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
         <div class="lightbox-info">
           <div class="lightbox-meta">
             <h2 id="lightbox-title" class="lightbox-title" data-lightbox-title></h2>
@@ -226,18 +240,6 @@ const piecesWithLightboxSrcs = await Promise.all(
         </div>
       </div>
     </div>
-
-    <button
-      type="button"
-      class="lightbox-nav lightbox-next"
-      aria-label={e.lightboxNext}
-      data-lightbox-next
-    >
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-        <line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/>
-        <polyline points="13 6 19 12 13 18" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
   </div>
 
   <script is:inline define:vars={{
@@ -456,8 +458,13 @@ const piecesWithLightboxSrcs = await Promise.all(
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(3rem, 7vh, 4rem) clamp(3.5rem, 6vw, 5rem);
+      padding: clamp(3rem, 7vh, 4rem) 1rem;
       overflow-y: auto;
+    }
+    @media (min-width: 768px) {
+      .lightbox-stage {
+        padding: clamp(3rem, 7vh, 4rem) clamp(2.5rem, 6vw, 5rem);
+      }
     }
 
     /* Frame: Bild + Info-Card gestacked, gemeinsam zentriert. */
@@ -471,6 +478,13 @@ const piecesWithLightboxSrcs = await Promise.all(
       .lightbox-frame {
         max-width: min(100%, 720px);
       }
+    }
+
+    /* Wrapper ums Bild — trägt die Prev/Next-Pfeile als relative Children,
+       damit die an der Bildkante kleben statt am Viewport-Rand. */
+    .lightbox-img-wrap {
+      position: relative;
+      display: block;
     }
 
     /* Cap auf maximale Darstellungsgröße — verhindert Upscaling auf großen
@@ -513,6 +527,7 @@ const piecesWithLightboxSrcs = await Promise.all(
     .lightbox-actions {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 1rem;
       flex-shrink: 0;
     }
@@ -520,6 +535,12 @@ const piecesWithLightboxSrcs = await Promise.all(
       font-size: 0.72rem;
       letter-spacing: 0.12em;
       color: var(--color-ink-mute);
+    }
+    /* Counter bei Einzelbild-Stücken (kein Text) komplett raus aus dem
+       Flex-Layout, damit kein Gap-Rest zwischen leerer Spalte und CTA
+       klafft. */
+    .lightbox-counter:empty {
+      display: none;
     }
     .lightbox-inquire {
       color: var(--color-ink);
@@ -543,8 +564,13 @@ const piecesWithLightboxSrcs = await Promise.all(
       transform: translateX(3px);
     }
 
-    .lightbox-close,
-    .lightbox-nav {
+    /* Close-Button bleibt auf dem Dunkel-Backdrop — dort greift der
+       hellere semi-transparente Look gut. */
+    .lightbox-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
       background: rgba(252, 251, 248, 0.12);
       color: var(--color-paper);
       border: 1px solid rgba(252, 251, 248, 0.24);
@@ -557,30 +583,64 @@ const piecesWithLightboxSrcs = await Promise.all(
       cursor: pointer;
       transition: background 0.2s ease, border-color 0.2s ease;
     }
-    .lightbox-close:hover,
-    .lightbox-nav:hover {
+    .lightbox-close:hover {
       background: rgba(252, 251, 248, 0.22);
       border-color: rgba(252, 251, 248, 0.4);
     }
-    .lightbox-close:focus-visible,
-    .lightbox-nav:focus-visible {
+    .lightbox-close:focus-visible {
       outline: 2px solid var(--color-gold);
       outline-offset: 3px;
     }
-    .lightbox-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      z-index: 2;
-    }
+
+    /* Nav-Pfeile — dieselbe Optik wie die PDP-Gallery-Buttons:
+       heller Bone-Hintergrund, dunkles Icon, runde Form mit Schatten.
+       Sitzen im .lightbox-img-wrap direkt an der Bildkante. */
     .lightbox-nav {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
       z-index: 2;
+      width: 2rem;
+      height: 2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(252, 251, 248, 0.92);
+      color: var(--color-ink);
+      border: 0;
+      border-radius: 999px;
+      box-shadow: 0 2px 14px rgba(28, 28, 26, 0.18);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.25s ease, background 0.2s ease, color 0.2s ease;
     }
-    .lightbox-prev { left: 1rem; }
-    .lightbox-next { right: 1rem; }
+    @media (min-width: 768px) {
+      .lightbox-nav { width: 2.5rem; height: 2.5rem; }
+    }
+    /* Bei Hover über das Bild und bei Fokus → sichtbar. */
+    .lightbox-img-wrap:hover .lightbox-nav,
+    .lightbox-img-wrap:focus-within .lightbox-nav,
+    .lightbox-nav:focus-visible {
+      opacity: 1;
+    }
+    .lightbox-nav:hover {
+      background: var(--color-ink);
+      color: var(--color-paper);
+    }
+    .lightbox-nav:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+    /* Touch-Geräte: dezent sichtbar lassen — keine Hover-State verfügbar. */
+    @media (hover: none) {
+      .lightbox-nav { opacity: 0.85; }
+    }
+    .lightbox-prev { left: 0.5rem; }
+    .lightbox-next { right: 0.5rem; }
+    @media (min-width: 768px) {
+      .lightbox-prev { left: 0.75rem; }
+      .lightbox-next { right: 0.75rem; }
+    }
 
     /* Mobile: Info-Card stacked intern */
     @media (max-width: 640px) {
@@ -590,14 +650,26 @@ const piecesWithLightboxSrcs = await Promise.all(
         gap: 0.75rem;
       }
       .lightbox-actions {
-        justify-content: space-between;
-      }
-      .lightbox-nav {
-        width: 2.25rem;
-        height: 2.25rem;
+        justify-content: flex-end;
       }
       .lightbox-img {
         max-height: 50vh;
+      }
+    }
+    /* Sehr schmale Viewports (Galaxy Z Fold closed ≈ 344px etc.) —
+       Info-Card-Padding straffen, Inquire-Text darf ausnahmsweise umbrechen
+       und in zwei Zeilen klein werden, damit nichts mehr überläuft. */
+    @media (max-width: 400px) {
+      .lightbox-info {
+        padding: 0.85rem 0.9rem 0.95rem;
+      }
+      .lightbox-inquire {
+        white-space: normal;
+        line-height: 1.4;
+      }
+      .lightbox-actions {
+        flex-wrap: wrap;
+        gap: 0.5rem 0.75rem;
       }
     }
   </style>

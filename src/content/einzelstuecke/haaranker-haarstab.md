@@ -1,5 +1,6 @@
 ---
 name: "Haaranker-Haarstab (lackiert)"
+nameEn: "Hair-anchor hairstick (lacquered)"
 material: "Messing"
 order: 14
 images:

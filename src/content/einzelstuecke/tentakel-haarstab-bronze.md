@@ -1,5 +1,6 @@
 ---
 name: "Tentakel-Haarstab"
+nameEn: "Tentacle hairstick"
 material: "Bronze"
 order: 50
 images:

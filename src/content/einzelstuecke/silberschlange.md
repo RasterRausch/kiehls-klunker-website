@@ -1,5 +1,6 @@
 ---
 name: "Silberschlange"
+nameEn: "Silver snake"
 material: "Silber"
 order: 46
 images:

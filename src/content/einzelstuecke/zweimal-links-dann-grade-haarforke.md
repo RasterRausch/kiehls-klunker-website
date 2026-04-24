@@ -1,5 +1,6 @@
 ---
 name: "Zweimal links, dann grade-Haarforke"
+nameEn: "Twice left, then straight hair fork"
 material: "Messing"
 order: 68
 needsReview: true
