@@ -19,7 +19,9 @@
 
 ## Deploy Flow (Staging)
 
-**Wichtig:** Der Mittwald-mittnite-Supervisor respawnt den Node-Job aktuell **nicht zuverlässig** nachdem der `npm start`-Prozess gekillt wurde (siehe Abschnitt unten). Daher starten wir Node in der Deploy-Kette manuell auf Port 3000 (wohin Apache den Reverse-Proxy leitet).
+Der in `/etc/mittnite.d/node.hcl` konfigurierte Job `node` wird per `mittnitectl` neu gestartet — das ist Mittwalds offizielle Empfehlung (bestätigt vom Support). `mittnitectl job restart node` macht den ganzen Zyklus (`npm start` = `astro build && node dist/server/entry.mjs`) und respawnt den Prozess sauber.
+
+**Was nicht funktioniert und warum:** Direkt den `node dist/server/entry.mjs`-Prozess killen — dann wartet der noch lebende `npm start`-Elterprozess auf sein Child, mittnite sieht den Job noch als „laufend" und startet nichts neu. Tot ist tot, aber keiner merkt's.
 
 ```bash
 # Lokal
@@ -29,26 +31,19 @@ git add . && git commit -m "…" && git push origin main
 ssh "info@raster-rausch.de@a-c8cb6q@ssh.altgemeinde.project.host" '
   cd ~/html/kiehls-klunker && \
   git pull --ff-only && \
-  kill $(ps -ef | awk "/node.*entry\\.mjs/ && !/awk/ {print \$2}") 2>/dev/null; \
-  npm run build && \
-  (HOST=0.0.0.0 PORT=3000 node dist/server/entry.mjs < /dev/null > /tmp/kk-node.log 2>&1 & disown); \
-  sleep 3 && echo "---done---" && tail -3 /tmp/kk-node.log
+  mittnitectl job restart node
 '
 ```
 
-Erwartete Ausgabe: `Server listening on http://localhost:3000`. Dann `curl -sI https://p-bn7b5m.project.space/` zum Smoke-Test — HTTP 200.
+Erwartete Ausgabe: `🥳 job node restarted`. Dann `curl -sI https://p-bn7b5m.project.space/` zum Smoke-Test — HTTP 200. Gesamter Deploy ≈ 5–8 Sekunden Downtime während der Build läuft.
 
-**Falls `git pull` wegen lokaler `package-lock.json`-Änderungen scheitert:** `git checkout -- package-lock.json` vorwegschicken. Kommt vor, wenn `npm install` auf dem Server lief (z. B. neue Dep im Commit).
+**Falls `git pull` wegen lokaler `package-lock.json`-Änderungen scheitert:** `git checkout -- package-lock.json` vorwegschicken. Kommt vor, wenn ein `npm install` frühere Lockfile-Änderungen gemacht hat, die nicht in Git sind.
 
-**Bei neuen npm-Deps:** zwischen `git pull` und `npm run build` ein `npm install --no-audit --no-fund` einfügen.
+**Bei neuen npm-Deps:** `mittnitectl job restart node` läuft `npm start`, was vor dem Start `astro build` triggert, aber kein `npm install`. Vor dem Restart also separat `npm install --no-audit --no-fund` ausführen wenn `package.json` geändert wurde.
 
 **Deploy-Limits:** Keine praktisch relevanten. GitHub, Mittwald, Stripe — niemand zählt pro Tag. Wir können so oft iterieren wie wir wollen.
 
-**Deploy-Rhythmus (User-Preference):** *Nicht nach jeder kleinen Änderung* deployen — Änderungen sammeln, zwischendurch lokal zeigen/diskutieren, erst auf Aufforderung („jetzt deploy"/„gib raus") Commit+Push+Server-Build anstoßen. Gründe: (a) Mittnite-Respawn-Quirk (s. u.), (b) weniger 503-Fenster, (c) saubere, thematische Commits statt viele Mini-Commits.
-
-### Mittnite-Respawn-Quirk (offen bei Mittwald)
-
-Der in `/etc/mittnite.d/node.hcl` konfigurierte Job `node` (command: `npm start`, `maxAttempts = -1`, `canFail = true`, `controllable = true`) respawnt nach einem manuellen `kill` des Node-Prozesses **nicht automatisch**. In den Logs unter `/var/log/nodejs/<uuid>-stdout.log` erscheinen nach dem Kill keine neuen Einträge. Deshalb der manuelle Start oben als Workaround. Ein Support-Ticket bei Mittwald ist raus.
+**Deploy-Rhythmus (User-Preference):** *Nicht nach jeder kleinen Änderung* deployen — Änderungen sammeln, zwischendurch lokal zeigen/diskutieren, erst auf Aufforderung („jetzt deploy"/„gib raus") Commit+Push+Server-Build anstoßen.
 
 ## Spacing-System (Design-Tokens)
 
