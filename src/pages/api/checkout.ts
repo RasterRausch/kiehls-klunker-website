@@ -125,16 +125,18 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const langPrefix = lang === 'en' ? '/en' : '';
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      payment_method_types: ['card', 'paypal'],
       line_items: lineItems,
       locale: lang === 'en' ? 'en' : 'de',
       success_url: `${origin}${langPrefix}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${langPrefix}/checkout/cancel`,
       shipping_address_collection: { allowed_countries: [...ALLOWED_COUNTRIES] },
+      // Versandkosten frei — Stripe zeigt "Kostenlos" / "Free" im Checkout an.
       shipping_options: [
         {
           shipping_rate_data: {
             type: 'fixed_amount',
-            fixed_amount: { amount: 490, currency: 'eur' },
+            fixed_amount: { amount: 0, currency: 'eur' },
             display_name: s.shippingOptionName,
             delivery_estimate: {
               minimum: { unit: 'business_day', value: 2 },
