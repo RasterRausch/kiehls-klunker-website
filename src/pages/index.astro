@@ -42,7 +42,7 @@ const heroMobileOpt = await getImage({
 });
 ---
 
-<BaseLayout title={h.pageTitle}>
+<BaseLayout title={h.pageTitle} description={h.pageDescription}>
   <!-- HERO: Full-bleed, Bild als Hintergrund, Text links auf weißem Bereich -->
   <section class="relative w-full">
     <!-- Desktop: Bild als Hintergrund, Text absolut (ab lg, 1024px+) -->
@@ -221,7 +221,7 @@ const heroMobileOpt = await getImage({
               <div class="relative aspect-square overflow-hidden bg-[var(--color-bone)] mb-6">
                 <Image
                   src={product.data.images[0]}
-                  alt=""
+                  alt={lang === 'en' && product.data.nameEn ? product.data.nameEn : product.data.name}
                   draggable={false}
                   widths={[300, 480, 640, 900]}
                   sizes="clamp(260px, 26vw, 440px)"

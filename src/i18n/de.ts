@@ -152,7 +152,8 @@ export const de = {
     errorTestMode: 'Der Shop läuft noch im Testbetrieb. Bestellungen sind derzeit nicht möglich.',
   },
   contact: {
-    pageTitle: 'Kontakt — Kiehls Klunker',
+    pageTitle: 'Kontakt — Persönliche Beratung & Anfragen | Kiehls Klunker',
+    pageDescription: 'Frage zu einem Klunker, Sonderwunsch oder Auftragsarbeit? Schreib mir — ich antworte in der Regel innerhalb von ein bis zwei Werktagen persönlich.',
     eyebrow: 'Kontakt',
     title: 'Schreib mir.',
     intro: 'Eine Frage zu einem Klunker, ein Sonderwunsch oder ein Einzelstück in Auftrag? Ich freue mich auf deine Nachricht — meist antworte ich innerhalb von ein bis zwei Werktagen persönlich.',
@@ -186,7 +187,8 @@ export const de = {
     body: 'Legal information in German only — please contact us with any questions.',
   },
   notFound: {
-    pageTitle: 'Seite nicht gefunden — Kiehls Klunker',
+    pageTitle: 'Seite nicht gefunden (404) — Kiehls Klunker',
+    pageDescription: 'Diese Seite gibt es nicht (mehr). Vielleicht ein veralteter Link — über die Startseite, den Shop oder die Einzelstücke kommst du zum Klunker.',
     eyebrow: 'Fehler 404',
     headline: 'Hier ist nichts.',
     body: 'Diese Seite gibt es nicht (mehr). Vielleicht war der Link veraltet, oder ein Buchstabe hat sich verirrt. Hier ein paar freundliche Wege zurück:',
@@ -197,6 +199,7 @@ export const de = {
   },
   home: {
     pageTitle: 'Kiehls Klunker — Handgefertigter Haarschmuck aus Titan',
+    pageDescription: 'Schlichter, eleganter Haarschmuck aus reinem Titan, von Kathrin Kiehl in Leipzig handgefertigt. Versand 2–9 Werktage, kostenlos innerhalb Deutschlands.',
     heroSubtitle: 'for your hair',
     heroBody: 'Willkommen bei Kiehls Klunker. Hier findest du funktionalen Haarschmuck, der schlichtes, elegantes Design mit hochwertigen Materialien kombiniert.',
     heroCta: 'Zum Shop',
@@ -231,10 +234,12 @@ export const de = {
     craftImageAlt: 'Titan wird von Hand in Form geschmiedet',
   },
   shopPage: {
-    pageTitle: 'Shop — Kiehls Klunker',
+    pageTitle: 'Shop — Haarforken, Haarstäbe & Spangen | Kiehls Klunker',
+    pageDescription: 'Handgefertigter Haarschmuck aus Titan und Messing — Haarforken, Haarstäbe, Haarspangen und Ohrschmuck aus Kathrin Kiehls Werkstatt in Leipzig.',
   },
   einzelstuecke: {
-    pageTitle: 'Einzelstücke — Kiehls Klunker',
+    pageTitle: 'Einzelstücke — Unikate aus Titan & Messing | Kiehls Klunker',
+    pageDescription: 'Unikate aus der Werkstatt — einmalige Haarforken und Haarstäbe in Titan, Messing und Silber. Auf Wunsch fertige ich ähnliche Stücke individuell für dich.',
     title: 'Einzelstücke',
     headline: 'Unikate aus der Werkstatt.',
     subheadline: 'Die hier gezeigten Einzelstücke sind bereits verkauft, gern kannst Du Dich inspirieren lassen und eine Variation oder einen Nachbau anfragen.',
@@ -260,7 +265,8 @@ export const de = {
     cardViewLabel: 'Bilder ansehen',
   },
   about: {
-    pageTitle: 'Über mich — Kiehls Klunker',
+    pageTitle: 'Kathrin Kiehl — Goldschmiedin in Leipzig | Kiehls Klunker',
+    pageDescription: 'Hinter Kiehls Klunker steht Kathrin Kiehl, gelernte Goldschmiedin aus Leipzig. Seit 2016 fertigt sie Haarforken und Haarstäbe aus Titan und Messing.',
     eyebrow: 'Über mich',
     headline: 'Kathrin Kiehl.',
     headlineSince: 'Seit 2016.',

@@ -21,7 +21,7 @@ const categoryCounts = activeCategories.map((key) => ({
 }));
 ---
 
-<BaseLayout title={strings.shopPage.pageTitle}>
+<BaseLayout title={strings.shopPage.pageTitle} description={strings.shopPage.pageDescription}>
   <section class="max-w-7xl mx-auto px-6 md:px-10 pt-12 md:pt-20 lg:pt-28 pb-8 md:pb-12">
     <div class="max-w-2xl mx-auto md:mx-0 text-center md:text-left">
       <p class="eyebrow mb-3">{strings.shop.title}</p>
@@ -102,7 +102,7 @@ const categoryCounts = activeCategories.map((key) => ({
               <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-3">
                 <Image
                   src={product.data.images[0]}
-                  alt=""
+                  alt={lang === 'en' && product.data.nameEn ? product.data.nameEn : product.data.name}
                   widths={[300, 480, 640, 900]}
                   sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 50vw"
                   class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700"

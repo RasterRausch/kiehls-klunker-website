@@ -9,17 +9,74 @@ import { getLang, localizedPath } from '../i18n';
 interface Props {
   title: string;
   description?: string;
+  // OG/Twitter — Page kann eigenes Sharing-Bild + Text setzen
+  ogImage?: string;
+  ogType?: 'website' | 'article' | 'product';
+  // SEO — auf Pages wie /checkout/success, /checkout/cancel oder 404 setzen
+  noindex?: boolean;
+  // Page-spezifische strukturierte Daten (JSON-LD), zusätzlich zur globalen Organization
+  structuredData?: object | object[];
 }
 
 const defaultDescDE = 'Handgefertigter Haarschmuck aus Titan — schlichtes, elegantes Design aus der Werkstatt von Kiehls Klunker.';
 const defaultDescEN = 'Handmade hair jewelry in titanium — understated, elegant design from the Kiehls Klunker studio.';
 const lang = getLang(Astro);
-const { title, description = lang === 'en' ? defaultDescEN : defaultDescDE } = Astro.props;
+const {
+  title,
+  description = lang === 'en' ? defaultDescEN : defaultDescDE,
+  ogImage,
+  ogType = 'website',
+  noindex = false,
+  structuredData,
+} = Astro.props;
 
 const pathNoLang = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || '';
 const hrefDE = siteUrl + pathNoLang;
 const hrefEN = siteUrl + (pathNoLang === '/' ? '/en' : `/en${pathNoLang}`);
+const canonical = lang === 'en' ? hrefEN : hrefDE;
+
+// OG-Image: wenn Page keins setzt, fällt's auf das in /public liegende Default zurück.
+// Stripe-/Crawler-Bots brauchen absolute URLs.
+const resolvedOgImage = (() => {
+  if (!ogImage) return `${siteUrl}/og-default.webp`;
+  if (ogImage.startsWith('http://') || ogImage.startsWith('https://')) return ogImage;
+  return `${siteUrl}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
+})();
+
+// Globale Organization-Schema, immer eingebettet
+const organizationLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Kiehls Klunker',
+  url: siteUrl,
+  logo: `${siteUrl}/og-default.webp`,
+  description: lang === 'en'
+    ? 'Handmade titanium hair jewelry from Leipzig.'
+    : 'Handgefertigter Haarschmuck aus Titan, gefertigt in Leipzig.',
+  founder: {
+    '@type': 'Person',
+    name: 'Kathrin Kiehl',
+  },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Verwaltungsring 12',
+    postalCode: '04571',
+    addressLocality: 'Rötha OT Espenhain',
+    addressCountry: 'DE',
+  },
+  sameAs: [
+    'https://www.instagram.com/kiehlsklunker/',
+    'https://www.facebook.com/kiehlsklunker',
+    'https://www.etsy.com/shop/KiehlsKlunker',
+  ],
+};
+
+const allLd: object[] = [organizationLd];
+if (structuredData) {
+  if (Array.isArray(structuredData)) allLd.push(...structuredData);
+  else allLd.push(structuredData);
+}
 ---
 
 <!doctype html>
@@ -29,11 +86,31 @@ const hrefEN = siteUrl + (pathNoLang === '/' ? '/en' : `/en${pathNoLang}`);
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fcfbf8" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="de" href={hrefDE} />
     <link rel="alternate" hreflang="en" href={hrefEN} />
     <link rel="alternate" hreflang="x-default" href={hrefDE} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'de_DE'} />
+    <meta property="og:locale:alternate" content={lang === 'en' ? 'de_DE' : 'en_US'} />
+    <meta property="og:site_name" content="Kiehls Klunker" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://use.typekit.net/yjk4kja.css" />
@@ -42,6 +119,9 @@ const hrefEN = siteUrl + (pathNoLang === '/' ? '/en' : `/en${pathNoLang}`);
       rel="stylesheet"
     />
     <title>{title}</title>
+
+    <!-- Strukturierte Daten (JSON-LD) — Organization global plus Page-spezifisch -->
+    <script type="application/ld+json" set:html={JSON.stringify(allLd.length === 1 ? allLd[0] : allLd)}></script>
   </head>
   <body class="min-h-screen flex flex-col">
     <a href="#main-content" class="skip-link">

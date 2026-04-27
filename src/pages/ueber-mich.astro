@@ -9,7 +9,7 @@ const lang = getLang(Astro);
 const a = t(lang).about;
 ---
 
-<BaseLayout title={a.pageTitle}>
+<BaseLayout title={a.pageTitle} description={a.pageDescription}>
   <!-- Split 1+2: Editoriales Alternieren, eingefasst im Container (M) -->
   <div class="max-w-7xl mx-auto px-6 md:px-10 pt-12 md:pt-20 lg:pt-28">
     <section class="grid md:grid-cols-2 md:items-stretch">

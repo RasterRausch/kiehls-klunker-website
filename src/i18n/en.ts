@@ -155,7 +155,8 @@ export const en: typeof de = {
     errorTestMode: 'The shop is still in test mode. Orders are currently not possible.',
   },
   contact: {
-    pageTitle: 'Contact — Kiehls Klunker',
+    pageTitle: 'Contact — Personal advice & enquiries | Kiehls Klunker',
+    pageDescription: 'Question about a Klunker, special request or commission? Drop me a message — I usually reply personally within one to two business days.',
     eyebrow: 'Contact',
     title: 'Say hello.',
     intro: 'A question about a Klunker, a special request, or a one-off commission? I\'d love to hear from you — I usually reply within one to two business days, personally.',
@@ -189,7 +190,8 @@ export const en: typeof de = {
     body: 'Legal information in German only — please contact us with any questions.',
   },
   notFound: {
-    pageTitle: 'Page not found — Kiehls Klunker',
+    pageTitle: 'Page not found (404) — Kiehls Klunker',
+    pageDescription: 'This page doesn\'t exist (anymore). Maybe an outdated link — the homepage, the shop or the one-offs will take you back to the Klunker world.',
     eyebrow: 'Error 404',
     headline: 'Nothing here.',
     body: 'This page doesn\'t exist (anymore). Maybe the link was outdated, or a letter went astray. A few friendly ways back:',
@@ -200,6 +202,7 @@ export const en: typeof de = {
   },
   home: {
     pageTitle: 'Kiehls Klunker — Handmade titanium hair jewelry',
+    pageDescription: 'Understated, elegant hair jewelry in pure titanium, handmade by Kathrin Kiehl in Leipzig. Shipping in 2–9 business days, free within Germany.',
     heroSubtitle: 'for your hair',
     heroBody: 'Welcome to Kiehls Klunker. Functional hair jewelry that pairs quiet, elegant design with premium materials.',
     heroCta: 'Shop now',
@@ -234,10 +237,12 @@ export const en: typeof de = {
     craftImageAlt: 'Titanium being forged by hand',
   },
   shopPage: {
-    pageTitle: 'Shop — Kiehls Klunker',
+    pageTitle: 'Shop — Hair Forks, Sticks & Clips | Kiehls Klunker',
+    pageDescription: 'Handmade hair jewelry in titanium and brass — hair forks, sticks, clips and earrings from Kathrin Kiehl\'s studio in Leipzig, Germany.',
   },
   einzelstuecke: {
-    pageTitle: 'One-offs — Kiehls Klunker',
+    pageTitle: 'One-offs — Unique Pieces in Titanium | Kiehls Klunker',
+    pageDescription: 'Unique handmade pieces from the studio — one-of-a-kind hair forks and sticks in titanium, brass and silver. Custom remakes on request.',
     title: 'One-offs',
     headline: 'Unique pieces from the studio.',
     subheadline: 'The pieces shown here have already been sold. Feel free to draw inspiration and enquire about a variation or a custom remake.',
@@ -263,7 +268,8 @@ export const en: typeof de = {
     cardViewLabel: 'View images',
   },
   about: {
-    pageTitle: 'About — Kiehls Klunker',
+    pageTitle: 'Kathrin Kiehl — Goldsmith in Leipzig | Kiehls Klunker',
+    pageDescription: 'The maker behind Kiehls Klunker: Kathrin Kiehl, trained goldsmith from Leipzig. Crafting hair forks and sticks in titanium and brass since 2016.',
     eyebrow: 'About',
     headline: 'Kathrin Kiehl.',
     headlineSince: 'Since 2016.',

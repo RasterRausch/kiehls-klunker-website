@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@astrojs/node": "^10.0.5",
-    "@astrojs/sitemap": "^3.7.2",
     "@astrojs/svelte": "^8.0.5",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.8",

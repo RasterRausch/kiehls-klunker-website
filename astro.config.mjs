@@ -4,7 +4,6 @@ import { loadEnv } from 'vite';
 
 import tailwindcss from '@tailwindcss/vite';
 import svelte from '@astrojs/svelte';
-import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
 
 // .env wird beim Build nicht automatisch in die Astro-Config geladen,
@@ -28,5 +27,8 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  integrations: [svelte(), sitemap({ i18n: { defaultLocale: 'de', locales: { de: 'de', en: 'en' } } })],
+  // Sitemap wird über src/pages/sitemap.xml.ts als SSR-Endpoint generiert
+  // (statt @astrojs/sitemap), damit auch dynamische Routen wie /shop/[slug]
+  // sauber enumeriert werden.
+  integrations: [svelte()],
 });
