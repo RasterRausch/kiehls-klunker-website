@@ -67,16 +67,17 @@ E-Mail: ${email}
 Sprache: ${lang === 'en' ? 'Englisch' : 'Deutsch'}
 Eingegangen: ${submittedAt}
 
-— Bis das Brevo-DOI-Template fertig ist, landen Anmeldungen direkt hier.
-Du kannst die Adresse manuell in deine Brevo-Liste übernehmen, sobald
-der Newsletter wirklich startet (dann gibt's automatisch DOI).`;
+⚠️  Wichtig: Diese Adresse hat noch KEIN Double-Opt-In durchlaufen.
+Bitte NICHT direkt antworten — sobald das Brevo-DOI-Template fertig ist,
+übernimm die Adresse in deine Brevo-Liste; Brevo schickt dann eine
+Bestätigungs-Mail. Erst nach Bestätigung darfst du die Person anschreiben.`;
 
     const html = `<div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#1a1d17;line-height:1.55;font-size:15px;">
 <p style="margin:0 0 16px;font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;color:#1a1d17;">Newsletter-Anmeldung</p>
-<p style="margin:0 0 8px;"><strong>E-Mail:</strong> <a href="mailto:${escapeHtml(email)}" style="color:#a05530;">${escapeHtml(email)}</a></p>
+<p style="margin:0 0 8px;"><strong>E-Mail:</strong> ${escapeHtml(email)}</p>
 <p style="margin:0 0 8px;"><strong>Sprache:</strong> ${lang === 'en' ? 'Englisch' : 'Deutsch'}</p>
 <p style="margin:0 0 24px;"><strong>Eingegangen:</strong> ${submittedAt}</p>
-<p style="margin:0;color:#4f5247;font-size:13px;">Bis das Brevo-DOI-Template fertig ist, landen Anmeldungen direkt hier. Du kannst die Adresse manuell in deine Brevo-Liste übernehmen, sobald der Newsletter wirklich startet — dann gibt's automatisch DOI.</p>
+<p style="margin:0 0 12px;padding:10px 14px;background:#f1eee5;border-left:3px solid #a05530;color:#1a1d17;font-size:13px;line-height:1.5;"><strong>⚠️ Wichtig:</strong> Diese Adresse hat noch <strong>kein Double-Opt-In</strong> durchlaufen. Bitte <strong>nicht direkt antworten</strong>. Sobald das Brevo-DOI-Template fertig ist, übernimm die Adresse in deine Brevo-Liste — Brevo schickt dann eine Bestätigungs-Mail; erst nach Bestätigung darfst du die Person anschreiben.</p>
 </div>`;
 
     const res = await fetch('https://api.resend.com/emails', {
@@ -88,7 +89,9 @@ der Newsletter wirklich startet (dann gibt's automatisch DOI).`;
       body: JSON.stringify({
         from: `${fromName} <${fromAddress}>`,
         to,
-        reply_to: email,
+        // Bewusst KEIN reply_to: bis Brevo-DOI live ist, soll Kathrin nicht
+        // versehentlich „Antworten" klicken und an einen unbestätigten
+        // Interessenten schreiben. Adresse steht im Mail-Body.
         subject,
         text,
         html,

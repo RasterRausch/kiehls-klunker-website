@@ -138,12 +138,12 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const shippingTotalCents = Math.round(shippingTotalEur(cartForShipping, tier) * 100);
 
     const allowedCountries = countriesForTier(tier);
-    const shippingDisplayName =
-      tier === 'DE'
-        ? s.shippingNameDE
-        : tier === 'US'
-          ? s.shippingNameUS
-          : s.shippingNameWORLD;
+    const shippingDisplayNames: Record<ShippingTier, string> = {
+      DE: s.shippingNameDE,
+      US: s.shippingNameUS,
+      WORLD: s.shippingNameWORLD,
+    };
+    const shippingDisplayName = shippingDisplayNames[tier];
 
     const langPrefix = lang === 'en' ? '/en' : '';
     const session = await stripe.checkout.sessions.create({

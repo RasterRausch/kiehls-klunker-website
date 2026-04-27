@@ -21,18 +21,26 @@ function env(key: string): string {
   return (import.meta.env as any)[key] || process.env[key] || '';
 }
 
-// Einfaches in-memory Dedupe: Stripe liefert Events bei Netzwerkproblemen
-// mehrfach. Bei Neustart des Prozesses vergessen wir die IDs — das ist okay,
-// weil auf Stripe-Seite nach Success kein Retry mehr kommt.
+// In-memory Dedupe: Stripe liefert Events bei Netzwerkproblemen mehrfach.
+// Bei Neustart des Prozesses vergessen wir die IDs — das ist okay, weil
+// Stripe auch nach Success-Response in seltenen Fällen retryen kann; ein
+// einmaliger Doppel-Versand bei Server-Restart ist tragbar.
+//
+// claimEvent ist atomar (kein await zwischen has und add), verhindert also
+// Race-Condition bei zwei parallelen Requests für dasselbe Event.
 const processedEvents = new Set<string>();
 const MAX_REMEMBERED = 500;
-function markProcessed(eventId: string) {
+function claimEvent(eventId: string): boolean {
+  if (processedEvents.has(eventId)) return false;
   processedEvents.add(eventId);
   if (processedEvents.size > MAX_REMEMBERED) {
-    // Ältester Eintrag raus
     const first = processedEvents.values().next().value;
-    if (first) processedEvents.delete(first);
+    if (first && first !== eventId) processedEvents.delete(first);
   }
+  return true;
+}
+function releaseEvent(eventId: string) {
+  processedEvents.delete(eventId);
 }
 
 async function sendMail(payload: {
@@ -89,8 +97,9 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Invalid signature', { status: 400 });
   }
 
-  if (processedEvents.has(event.id)) {
-    // Schon verarbeitet — trotzdem 200 zurück, damit Stripe nicht retryt
+  // Atomar reservieren — vor jedem await — damit zwei parallele Requests
+  // für dasselbe Event nicht beide handlePaidSession ausführen.
+  if (!claimEvent(event.id)) {
     return new Response('OK (duplicate)', { status: 200 });
   }
 
@@ -116,11 +125,12 @@ export const POST: APIRoute = async ({ request }) => {
         // Andere Events ignorieren wir bewusst
         break;
     }
-    markProcessed(event.id);
     return new Response('OK', { status: 200 });
   } catch (err) {
     console.error('[stripe-webhook] Verarbeitung fehlgeschlagen:', err);
-    // Wichtig: 500 zurückgeben, damit Stripe retryt
+    // Reservierung zurückgeben, damit Stripe-Retry erneut greifen kann
+    releaseEvent(event.id);
+    // 500 zurückgeben, damit Stripe retryt
     return new Response('Handler error', { status: 500 });
   }
 };

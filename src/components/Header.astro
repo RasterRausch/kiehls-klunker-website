@@ -25,10 +25,11 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
 ---
 
 <header class="sticky top-0 z-50 bg-[var(--color-paper)]/95 backdrop-blur-sm">
-  <!-- Announcement Bar -->
+  <!-- Announcement Bar — auf sehr engen Viewports (<400px) gekürzte Variante -->
   <div class="bg-[var(--color-surface-dark)] text-[var(--color-paper)] text-center py-2 px-3 min-[480px]:py-2.5 overflow-hidden" role="region" aria-label={lang === 'en' ? 'Shop announcement' : 'Shop-Hinweis'}>
     <p class="text-[0.6rem] tracking-[0.08em] min-[400px]:text-[0.62rem] min-[400px]:tracking-[0.14em] min-[480px]:text-[0.68rem] min-[480px]:tracking-[0.24em] uppercase font-light whitespace-nowrap">
-      {strings.header.announcement}
+      <span class="inline min-[400px]:hidden">{strings.header.announcementShort}</span>
+      <span class="hidden min-[400px]:inline">{strings.header.announcement}</span>
     </p>
   </div>
 
@@ -76,14 +77,14 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
             href={switchToDE}
             class:list={['lang-option', lang === 'de' && 'is-active']}
             data-lang="de"
-            aria-current={lang === 'de' ? 'true' : undefined}
+            aria-current={lang === 'de' ? 'page' : undefined}
           >DE</a>
           <span class="lang-sep" aria-hidden="true">/</span>
           <a
             href={switchToEN}
             class:list={['lang-option', lang === 'en' && 'is-active']}
             data-lang="en"
-            aria-current={lang === 'en' ? 'true' : undefined}
+            aria-current={lang === 'en' ? 'page' : undefined}
           >EN</a>
         </div>
 
@@ -217,14 +218,14 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
             href={switchToDE}
             class:list={['lang-option', lang === 'de' && 'is-active']}
             data-lang="de"
-            aria-current={lang === 'de' ? 'true' : undefined}
+            aria-current={lang === 'de' ? 'page' : undefined}
           >DE</a>
           <span class="lang-sep" aria-hidden="true">/</span>
           <a
             href={switchToEN}
             class:list={['lang-option', lang === 'en' && 'is-active']}
             data-lang="en"
-            aria-current={lang === 'en' ? 'true' : undefined}
+            aria-current={lang === 'en' ? 'page' : undefined}
           >EN</a>
         </div>
       </div>
@@ -335,16 +336,6 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
   }
   .mobile-nav-cart-count {
     font-family: var(--font-sans);
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-    font-weight: 500;
-    color: var(--color-ink-mute);
-    padding: 0.1rem 0.45rem;
-    border: 1px solid var(--color-hairline);
-    border-radius: 999px;
-  }
-  .mobile-nav-cart-count {
-    font-family: var(--font-sans);
     font-size: 0.72rem;
     letter-spacing: 0.08em;
     color: var(--color-ink-mute);
@@ -372,8 +363,8 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
       window.addEventListener('storage', (e) => { if (e.key === 'cart') updateBadges(); });
     }
 
-    // E-Mail-Obfuscation (wird auch auf kontakt-Seite genutzt — doppelte
-    // Ausführung schadet nicht, weil textContent idempotent gesetzt wird)
+    // E-Mail- und Telefon-Obfuscation — global für alle Pages.
+    // Idempotent, falls Page-spezifische Scripts dasselbe nochmal tun.
     document.querySelectorAll('.obf-mail').forEach((el) => {
       const u = el.dataset.user;
       const d = el.dataset.domain;
@@ -381,6 +372,14 @@ const switchToEN = pathNoLang === '/' ? '/en' : `/en${pathNoLang}`;
       const addr = u + '@' + d;
       el.href = 'mailto:' + addr;
       el.textContent = addr;
+    });
+    document.querySelectorAll('.obf-tel').forEach((el) => {
+      const cc = el.dataset.cc;
+      const p1 = el.dataset.p1;
+      const p2 = el.dataset.p2;
+      if (!cc || !p1 || !p2) return;
+      el.href = 'tel:+' + cc + p1 + p2;
+      el.textContent = '+' + cc + ' ' + p1 + ' ' + p2;
     });
 
     // Sprach-Klick: Cookie setzen, damit die Wahl beim nächsten Seitenaufruf erhalten bleibt

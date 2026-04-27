@@ -310,8 +310,8 @@ const placeholderFor = (variantName: string) => {
             qty = Math.max(1, Math.min(maxStock, v));
             qtyEl.textContent = String(qty);
           };
-          dec.addEventListener('click', () => updateQty(qty - 1));
-          inc.addEventListener('click', () => updateQty(qty + 1));
+          dec?.addEventListener('click', () => updateQty(qty - 1));
+          inc?.addEventListener('click', () => updateQty(qty + 1));
 
           // —— Personalisierung (optional) ————————————————————
           const personalizationToggle = document.querySelector('[data-personalization-toggle]');

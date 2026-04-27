@@ -13,6 +13,7 @@ export const en: typeof de = {
   },
   header: {
     announcement: 'Handmade in Leipzig · Shipping in 2–9 business days',
+    announcementShort: 'Handmade in Leipzig',
   },
   testMode: {
     banner: 'Test mode — orders are currently disabled. The shop opens officially soon.',
@@ -142,7 +143,7 @@ export const en: typeof de = {
     shippingOptionName: 'DHL Shipping (free)',
     shippingNameDE: 'Shipping Germany (free)',
     shippingNameUS: 'Shipping USA / Overseas',
-    shippingNameWORLD: 'Shipping International',
+    shippingNameWORLD: 'Shipping other countries (€4.90 flat)',
     errorGeneric: 'Unknown error',
     errorCartEmpty: 'Cart is empty.',
     errorNotConfigured: 'Stripe is not configured yet.',
@@ -173,6 +174,11 @@ export const en: typeof de = {
     directMailCta: 'Show address',
     workshop: 'Studio',
     alsoHere: 'Also here',
+  },
+  reviewCard: {
+    readMore: 'Read more',
+    readLess: 'Less',
+    verified: 'Verified purchase',
   },
   langSwitcher: {
     label: 'Language',

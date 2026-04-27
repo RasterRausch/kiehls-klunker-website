@@ -65,14 +65,16 @@ const tagline = lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzi
               placeholder={n.placeholder}
               class="w-full bg-transparent border-0 border-b border-[var(--color-hairline)] focus:border-[var(--color-ink)] focus:outline-none text-[var(--color-ink)] placeholder:text-[var(--color-ink-mute)] px-0 py-3 text-sm transition-colors disabled:opacity-50"
             />
-            <!-- Honeypot — versteckt; Bots füllen, Menschen nicht -->
+            <!-- Honeypot — off-screen statt display:none, weil moderne Bots
+                 display:none als „nicht ausfüllen" erkennen. Off-screen wird
+                 hingegen ausgefüllt → wir filtern serverseitig. -->
             <input
               type="text"
               name="website"
               tabindex="-1"
               autocomplete="off"
               aria-hidden="true"
-              class="hidden"
+              style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;opacity:0;"
             />
             <button
               type="submit"

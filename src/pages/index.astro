@@ -268,74 +268,14 @@ const heroMobileOpt = await getImage({
     </div>
   </section>
 
-  <script is:inline>
-    (() => {
-      const slider = document.getElementById('product-slider');
-      if (!slider) return;
-
-      // DRAG-TO-SCROLL
-      let isDown = false;
-      let startX = 0;
-      let startScroll = 0;
-      let dragDistance = 0;
-
-      slider.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return;
-        e.preventDefault(); // verhindert native Image-Drag + Text-Selektion
-        isDown = true;
-        dragDistance = 0;
-        startX = e.pageX;
-        startScroll = slider.scrollLeft;
-        slider.classList.add('is-dragging');
-      });
-      window.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        const walk = e.pageX - startX;
-        dragDistance = Math.abs(walk);
-        slider.scrollLeft = startScroll - walk;
-      });
-      window.addEventListener('mouseup', () => {
-        if (!isDown) return;
-        isDown = false;
-        setTimeout(() => slider.classList.remove('is-dragging'), 50);
-      });
-
-      // Bei Drag > 5px: Click auf Link verhindern (sonst navigiert er nach Drag)
-      slider.addEventListener('click', (e) => {
-        if (dragDistance > 5) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      }, true);
-
-      // ARROW BUTTONS
-      const getStep = () => {
-        const firstCard = slider.querySelector('.product-card');
-        if (!firstCard) return slider.clientWidth * 0.8;
-        const style = getComputedStyle(slider.querySelector('.flex'));
-        const gap = parseInt(style.gap || '24', 10);
-        return firstCard.getBoundingClientRect().width + gap;
-      };
-      // prefers-reduced-motion respektieren: smooth → auto
-      const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.querySelectorAll('[data-slider-next]').forEach((btn) => {
-        btn.addEventListener('click', () => slider.scrollBy({ left: getStep(), behavior: reduceMotion() ? 'auto' : 'smooth' }));
-      });
-      document.querySelectorAll('[data-slider-prev]').forEach((btn) => {
-        btn.addEventListener('click', () => slider.scrollBy({ left: -getStep(), behavior: reduceMotion() ? 'auto' : 'smooth' }));
-      });
-
-      // Verstecke Prev-Button wenn am Anfang, Next wenn am Ende
-      const updateNavState = () => {
-        const atStart = slider.scrollLeft <= 4;
-        const atEnd = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 4;
-        document.querySelectorAll('[data-slider-prev]').forEach((b) => b.classList.toggle('is-hidden', atStart));
-        document.querySelectorAll('[data-slider-next]').forEach((b) => b.classList.toggle('is-hidden', atEnd));
-      };
-      slider.addEventListener('scroll', updateNavState, { passive: true });
-      window.addEventListener('resize', updateNavState);
-      updateNavState();
-    })();
+  <script>
+    import { initHorizontalSlider } from '../scripts/horizontal-slider';
+    initHorizontalSlider({
+      sliderId: 'product-slider',
+      prevSelector: '[data-slider-prev]',
+      nextSelector: '[data-slider-next]',
+      cardSelector: '.product-card',
+    });
   </script>
 
   <hr class="hairline" />
@@ -361,12 +301,13 @@ const heroMobileOpt = await getImage({
           tabindex="0"
         >
           <div class="flex gap-6 md:gap-8 container-align pb-2 items-stretch">
-            {featuredReviews.map((review) => (
+            {featuredReviews.map((review, idx) => (
               <div
                 class="shrink-0 w-[clamp(280px,28vw,400px)]"
                 style="width: clamp(280px, 28vw, 400px);"
               >
                 <ReviewCard
+                  id={`r${idx}`}
                   author={review.data.author}
                   rating={review.data.rating}
                   date={review.data.date}
@@ -406,61 +347,14 @@ const heroMobileOpt = await getImage({
     </section>
   )}
 
-  <script is:inline>
-    (() => {
-      const slider = document.getElementById('review-slider');
-      if (!slider) return;
-
-      // Drag-to-scroll
-      let isDown = false, startX = 0, startScroll = 0, dragDistance = 0;
-      slider.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return;
-        e.preventDefault();
-        isDown = true;
-        dragDistance = 0;
-        startX = e.pageX;
-        startScroll = slider.scrollLeft;
-        slider.classList.add('is-dragging');
-      });
-      window.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        const walk = e.pageX - startX;
-        dragDistance = Math.abs(walk);
-        slider.scrollLeft = startScroll - walk;
-      });
-      window.addEventListener('mouseup', () => {
-        if (!isDown) return;
-        isDown = false;
-        setTimeout(() => slider.classList.remove('is-dragging'), 50);
-      });
-
-      // Arrows
-      const getStep = () => {
-        const card = slider.querySelector('.snap-start');
-        if (!card) return slider.clientWidth * 0.8;
-        const style = getComputedStyle(slider.querySelector('.flex'));
-        const gap = parseInt(style.gap || '24', 10);
-        return card.getBoundingClientRect().width + gap;
-      };
-      // prefers-reduced-motion respektieren
-      const reduceMotionR = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.querySelectorAll('[data-review-next]').forEach((b) =>
-        b.addEventListener('click', () => slider.scrollBy({ left: getStep(), behavior: reduceMotionR() ? 'auto' : 'smooth' }))
-      );
-      document.querySelectorAll('[data-review-prev]').forEach((b) =>
-        b.addEventListener('click', () => slider.scrollBy({ left: -getStep(), behavior: reduceMotionR() ? 'auto' : 'smooth' }))
-      );
-
-      const updateNavState = () => {
-        const atStart = slider.scrollLeft <= 4;
-        const atEnd = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 4;
-        document.querySelectorAll('[data-review-prev]').forEach((b) => b.classList.toggle('is-hidden', atStart));
-        document.querySelectorAll('[data-review-next]').forEach((b) => b.classList.toggle('is-hidden', atEnd));
-      };
-      slider.addEventListener('scroll', updateNavState, { passive: true });
-      window.addEventListener('resize', updateNavState);
-      updateNavState();
-    })();
+  <script>
+    import { initHorizontalSlider } from '../scripts/horizontal-slider';
+    initHorizontalSlider({
+      sliderId: 'review-slider',
+      prevSelector: '[data-review-prev]',
+      nextSelector: '[data-review-next]',
+      cardSelector: '.snap-start',
+    });
   </script>
 
   <!-- USP / Trust-Badges (S — supportive) -->

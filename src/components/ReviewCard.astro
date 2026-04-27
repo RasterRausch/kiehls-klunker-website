@@ -1,4 +1,6 @@
 ---
+import { getLang, t } from '../i18n';
+
 interface Props {
   author: string;
   rating: number;
@@ -6,11 +8,15 @@ interface Props {
   productName?: string;
   body: string;
   verified?: boolean;
+  // Stabile, eindeutige ID vom Caller — z. B. `review-${index}` oder review.id
+  id: string;
 }
 
-const { author, rating, date, productName, body, verified = true } = Astro.props;
+const { author, rating, date, productName, body, verified = true, id } = Astro.props;
+const lang = getLang(Astro);
+const strings = t(lang);
 
-const formattedDate = new Intl.DateTimeFormat('de-DE', {
+const formattedDate = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'de-DE', {
   day: '2-digit',
   month: 'long',
   year: 'numeric',
@@ -18,8 +24,10 @@ const formattedDate = new Intl.DateTimeFormat('de-DE', {
 
 const stars = Array.from({ length: 5 }, (_, i) => i < rating);
 const isLong = body.length > 160;
-const toggleId = `review-${Math.random().toString(36).slice(2, 9)}`;
-const showAuthor = author && author !== 'Etsy-Kundin';
+const toggleId = `review-toggle-${id}`;
+const showAuthor = author && author !== 'Etsy-Kundin' && author !== 'Etsy customer';
+const quoteOpen = lang === 'en' ? '“' : '„';
+const quoteClose = lang === 'en' ? '”' : '“';
 ---
 
 <article class="review-card flex flex-col gap-3 p-6 bg-[var(--color-bone)] border border-[var(--color-hairline)] h-full">
@@ -33,16 +41,16 @@ const showAuthor = author && author !== 'Etsy-Kundin';
     <div class="review-expand">
       <input type="checkbox" id={toggleId} class="review-expand-input sr-only" />
       <blockquote class="review-body font-serif text-lg leading-snug text-[var(--color-ink)] line-clamp-5">
-        „{body}"
+        {quoteOpen}{body}{quoteClose}
       </blockquote>
       <label for={toggleId} class="review-expand-toggle inline-block mt-2 text-xs uppercase tracking-[0.2em] text-[var(--color-ink-soft)] cursor-pointer hover:text-[var(--color-ink)] transition-colors">
-        <span class="review-expand-more">Mehr lesen</span>
-        <span class="review-expand-less">Weniger</span>
+        <span class="review-expand-more">{strings.reviewCard.readMore}</span>
+        <span class="review-expand-less">{strings.reviewCard.readLess}</span>
       </label>
     </div>
   ) : (
     <blockquote class="font-serif text-lg leading-snug text-[var(--color-ink)]">
-      „{body}"
+      {quoteOpen}{body}{quoteClose}
     </blockquote>
   )}
 
@@ -52,7 +60,7 @@ const showAuthor = author && author !== 'Etsy-Kundin';
     )}
     <p class="text-xs text-[var(--color-ink-soft)]">
       {formattedDate}
-      {verified && <span class="ml-2 text-[var(--color-gold)]">· Verifizierter Kauf</span>}
+      {verified && <span class="ml-2 text-[var(--color-gold)]">· {strings.reviewCard.verified}</span>}
     </p>
     {productName && (
       <p class="mt-1.5 text-xs text-[var(--color-ink-mute)] italic line-clamp-1">{productName}</p>

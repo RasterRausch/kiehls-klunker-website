@@ -34,7 +34,8 @@ export function interpolate(template: string, values: Record<string, string | nu
 // Übersetzt gängige Varianten-Namen (Farbe, Länge, Größe, ...) von DE nach EN.
 // Bei unbekannten Namen wird das Original zurückgegeben — sollte beim nächsten
 // Etsy-Sync idealerweise auch EN-Varianten kommen, wenn Katrin sie pflegt.
-const VARIANT_NAME_MAP: Record<string, string> = {
+// Export, damit Client-Scripts (CartDrawer) dieselbe Map via define:vars nutzen können.
+export const VARIANT_NAME_MAP: Record<string, string> = {
   'Farbe': 'Color',
   'Primäre Farbe': 'Primary color',
   'Sekundäre Farbe': 'Secondary color',
@@ -50,7 +51,8 @@ export function translateVariantName(name: string, lang: Lang): string {
 }
 
 // Übersetzt Farbwerte (DE-Quelle aus Etsy). Lückenhaft - ergänzen bei Bedarf.
-const COLOR_VALUE_MAP: Record<string, string> = {
+// Export, damit Client-Scripts (CartDrawer) dieselbe Map via define:vars nutzen können.
+export const COLOR_VALUE_MAP: Record<string, string> = {
   'bunt': 'multicolor',
   'karamell': 'caramel',
   'flieder': 'lilac',

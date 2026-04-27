@@ -5,7 +5,7 @@
 //   - Schließen: click auf [data-cart-close] / Overlay / Escape
 //   - Item-Änderung: `cart:changed`-Event triggert Re-Render + Badge-Update
 
-import { getLang, t, localizedPath } from '../i18n';
+import { getLang, t, localizedPath, VARIANT_NAME_MAP, COLOR_VALUE_MAP } from '../i18n';
 import { WORLD_FLAT_RATE_EUR } from '../lib/shipping';
 
 const lang = getLang(Astro);
@@ -184,8 +184,20 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
   checkoutLabel: strings.cart.checkout,
   checkoutLoading: strings.cart.checkoutLoading,
   worldFlatRate: WORLD_FLAT_RATE_EUR,
+  variantNameMap: VARIANT_NAME_MAP,
+  colorValueMap: COLOR_VALUE_MAP,
 }}>
   (() => {
+    // Cart-Schema-Version: bei Schema-Änderungen erhöhen, dann werden alte
+    // localStorage-Carts beim ersten Page-Load gedroppt (z. B. wenn neue
+    // Felder wie priceUS/priceWorld dazugekommen sind und alte Items die
+    // nicht haben).
+    const CART_VERSION = '2';
+    if (localStorage.getItem('kk_cart_version') !== CART_VERSION) {
+      localStorage.removeItem('cart');
+      localStorage.setItem('kk_cart_version', CART_VERSION);
+    }
+
     const drawer = document.getElementById('cart-drawer');
     const overlay = document.getElementById('cart-overlay');
     const list = document.getElementById('cart-drawer-list');
@@ -207,19 +219,8 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
 
     const keyOf = (item) => item.cartKey || item.id;
 
-    // Minimal-Übersetzungsmap für Varianten-Namen und -Werte (EN).
-    // Deckung lückenhaft — bei Bedarf in src/i18n/index.ts erweitern.
-    const variantNameMap = {
-      'Farbe': 'Color', 'Primäre Farbe': 'Primary color', 'Sekundäre Farbe': 'Secondary color',
-      'Länge': 'Length', 'Größe': 'Size', 'Material': 'Material', 'Haartyp': 'Hair type',
-    };
-    const colorValueMap = {
-      'bunt': 'multicolor', 'karamell': 'caramel', 'flieder': 'lilac', 'violett': 'purple',
-      'blau': 'blue', 'hellblau': 'light blue', 'grün': 'green', 'mint': 'mint',
-      'gelb': 'yellow', 'rosé': 'rose', 'rosa': 'pink', 'rot': 'red',
-      'schwarz': 'black', 'weiß': 'white', 'grau': 'gray', 'silber': 'silver',
-      'gold': 'gold', 'ohne (titangrau)': 'plain (titanium grey)',
-    };
+    // Variant-Translation-Maps kommen via define:vars aus src/i18n/index.ts —
+    // Single-Source-of-Truth, keine Drift mehr zwischen Server und Client.
     const tName = (n) => lang === 'de' ? n : (variantNameMap[n] || n);
     const tValue = (v) => {
       if (lang === 'de') return v;

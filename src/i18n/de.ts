@@ -10,6 +10,7 @@ export const de = {
   },
   header: {
     announcement: 'Handgefertigt in Leipzig · Versand in 2–9 Werktagen',
+    announcementShort: 'Handgefertigt in Leipzig',
   },
   testMode: {
     banner: 'Testbetrieb — Bestellungen sind aktuell deaktiviert. Der Shop-Start folgt in Kürze.',
@@ -139,7 +140,7 @@ export const de = {
     shippingOptionName: 'Versand DHL (kostenfrei)',
     shippingNameDE: 'Versand Deutschland (kostenfrei)',
     shippingNameUS: 'Versand USA / Übersee',
-    shippingNameWORLD: 'Versand International',
+    shippingNameWORLD: 'Versand übrige Länder (Pauschale 4,90 €)',
     errorGeneric: 'Unbekannter Fehler',
     errorCartEmpty: 'Warenkorb ist leer.',
     errorNotConfigured: 'Stripe ist noch nicht konfiguriert.',
@@ -170,6 +171,11 @@ export const de = {
     directMailCta: 'Adresse anzeigen',
     workshop: 'Werkstatt',
     alsoHere: 'Auch hier',
+  },
+  reviewCard: {
+    readMore: 'Mehr lesen',
+    readLess: 'Weniger',
+    verified: 'Verifizierter Kauf',
   },
   langSwitcher: {
     label: 'Sprache',
