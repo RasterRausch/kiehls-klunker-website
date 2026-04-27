@@ -58,7 +58,7 @@ export const de = {
   },
   product: {
     backToShop: 'Zurück zum Shop',
-    shippingHint: 'Versand innerhalb Deutschlands kostenfrei · International ab Aufpreis (siehe Warenkorb)',
+    shippingHint: 'Versand innerhalb Deutschlands kostenfrei · International ab 4,90 €',
     galleryLabel: 'Produktgalerie',
     galleryThumbLabel: 'Bild {index} anzeigen',
     mainPrev: 'Vorheriges Bild',

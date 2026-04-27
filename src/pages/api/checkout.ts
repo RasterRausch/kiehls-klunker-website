@@ -5,7 +5,7 @@ import { displayPrice } from '../../lib/price';
 import {
   type ShippingTier,
   countriesForTier,
-  shippingSurchargePerItem,
+  shippingTotalEur,
 } from '../../lib/shipping';
 import { t, interpolate, type Lang } from '../../i18n';
 
@@ -59,7 +59,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(origin);
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-    let shippingTotalCents = 0;
+    const cartForShipping: Array<{ data: typeof products[number]['data']; quantity: number }> = [];
 
     for (const raw of items) {
       const id = String(raw?.id ?? '').trim();
@@ -132,8 +132,10 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
         quantity: qty,
       });
 
-      shippingTotalCents += Math.round(shippingSurchargePerItem(product.data, tier) * 100) * qty;
+      cartForShipping.push({ data: product.data, quantity: qty });
     }
+
+    const shippingTotalCents = Math.round(shippingTotalEur(cartForShipping, tier) * 100);
 
     const allowedCountries = countriesForTier(tier);
     const shippingDisplayName =

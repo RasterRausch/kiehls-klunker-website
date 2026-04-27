@@ -6,6 +6,7 @@
 //   - Item-Änderung: `cart:changed`-Event triggert Re-Render + Badge-Update
 
 import { getLang, t, localizedPath } from '../i18n';
+import { WORLD_FLAT_RATE_EUR } from '../lib/shipping';
 
 const lang = getLang(Astro);
 const strings = t(lang);
@@ -182,6 +183,7 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
   checkoutErrorGeneric: strings.cart.checkoutError,
   checkoutLabel: strings.cart.checkout,
   checkoutLoading: strings.cart.checkoutLoading,
+  worldFlatRate: WORLD_FLAT_RATE_EUR,
 }}>
   (() => {
     const drawer = document.getElementById('cart-drawer');
@@ -242,20 +244,24 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
     };
     const saveTier = (t) => localStorage.setItem(TIER_KEY, t);
 
-    // Versandkosten-Surcharge pro Artikel basierend auf priceUS/priceWorld
-    const surchargePerItem = (item, tier) => {
+    // Versandkosten-Logik — Spiegel von src/lib/shipping.ts:
+    // - DE: 0
+    // - US: pro-Artikel (priceUS - priceDE) × Menge
+    // - WORLD: pauschal worldFlatRate pro Bestellung
+    const surchargePerItemUS = (item) => {
       const base = item.price;
-      if (tier === 'DE') return 0;
-      if (tier === 'US') return Math.max(0, (item.priceUS ?? base) - base);
-      return Math.max(0, (item.priceWorld ?? base) - base); // WORLD
+      return Math.max(0, (item.priceUS ?? base) - base);
     };
 
     const computeTotals = (cart, tier) => {
       let subtotal = 0;
+      for (const i of cart) subtotal += i.price * i.quantity;
+
       let shipping = 0;
-      for (const i of cart) {
-        subtotal += i.price * i.quantity;
-        shipping += surchargePerItem(i, tier) * i.quantity;
+      if (tier === 'US') {
+        for (const i of cart) shipping += surchargePerItemUS(i) * i.quantity;
+      } else if (tier === 'WORLD') {
+        shipping = cart.length > 0 ? worldFlatRate : 0;
       }
       return { subtotal, shipping, total: subtotal + shipping };
     };

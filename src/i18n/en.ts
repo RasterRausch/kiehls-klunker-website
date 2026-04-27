@@ -61,7 +61,7 @@ export const en: typeof de = {
   },
   product: {
     backToShop: 'Back to shop',
-    shippingHint: 'Free shipping within Germany · International with surcharge (see cart)',
+    shippingHint: 'Free shipping within Germany · International from €4.90',
     galleryLabel: 'Product gallery',
     galleryThumbLabel: 'Show image {index}',
     mainPrev: 'Previous image',

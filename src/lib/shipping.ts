@@ -1,14 +1,26 @@
-// Versand-Tier-Logik: Lieferziel → Tier → Versandkosten pro Artikel.
-// Der Aufpreis pro Artikel = priceUS-priceDE (für USA/Übersee) bzw.
-// priceWorld-priceDE (für Rest). Innerhalb DE = kostenlos.
+// Versand-Tier-Logik: Lieferziel → Tier → Versandkosten.
+// - DE: kostenlos
+// - US/Übersee: artikelabhängiger Aufpreis (priceUS - priceDE) × Menge
+// - WORLD/Rest: pauschal 4,90 € pro Bestellung
+//
+// Hinweis: Spiegelt sich in src/components/CartDrawer.astro für die Live-Anzeige.
+// Wer hier was ändert, muss auch dort nachziehen.
 
 export type ShippingTier = 'DE' | 'US' | 'WORLD';
+
+// Pauschale für „Übrige Länder" (alles außer DACH-DE und USA-Tier)
+export const WORLD_FLAT_RATE_EUR = 4.90;
 
 type ProductPriceFields = {
   priceDE?: number;
   priceUS?: number;
   priceWorld?: number;
   price: number;
+};
+
+type CartItemForShipping = {
+  data: ProductPriceFields;
+  quantity: number;
 };
 
 // Welche Länder fallen unter welches Tier?
@@ -39,19 +51,28 @@ export function countriesForTier(tier: ShippingTier): readonly string[] {
   return COUNTRIES_WORLD;
 }
 
-// Aufpreis pro Stück basierend auf der vorgegebenen Preisstaffel.
-// Wenn priceUS/priceWorld nicht gepflegt sind, fällt der Aufpreis auf 0.
+// Aufpreis pro Stück (nur für US-Tier).
+// DE = 0, WORLD-Tier wird über Pauschale am Order-Level berechnet (siehe shippingTotalEur).
 export function shippingSurchargePerItem(
   data: ProductPriceFields,
   tier: ShippingTier,
 ): number {
+  if (tier !== 'US') return 0;
   const base = data.priceDE ?? data.price;
+  const us = data.priceUS ?? base;
+  return Math.max(0, us - base);
+}
+
+// Gesamt-Versandkosten für den Warenkorb basierend auf dem Tier.
+export function shippingTotalEur(
+  items: readonly CartItemForShipping[],
+  tier: ShippingTier,
+): number {
   if (tier === 'DE') return 0;
-  if (tier === 'US') {
-    const us = data.priceUS ?? base;
-    return Math.max(0, us - base);
-  }
-  // WORLD
-  const world = data.priceWorld ?? base;
-  return Math.max(0, world - base);
+  if (tier === 'WORLD') return items.length > 0 ? WORLD_FLAT_RATE_EUR : 0;
+  // US: per-Item-Aufpreis × Menge
+  return items.reduce(
+    (sum, { data, quantity }) => sum + shippingSurchargePerItem(data, 'US') * quantity,
+    0,
+  );
 }
