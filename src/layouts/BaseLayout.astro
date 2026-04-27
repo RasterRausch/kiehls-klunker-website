@@ -111,13 +111,10 @@ if (structuredData) {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={resolvedOgImage} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://use.typekit.net/yjk4kja.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Fonts: lokal in /fonts (DSGVO-konform, kein Google/Adobe-Tracking).
+         Preload für die zwei kritischen Latin-Subsets, der Rest lädt on-demand. -->
+    <link rel="preload" href="/fonts/dmsans-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/instrumentserif-regular-latin.woff2" as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
 
     <!-- Strukturierte Daten (JSON-LD) — Organization global plus Page-spezifisch -->
