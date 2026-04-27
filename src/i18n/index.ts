@@ -11,6 +11,12 @@ export function getLang(astro: { locals?: { lang?: Lang } }): Lang {
   return astro.locals?.lang ?? 'de';
 }
 
+// Liest die Preisregion (DE/US/WORLD), die die Middleware via GeoIP gesetzt hat.
+import type { Country } from '../lib/price';
+export function getCountry(astro: { locals?: { country?: Country } }): Country {
+  return astro.locals?.country ?? 'DE';
+}
+
 export function t(lang: Lang) {
   return dictionaries[lang];
 }

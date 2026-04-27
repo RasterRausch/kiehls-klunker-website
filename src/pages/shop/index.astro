@@ -3,9 +3,10 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { displayPrice } from '../../lib/price';
-import { getLang, t, localizedPath, interpolate } from '../../i18n';
+import { getLang, getCountry, t, localizedPath, interpolate } from '../../i18n';
 
 const lang = getLang(Astro);
+const country = getCountry(Astro);
 const strings = t(lang);
 const p = (path: string) => localizedPath(path, lang);
 
@@ -97,7 +98,7 @@ const categoryCounts = activeCategories.map((key) => ({
               href={p(`/shop/${product.id}`)}
               class="product-card group/card block"
               data-category={product.data.category}
-              data-price={displayPrice(product.data)}
+              data-price={displayPrice(product.data, country)}
             >
               <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-3">
                 <Image
@@ -127,7 +128,7 @@ const categoryCounts = activeCategories.map((key) => ({
                 <p class="text-xs md:text-sm text-[var(--color-ink-soft)] mb-2 line-clamp-1">{lang === 'en' && product.data.taglineEn ? product.data.taglineEn : product.data.tagline}</p>
               )}
               <p class="text-sm">
-                {displayPrice(product.data).toFixed(2).replace('.', ',')} €
+                {displayPrice(product.data, country).toFixed(2).replace('.', ',')} €
               </p>
             </a>
           ))}

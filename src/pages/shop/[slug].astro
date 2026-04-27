@@ -4,9 +4,10 @@ import { Image } from 'astro:assets';
 import { marked } from 'marked';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { displayPrice } from '../../lib/price';
-import { getLang, t, localizedPath, interpolate, translateVariantName, translateVariantValue } from '../../i18n';
+import { getLang, getCountry, t, localizedPath, interpolate, translateVariantName, translateVariantValue } from '../../i18n';
 
 const lang = getLang(Astro);
+const country = getCountry(Astro);
 const strings = t(lang);
 const p = (path: string) => localizedPath(path, lang);
 
@@ -17,7 +18,7 @@ if (!product) {
 }
 const { Content } = await render(product);
 const images = product.data.images;
-const price = displayPrice(product.data);
+const price = displayPrice(product.data, country);
 
 // Displayed-Texte pro Sprache — EN fällt auf DE zurück, solange
 // Kathrin die Produkt-Daten in Etsy nicht zweisprachig pflegt.

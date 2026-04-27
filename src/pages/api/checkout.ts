@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import Stripe from 'stripe';
-import { displayPrice } from '../../lib/price';
+import { displayPrice, type Country } from '../../lib/price';
 import { t, interpolate, type Lang } from '../../i18n';
 
 export const prerender = false;
@@ -24,6 +24,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     // Sprache: explizit aus dem Request-Body, sonst aus Middleware-Locals
     const requestedLang = typeof body?.lang === 'string' && body.lang === 'en' ? 'en' : null;
     const lang: Lang = requestedLang ?? ((locals as { lang?: Lang })?.lang ?? 'de');
+    const country: Country = ((locals as { country?: Country })?.country) ?? 'DE';
     const s = t(lang).checkout;
 
     // Globaler Schalter: Shop läuft im Testbetrieb → keine echten Bestellungen.
@@ -119,7 +120,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
       lineItems.push({
         price_data: {
           currency: (product.data.currency || 'EUR').toLowerCase(),
-          unit_amount: Math.round(displayPrice(product.data) * 100),
+          unit_amount: Math.round(displayPrice(product.data, country) * 100),
           product_data: {
             name: productName,
             ...(imageUrl ? { images: [imageUrl] } : {}),

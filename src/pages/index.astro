@@ -4,13 +4,14 @@ import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ReviewCard from '../components/ReviewCard.astro';
 import { displayPrice } from '../lib/price';
-import { getLang, t, localizedPath } from '../i18n';
+import { getLang, getCountry, t, localizedPath } from '../i18n';
 import hero from '../assets/images/hero-schmuck.png';
 import heroMobile from '../assets/images/hero-mobile.jpg';
 import heroSmartphone from '../assets/images/hero-smartphone.jpg';
 import soEntsteht from '../assets/images/so-entsteht.jpg';
 
 const lang = getLang(Astro);
+const country = getCountry(Astro);
 const strings = t(lang);
 const p = (path: string) => localizedPath(path, lang);
 const h = strings.home;
@@ -235,7 +236,7 @@ const heroMobileOpt = await getImage({
               <h3 class="font-sans text-base md:text-lg font-medium leading-snug mb-1 text-[var(--color-ink)]">{lang === 'en' && product.data.nameEn ? product.data.nameEn : product.data.name}</h3>
               <p class="text-sm text-[var(--color-ink-soft)] mb-3">{lang === 'en' && product.data.taglineEn ? product.data.taglineEn : product.data.tagline}</p>
               <p class="text-sm">
-                {displayPrice(product.data).toFixed(2).replace('.', ',')} €
+                {displayPrice(product.data, country).toFixed(2).replace('.', ',')} €
               </p>
             </a>
           ))}
