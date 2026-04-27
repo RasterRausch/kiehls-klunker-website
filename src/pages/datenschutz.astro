@@ -126,12 +126,34 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
             (Deutsch oder Englisch). Laufzeit: bis zu 1&nbsp;Jahr.
           </li>
           <li>
+            <span class="ink-strong">kk_country</span> — speichert die für Ihre Region
+            ermittelte Preiszone (Deutschland/Österreich/Schweiz, USA oder Welt). Damit
+            sehen Sie konsistent die für Sie passenden Preise und Sprache, ohne dass
+            bei jedem Seitenaufruf eine neue Erkennung nötig ist. Laufzeit: 30&nbsp;Tage.
+          </li>
+          <li>
             <span class="ink-strong">cart</span> (Local Storage) — speichert die Inhalte
             Ihres Warenkorbs bis zum Abschluss oder Abbruch der Bestellung. Diese Daten
             verbleiben ausschließlich in Ihrem Browser und werden nicht an uns übermittelt,
             solange Sie die Bestellung nicht abschließen.
           </li>
         </ul>
+        <p class="mt-4 mb-3">
+          <span class="ink-strong">Hinweis zur Region-Erkennung:</span> Zur Bestimmung
+          der Preiszone und der Anzeigesprache wird Ihre IP-Adresse beim ersten
+          Seitenaufruf gegen eine lokal auf unserem Server vorgehaltene
+          GeoIP-Länder­datenbank (geoip-lite) abgeglichen. Es erfolgt
+          <span class="ink-strong">keine Übermittlung Ihrer IP an Dritte</span>;
+          die Datenbank wird ausschließlich lokal abgefragt. Gespeichert wird
+          nur das Ergebnis (Ländercode) im oben genannten Cookie. Das Ergebnis
+          können Sie jederzeit überschreiben, indem Sie manuell die Sprache
+          umschalten oder das Cookie in Ihrem Browser löschen.
+        </p>
+        <p>
+          <span class="ink-strong">Rechtsgrundlage:</span> Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f
+          DSGVO (berechtigtes Interesse an einer für Ihre Region passenden Darstellung
+          von Preisen und Sprache).
+        </p>
       </section>
 
       <section class="mb-10">
@@ -335,7 +357,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <p class="text-sm text-[var(--color-ink-mute)] mt-16">
-        Stand: 22. April 2026
+        Stand: 27. April 2026
       </p>
     </div>
   </section>

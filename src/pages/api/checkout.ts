@@ -14,8 +14,14 @@ type CartItem = {
 };
 
 const ALLOWED_COUNTRIES = [
+  // EU + DACH
   'DE', 'AT', 'CH', 'NL', 'BE', 'LU', 'FR', 'IT', 'ES',
   'DK', 'SE', 'FI', 'IE', 'PT', 'PL', 'CZ', 'SK', 'SI', 'HU',
+  'BG', 'RO', 'HR', 'EE', 'LV', 'LT', 'GR', 'CY', 'MT',
+  // Europäische Nicht-EU
+  'NO', 'IS', 'LI', 'GB',
+  // Übersee (priceUS / priceWorld-Regionen)
+  'US', 'CA', 'AU', 'NZ', 'JP',
 ] as const;
 
 export const POST: APIRoute = async ({ request, url, locals }) => {
