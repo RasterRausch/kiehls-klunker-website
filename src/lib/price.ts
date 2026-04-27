@@ -1,6 +1,5 @@
-// Zentrale Preis-Auflösung. Aktuell liefert sie immer den DE-Preis (mit
-// Fallback auf den Etsy-Basispreis). Sobald `priceUS`/`priceWorld` gepflegt
-// und Geo-Erkennung live ist, wird hier das Country-Argument ausgewertet.
+// Anzeigepreis = priceDE; international wird über destination-basierte
+// Versandkosten (siehe lib/shipping.ts) abgebildet.
 
 type ProductPriceFields = {
   price: number;
@@ -9,11 +8,7 @@ type ProductPriceFields = {
   priceWorld?: number;
 };
 
-export type Country = 'DE' | 'US' | 'WORLD';
-
-export function displayPrice(data: ProductPriceFields, country: Country = 'DE'): number {
-  if (country === 'US' && data.priceUS != null) return data.priceUS;
-  if (country === 'WORLD' && data.priceWorld != null) return data.priceWorld;
+export function displayPrice(data: ProductPriceFields): number {
   if (data.priceDE != null) return data.priceDE;
   return data.price;
 }

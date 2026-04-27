@@ -1,7 +1,12 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import Stripe from 'stripe';
-import { displayPrice, type Country } from '../../lib/price';
+import { displayPrice } from '../../lib/price';
+import {
+  type ShippingTier,
+  countriesForTier,
+  shippingSurchargePerItem,
+} from '../../lib/shipping';
 import { t, interpolate, type Lang } from '../../i18n';
 
 export const prerender = false;
@@ -13,28 +18,19 @@ type CartItem = {
   personalization?: string;
 };
 
-const ALLOWED_COUNTRIES = [
-  // EU + DACH
-  'DE', 'AT', 'CH', 'NL', 'BE', 'LU', 'FR', 'IT', 'ES',
-  'DK', 'SE', 'FI', 'IE', 'PT', 'PL', 'CZ', 'SK', 'SI', 'HU',
-  'BG', 'RO', 'HR', 'EE', 'LV', 'LT', 'GR', 'CY', 'MT',
-  // Europäische Nicht-EU
-  'NO', 'IS', 'LI', 'GB',
-  // Übersee (priceUS / priceWorld-Regionen)
-  'US', 'CA', 'AU', 'NZ', 'JP',
-] as const;
+function isShippingTier(v: unknown): v is ShippingTier {
+  return v === 'DE' || v === 'US' || v === 'WORLD';
+}
 
 export const POST: APIRoute = async ({ request, url, locals }) => {
   try {
     const body = await request.json();
-    // Sprache: explizit aus dem Request-Body, sonst aus Middleware-Locals
     const requestedLang = typeof body?.lang === 'string' && body.lang === 'en' ? 'en' : null;
     const lang: Lang = requestedLang ?? ((locals as { lang?: Lang })?.lang ?? 'de');
-    const country: Country = ((locals as { country?: Country })?.country) ?? 'DE';
+    const tier: ShippingTier = isShippingTier(body?.shippingTier) ? body.shippingTier : 'DE';
     const s = t(lang).checkout;
 
     // Globaler Schalter: Shop läuft im Testbetrieb → keine echten Bestellungen.
-    // Backend-seitig hart blocken, falls jemand Frontend-Sperre umgeht.
     const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true' || process.env.PUBLIC_TEST_MODE === 'true';
     if (testMode) {
       return json({ error: s.errorTestMode }, 503);
@@ -63,6 +59,8 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(origin);
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+    let shippingTotalCents = 0;
+
     for (const raw of items) {
       const id = String(raw?.id ?? '').trim();
       const qty = Math.max(1, Math.floor(Number(raw?.quantity ?? 1)));
@@ -86,7 +84,6 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
         ? new URL(imgSrc, origin).toString()
         : undefined;
 
-      // Varianten validieren & als String aufbereiten
       const rawVariants = (raw?.variants && typeof raw.variants === 'object') ? raw.variants : {};
       const validatedVariants: Record<string, string> = {};
       if (product.data.variants && product.data.variants.length > 0) {
@@ -109,7 +106,6 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
         ? `${displayName} — ${variantLabel}`
         : displayName;
 
-      // Personalisierungstext nur übernehmen, wenn Produkt auch personalisierbar ist
       const rawPersonalization =
         product.data.personalizable && typeof raw?.personalization === 'string'
           ? raw.personalization.trim().slice(0, 256)
@@ -126,7 +122,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
       lineItems.push({
         price_data: {
           currency: (product.data.currency || 'EUR').toLowerCase(),
-          unit_amount: Math.round(displayPrice(product.data, country) * 100),
+          unit_amount: Math.round(displayPrice(product.data) * 100),
           product_data: {
             name: productName,
             ...(imageUrl ? { images: [imageUrl] } : {}),
@@ -135,7 +131,17 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
         },
         quantity: qty,
       });
+
+      shippingTotalCents += Math.round(shippingSurchargePerItem(product.data, tier) * 100) * qty;
     }
+
+    const allowedCountries = countriesForTier(tier);
+    const shippingDisplayName =
+      tier === 'DE'
+        ? s.shippingNameDE
+        : tier === 'US'
+          ? s.shippingNameUS
+          : s.shippingNameWORLD;
 
     const langPrefix = lang === 'en' ? '/en' : '';
     const session = await stripe.checkout.sessions.create({
@@ -145,14 +151,13 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
       locale: lang === 'en' ? 'en' : 'de',
       success_url: `${origin}${langPrefix}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${langPrefix}/checkout/cancel`,
-      shipping_address_collection: { allowed_countries: [...ALLOWED_COUNTRIES] },
-      // Versandkosten frei — Stripe zeigt "Kostenlos" / "Free" im Checkout an.
+      shipping_address_collection: { allowed_countries: [...allowedCountries] as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] },
       shipping_options: [
         {
           shipping_rate_data: {
             type: 'fixed_amount',
-            fixed_amount: { amount: 0, currency: 'eur' },
-            display_name: s.shippingOptionName,
+            fixed_amount: { amount: shippingTotalCents, currency: 'eur' },
+            display_name: shippingDisplayName,
             delivery_estimate: {
               minimum: { unit: 'business_day', value: 2 },
               maximum: { unit: 'business_day', value: 9 },
@@ -163,7 +168,6 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
       invoice_creation: {
         enabled: true,
         invoice_data: {
-          // Kleinunternehmer-Hinweis nach §19 UStG auf jede Rechnung
           footer: lang === 'en'
             ? 'Small-business exemption under §19 UStG — no VAT is charged.'
             : 'Kein Ausweis der Umsatzsteuer gemäß §19 UStG.',

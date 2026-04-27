@@ -59,11 +59,40 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
 
   <!-- Footer (nur wenn gefüllt) -->
   <div id="cart-drawer-footer" class="hidden border-t border-[var(--color-hairline)] px-6 py-5">
+    <!-- Versand-Tier-Auswahl -->
+    <fieldset class="mb-4">
+      <legend class="text-xs uppercase tracking-[0.16em] text-[var(--color-ink-mute)] mb-2">{strings.cart.shippingTo}</legend>
+      <div class="flex flex-col gap-1.5" role="radiogroup">
+        <label class="flex items-center gap-2.5 cursor-pointer text-sm">
+          <input type="radio" name="cart-shipping-tier" value="DE" class="accent-[var(--color-ink)]" checked />
+          <span class="flex-1">{strings.cart.tierDE}</span>
+          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="DE">—</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer text-sm">
+          <input type="radio" name="cart-shipping-tier" value="US" class="accent-[var(--color-ink)]" />
+          <span class="flex-1">{strings.cart.tierUS}</span>
+          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="US">—</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer text-sm">
+          <input type="radio" name="cart-shipping-tier" value="WORLD" class="accent-[var(--color-ink)]" />
+          <span class="flex-1">{strings.cart.tierWORLD}</span>
+          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="WORLD">—</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="flex items-baseline justify-between mb-1 text-sm text-[var(--color-ink-soft)]">
+      <span>{strings.cart.subtotal}</span>
+      <span data-cart-subtotal>0,00 €</span>
+    </div>
+    <div class="flex items-baseline justify-between mb-3 text-sm text-[var(--color-ink-soft)]">
+      <span>{strings.cart.shipping}</span>
+      <span data-cart-shipping>0,00 €</span>
+    </div>
     <div class="flex items-end justify-between mb-2">
-      <span class="text-sm text-[var(--color-ink-soft)]">{strings.cart.subtotal}</span>
+      <span class="text-sm text-[var(--color-ink-soft)]">{strings.cart.total}</span>
       <span class="font-serif text-2xl" id="cart-drawer-total">0,00 €</span>
     </div>
-    <p class="text-xs text-[var(--color-ink-mute)] mb-4">{strings.cart.shippingNote}</p>
 
     {testMode ? (
       <p class="text-xs leading-relaxed text-[var(--color-ink)] bg-[var(--color-bone-deep)] px-4 py-3 text-center">
@@ -205,6 +234,37 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
       return Object.keys(v).map((k) => `${tName(k)}: ${tValue(v[k])}`).join(' · ');
     };
 
+    // Versand-Tier: gemerkt in localStorage, Default = DE
+    const TIER_KEY = 'kk_shipping_tier';
+    const loadTier = () => {
+      const v = localStorage.getItem(TIER_KEY);
+      return v === 'US' || v === 'WORLD' ? v : 'DE';
+    };
+    const saveTier = (t) => localStorage.setItem(TIER_KEY, t);
+
+    // Versandkosten-Surcharge pro Artikel basierend auf priceUS/priceWorld
+    const surchargePerItem = (item, tier) => {
+      const base = item.price;
+      if (tier === 'DE') return 0;
+      if (tier === 'US') return Math.max(0, (item.priceUS ?? base) - base);
+      return Math.max(0, (item.priceWorld ?? base) - base); // WORLD
+    };
+
+    const computeTotals = (cart, tier) => {
+      let subtotal = 0;
+      let shipping = 0;
+      for (const i of cart) {
+        subtotal += i.price * i.quantity;
+        shipping += surchargePerItem(i, tier) * i.quantity;
+      }
+      return { subtotal, shipping, total: subtotal + shipping };
+    };
+
+    const subtotalEl = footer?.querySelector('[data-cart-subtotal]');
+    const shippingEl = footer?.querySelector('[data-cart-shipping]');
+    const tierCostEls = footer ? footer.querySelectorAll('[data-tier-cost]') : [];
+    const tierRadios = footer ? footer.querySelectorAll('input[name="cart-shipping-tier"]') : [];
+
     const render = () => {
       const cart = load();
       list.innerHTML = '';
@@ -214,9 +274,7 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
       } else {
         emptyEl.classList.add('hidden');
         footer.classList.remove('hidden');
-        let total = 0;
         for (const item of cart) {
-          total += item.price * item.quantity;
           const node = template.content.cloneNode(true);
           const root = node.querySelector('[data-item]');
           root.dataset.itemKey = keyOf(item);
@@ -241,9 +299,34 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
           node.querySelector('[data-item-qty]').textContent = item.quantity;
           list.appendChild(node);
         }
-        totalEl.textContent = fmt(total);
+
+        // Tier wiederherstellen + Totals rendern
+        const tier = loadTier();
+        tierRadios.forEach((r) => { r.checked = r.value === tier; });
+        renderTotals(cart, tier);
       }
     };
+
+    const renderTotals = (cart, tier) => {
+      const { subtotal, shipping, total } = computeTotals(cart, tier);
+      if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
+      if (shippingEl) shippingEl.textContent = shipping === 0 ? fmt(0) : fmt(shipping);
+      totalEl.textContent = fmt(total);
+      // Aufpreis-Anzeige neben jedem Tier-Radio
+      tierCostEls.forEach((el) => {
+        const tierName = el.dataset.tierCost;
+        const cost = computeTotals(cart, tierName).shipping;
+        el.textContent = cost === 0 ? fmt(0) : '+ ' + fmt(cost);
+      });
+    };
+
+    tierRadios.forEach((r) => {
+      r.addEventListener('change', () => {
+        const tier = r.value;
+        saveTier(tier);
+        renderTotals(load(), tier);
+      });
+    });
 
     // Focus-Trap: speichere das vorher fokussierte Element, fange Tab im Drawer ab,
     // gib Fokus zurück beim Schließen.
@@ -375,6 +458,7 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             lang,
+            shippingTier: loadTier(),
             items: cart.map((i) => ({
               id: i.id,
               quantity: i.quantity,

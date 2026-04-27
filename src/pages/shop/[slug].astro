@@ -4,10 +4,9 @@ import { Image } from 'astro:assets';
 import { marked } from 'marked';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { displayPrice } from '../../lib/price';
-import { getLang, getCountry, t, localizedPath, interpolate, translateVariantName, translateVariantValue } from '../../i18n';
+import { getLang, t, localizedPath, interpolate, translateVariantName, translateVariantValue } from '../../i18n';
 
 const lang = getLang(Astro);
-const country = getCountry(Astro);
 const strings = t(lang);
 const p = (path: string) => localizedPath(path, lang);
 
@@ -18,7 +17,7 @@ if (!product) {
 }
 const { Content } = await render(product);
 const images = product.data.images;
-const price = displayPrice(product.data, country);
+const price = displayPrice(product.data);
 
 // Displayed-Texte pro Sprache — EN fällt auf DE zurück, solange
 // Kathrin die Produkt-Daten in Etsy nicht zweisprachig pflegt.
@@ -154,8 +153,11 @@ const placeholderFor = (variantName: string) => {
       {displayTagline && (
         <p class="text-lg text-[var(--color-ink-soft)] mb-6 font-serif italic">{displayTagline}</p>
       )}
-      <p class="font-serif text-3xl mb-3">
+      <p class="font-serif text-3xl mb-1">
         {price.toFixed(2).replace('.', ',')} €
+      </p>
+      <p class="text-xs text-[var(--color-ink-mute)] mb-3">
+        {strings.product.shippingHint}
       </p>
       {product.data.stock !== undefined && (
         <p class="text-xs uppercase tracking-[0.2em] mb-10">
@@ -241,6 +243,8 @@ const placeholderFor = (variantName: string) => {
               data-product-id={product.id}
               data-product-name={displayName}
               data-product-price={price}
+              data-product-price-us={product.data.priceUS ?? ''}
+              data-product-price-world={product.data.priceWorld ?? ''}
               data-product-image={product.data.images[0].src}
               data-product-max-stock={product.data.stock}
             >
@@ -401,11 +405,15 @@ const placeholderFor = (variantName: string) => {
             if (existing) {
               existing.quantity = Math.min(maxStock, existing.quantity + qty);
             } else {
+              const rawUs = addBtn.dataset.productPriceUs;
+              const rawWorld = addBtn.dataset.productPriceWorld;
               cart.push({
                 id,
                 cartKey,
                 name: addBtn.dataset.productName,
                 price: parseFloat(addBtn.dataset.productPrice),
+                ...(rawUs ? { priceUS: parseFloat(rawUs) } : {}),
+                ...(rawWorld ? { priceWorld: parseFloat(rawWorld) } : {}),
                 image: addBtn.dataset.productImage,
                 quantity: qty,
                 variants,
