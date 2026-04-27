@@ -15,6 +15,13 @@ export const de = {
     banner: 'Testbetrieb — Bestellungen sind aktuell deaktiviert. Der Shop-Start folgt in Kürze.',
     cartNotice: 'Der Shop ist noch im Testbetrieb. Bestellungen sind aktuell deaktiviert.',
   },
+  newsletter: {
+    submitting: 'Wird gesendet…',
+    success: 'Danke — sobald der Newsletter losgeht, melden wir uns bei dir persönlich.',
+    errorEmail: 'Bitte gib eine gültige E-Mail-Adresse ein.',
+    errorRateLimit: 'Zu viele Versuche. Bitte später nochmal.',
+    errorGeneric: 'Es ist etwas schiefgegangen. Bitte später nochmal versuchen.',
+  },
   footer: {
     tagline: 'Handgefertigter Haarschmuck aus Leipzig.',
     legal: 'Rechtliches',

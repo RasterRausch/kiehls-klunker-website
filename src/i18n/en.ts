@@ -18,6 +18,13 @@ export const en: typeof de = {
     banner: 'Test mode — orders are currently disabled. The shop opens officially soon.',
     cartNotice: 'The shop is still in test mode. Orders are currently disabled.',
   },
+  newsletter: {
+    submitting: 'Sending…',
+    success: 'Thank you — when the newsletter launches, we\'ll get in touch personally.',
+    errorEmail: 'Please enter a valid email address.',
+    errorRateLimit: 'Too many attempts. Please try again later.',
+    errorGeneric: 'Something went wrong. Please try again later.',
+  },
   footer: {
     tagline: 'Handmade hair jewelry from Leipzig.',
     legal: 'Legal',

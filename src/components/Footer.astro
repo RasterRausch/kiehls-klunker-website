@@ -55,23 +55,38 @@ const tagline = lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzi
           <div class="hidden md:block h-28 border-l border-dashed border-[var(--color-hairline)]" aria-hidden="true"></div>
 
           <!-- Adressfeld -->
-          <form class="mt-10 md:mt-0 space-y-4" onsubmit="return false;">
+          <form id="newsletter-form" class="mt-10 md:mt-0 space-y-4" novalidate>
             <label class="sr-only" for="newsletter-email">{n.emailLabel}</label>
             <input
               id="newsletter-email"
+              name="email"
               type="email"
               required
               placeholder={n.placeholder}
-              class="w-full bg-transparent border-0 border-b border-[var(--color-hairline)] focus:border-[var(--color-ink)] focus:outline-none text-[var(--color-ink)] placeholder:text-[var(--color-ink-mute)] px-0 py-3 text-sm transition-colors"
+              class="w-full bg-transparent border-0 border-b border-[var(--color-hairline)] focus:border-[var(--color-ink)] focus:outline-none text-[var(--color-ink)] placeholder:text-[var(--color-ink-mute)] px-0 py-3 text-sm transition-colors disabled:opacity-50"
+            />
+            <!-- Honeypot — versteckt; Bots füllen, Menschen nicht -->
+            <input
+              type="text"
+              name="website"
+              tabindex="-1"
+              autocomplete="off"
+              aria-hidden="true"
+              class="hidden"
             />
             <button
               type="submit"
-              disabled
-              title="Backend folgt"
               class="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {n.submit}
+              <span data-newsletter-label>{n.submit}</span>
+              <span data-newsletter-loading class="hidden">{strings.newsletter.submitting}</span>
             </button>
+            <p
+              data-newsletter-status
+              role="status"
+              aria-live="polite"
+              class="hidden text-xs leading-relaxed text-[var(--color-ink)] bg-[var(--color-bone-deep)] px-3 py-2"
+            ></p>
           </form>
         </div>
       </div>
@@ -138,3 +153,72 @@ const tagline = lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzi
     </div>
   </div>
 </footer>
+
+<script is:inline define:vars={{
+  lang,
+  msgSubmitting: strings.newsletter.submitting,
+  msgSuccess: strings.newsletter.success,
+  msgErrorEmail: strings.newsletter.errorEmail,
+  msgErrorRateLimit: strings.newsletter.errorRateLimit,
+  msgErrorGeneric: strings.newsletter.errorGeneric,
+}}>
+  (() => {
+    const form = document.getElementById('newsletter-form');
+    if (!form) return;
+    const emailEl = form.querySelector('input[name="email"]');
+    const honeypotEl = form.querySelector('input[name="website"]');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const labelEl = submitBtn?.querySelector('[data-newsletter-label]');
+    const loadingEl = submitBtn?.querySelector('[data-newsletter-loading]');
+    const statusEl = form.querySelector('[data-newsletter-status]');
+
+    const setLoading = (loading) => {
+      if (!submitBtn) return;
+      submitBtn.disabled = loading;
+      if (emailEl) emailEl.disabled = loading;
+      labelEl?.classList.toggle('hidden', loading);
+      loadingEl?.classList.toggle('hidden', !loading);
+    };
+    const showStatus = (msg, isError) => {
+      if (!statusEl) return;
+      statusEl.textContent = msg;
+      statusEl.classList.remove('hidden');
+      statusEl.style.color = isError ? '#a05530' : '';
+    };
+    const hideStatus = () => statusEl?.classList.add('hidden');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (emailEl?.value || '').trim();
+      const website = honeypotEl?.value || '';
+      hideStatus();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        showStatus(msgErrorEmail, true);
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await fetch('/api/newsletter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, lang, website }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          showStatus(msgSuccess, false);
+          if (emailEl) emailEl.value = '';
+        } else if (res.status === 429) {
+          showStatus(msgErrorRateLimit, true);
+        } else if (res.status === 400 && data?.error) {
+          showStatus(data.error, true);
+        } else {
+          showStatus(msgErrorGeneric, true);
+        }
+      } catch (err) {
+        showStatus(msgErrorGeneric, true);
+      } finally {
+        setLoading(false);
+      }
+    });
+  })();
+</script>
