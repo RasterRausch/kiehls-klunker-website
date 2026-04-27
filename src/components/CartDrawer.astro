@@ -10,6 +10,7 @@ import { getLang, t, localizedPath } from '../i18n';
 const lang = getLang(Astro);
 const strings = t(lang);
 const p = (path: string) => localizedPath(path, lang);
+const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
 ---
 
 <!-- Overlay -->
@@ -64,29 +65,37 @@ const p = (path: string) => localizedPath(path, lang);
     </div>
     <p class="text-xs text-[var(--color-ink-mute)] mb-4">{strings.cart.shippingNote}</p>
 
-    <label class="flex gap-2.5 mb-4 cursor-pointer select-none" for="cart-agb-check">
-      <input
-        type="checkbox"
-        id="cart-agb-check"
-        class="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-ink)] cursor-pointer"
-      />
-      <span class="text-xs leading-relaxed text-[var(--color-ink-soft)]">
-        {strings.cart.termsIntro} <a href="/agb" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.agb}</a>{strings.cart.termsAnd}
-        <a href="/widerruf" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.widerruf}</a> {strings.cart.termsMid}
-        <a href="/datenschutz" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.datenschutz}</a>{strings.cart.termsOutro}
-      </span>
-    </label>
+    {testMode ? (
+      <p class="text-xs leading-relaxed text-[var(--color-ink)] bg-[var(--color-bone-deep)] px-4 py-3 text-center">
+        {strings.testMode.cartNotice}
+      </p>
+    ) : (
+      <>
+        <label class="flex gap-2.5 mb-4 cursor-pointer select-none" for="cart-agb-check">
+          <input
+            type="checkbox"
+            id="cart-agb-check"
+            class="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-ink)] cursor-pointer"
+          />
+          <span class="text-xs leading-relaxed text-[var(--color-ink-soft)]">
+            {strings.cart.termsIntro} <a href="/agb" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.agb}</a>{strings.cart.termsAnd}
+            <a href="/widerruf" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.widerruf}</a> {strings.cart.termsMid}
+            <a href="/datenschutz" target="_blank" class="underline underline-offset-2 hover:text-[var(--color-ink)]">{strings.footer.datenschutz}</a>{strings.cart.termsOutro}
+          </span>
+        </label>
 
-    <p id="cart-drawer-error" role="alert" aria-live="assertive" class="hidden text-xs text-[var(--color-ink)] bg-[var(--color-bone-deep)] px-3 py-2 mb-3"></p>
-    <button
-      type="button"
-      id="cart-drawer-checkout"
-      disabled
-      class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      <span data-checkout-label>{strings.cart.checkout}</span>
-      <span data-checkout-loading class="hidden">{strings.cart.checkoutLoading}</span>
-    </button>
+        <p id="cart-drawer-error" role="alert" aria-live="assertive" class="hidden text-xs text-[var(--color-ink)] bg-[var(--color-bone-deep)] px-3 py-2 mb-3"></p>
+        <button
+          type="button"
+          id="cart-drawer-checkout"
+          disabled
+          class="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span data-checkout-label>{strings.cart.checkout}</span>
+          <span data-checkout-loading class="hidden">{strings.cart.checkoutLoading}</span>
+        </button>
+      </>
+    )}
   </div>
 </aside>
 

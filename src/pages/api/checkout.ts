@@ -25,6 +25,14 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const requestedLang = typeof body?.lang === 'string' && body.lang === 'en' ? 'en' : null;
     const lang: Lang = requestedLang ?? ((locals as { lang?: Lang })?.lang ?? 'de');
     const s = t(lang).checkout;
+
+    // Globaler Schalter: Shop läuft im Testbetrieb → keine echten Bestellungen.
+    // Backend-seitig hart blocken, falls jemand Frontend-Sperre umgeht.
+    const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true' || process.env.PUBLIC_TEST_MODE === 'true';
+    if (testMode) {
+      return json({ error: s.errorTestMode }, 503);
+    }
+
     const items: CartItem[] = Array.isArray(body?.items) ? body.items : [];
     if (items.length === 0) {
       return json({ error: s.errorCartEmpty }, 400);

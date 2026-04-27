@@ -11,6 +11,10 @@ export const de = {
   header: {
     announcement: 'Handgefertigt in Leipzig · Versand in 2–9 Werktagen',
   },
+  testMode: {
+    banner: 'Testbetrieb — Bestellungen sind aktuell deaktiviert. Der Shop-Start folgt in Kürze.',
+    cartNotice: 'Der Shop ist noch im Testbetrieb. Bestellungen sind aktuell deaktiviert.',
+  },
   footer: {
     tagline: 'Handgefertigter Haarschmuck aus Leipzig.',
     legal: 'Rechtliches',
@@ -128,6 +132,7 @@ export const de = {
     errorStock: '{name}: nur noch {stock} auf Lager.',
     errorVariantMissing: '{name}: Bitte {group} wählen.',
     errorVariantInvalid: '{name}: Ungültige Auswahl bei {group}.',
+    errorTestMode: 'Der Shop läuft noch im Testbetrieb. Bestellungen sind derzeit nicht möglich.',
   },
   contact: {
     pageTitle: 'Kontakt — Kiehls Klunker',

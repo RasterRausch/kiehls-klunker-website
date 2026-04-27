@@ -1,0 +1,40 @@
+---
+// Wird gerendert, wenn PUBLIC_TEST_MODE=true in .env steht.
+// Zeigt globalen Hinweis, dass die Seite im Testbetrieb läuft.
+import { getLang, t } from '../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const enabled = import.meta.env.PUBLIC_TEST_MODE === 'true';
+---
+
+{enabled && (
+  <div class="test-mode-banner" role="region" aria-label={lang === 'en' ? 'Test mode notice' : 'Testbetriebs-Hinweis'}>
+    <p>{strings.testMode.banner}</p>
+  </div>
+)}
+
+<style>
+  .test-mode-banner {
+    background: var(--color-bone-deep);
+    color: var(--color-ink);
+    text-align: center;
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .test-mode-banner p {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0;
+  }
+  @media (min-width: 480px) {
+    .test-mode-banner p {
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+    }
+  }
+</style>

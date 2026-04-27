@@ -14,6 +14,10 @@ export const en: typeof de = {
   header: {
     announcement: 'Handmade in Leipzig · Shipping in 2–9 business days',
   },
+  testMode: {
+    banner: 'Test mode — orders are currently disabled. The shop opens officially soon.',
+    cartNotice: 'The shop is still in test mode. Orders are currently disabled.',
+  },
   footer: {
     tagline: 'Handmade hair jewelry from Leipzig.',
     legal: 'Legal',
@@ -131,6 +135,7 @@ export const en: typeof de = {
     errorStock: '{name}: only {stock} left in stock.',
     errorVariantMissing: '{name}: please choose {group}.',
     errorVariantInvalid: '{name}: invalid selection for {group}.',
+    errorTestMode: 'The shop is still in test mode. Orders are currently not possible.',
   },
   contact: {
     pageTitle: 'Contact — Kiehls Klunker',
