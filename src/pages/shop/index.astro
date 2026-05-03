@@ -99,7 +99,7 @@ const categoryCounts = activeCategories.map((key) => ({
               data-category={product.data.category}
               data-price={displayPrice(product.data)}
             >
-              <div class="aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-3">
+              <div class="aspect-[7/5] relative overflow-hidden bg-[var(--color-bone)] mb-3">
                 <Image
                   src={product.data.images[0]}
                   alt={lang === 'en' && product.data.nameEn ? product.data.nameEn : product.data.name}

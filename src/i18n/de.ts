@@ -209,7 +209,7 @@ export const de = {
     collectionEyebrow: 'Kollektion',
     collectionHeadline: 'Aus der Werkstatt.',
     collectionCta: 'Zum Shop',
-    cardHoverLabel: 'Näher betrachten',
+    cardHoverLabel: 'Anschauen',
     sliderNextProducts: 'Nächste Produkte',
     sliderPrevProducts: 'Vorherige Produkte',
     sliderRoleDescription: 'Karussell',

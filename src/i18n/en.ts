@@ -212,7 +212,7 @@ export const en: typeof de = {
     collectionEyebrow: 'Collection',
     collectionHeadline: 'From the studio.',
     collectionCta: 'Shop',
-    cardHoverLabel: 'Take a closer look',
+    cardHoverLabel: 'View',
     sliderNextProducts: 'Next products',
     sliderPrevProducts: 'Previous products',
     sliderRoleDescription: 'Carousel',
