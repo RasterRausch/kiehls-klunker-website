@@ -1,13 +1,13 @@
-// Versand-Tier-Logik: zwei Tarife, jeweils pauschal pro Bestellung.
-// - STD: Deutschland + EU + Rest-Europa → 4,90 €
-// - US:  nur USA → 39 €
+// Versand-Tier-Logik: zwei Tarife.
+// - STD: Deutschland + EU + Rest-Europa → kostenfrei
+// - US:  nur USA → 39 € pauschal pro Bestellung
 //
 // Hinweis: Spiegelt sich in src/components/CartDrawer.astro für die Live-Anzeige.
 // Wer hier was ändert, muss auch dort nachziehen.
 
 export type ShippingTier = 'STD' | 'US';
 
-export const STD_RATE_EUR = 4.90;
+export const STD_RATE_EUR = 0;
 export const US_RATE_EUR = 39.00;
 
 // USA als eigener Tarif wegen langer Distanz / Zoll-Aufwand.

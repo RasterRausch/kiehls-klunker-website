@@ -180,6 +180,7 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
   checkoutLoading: strings.cart.checkoutLoading,
   stdRate: STD_RATE_EUR,
   usRate: US_RATE_EUR,
+  freeLabel: strings.cart.shippingFree,
   variantNameMap: VARIANT_NAME_MAP,
   colorValueMap: COLOR_VALUE_MAP,
 }}>
@@ -302,13 +303,13 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
     const renderTotals = (cart, tier) => {
       const { subtotal, shipping, total } = computeTotals(cart, tier);
       if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
-      if (shippingEl) shippingEl.textContent = shipping === 0 ? fmt(0) : fmt(shipping);
+      if (shippingEl) shippingEl.textContent = shipping === 0 ? freeLabel : fmt(shipping);
       totalEl.textContent = fmt(total);
       // Aufpreis-Anzeige neben jedem Tier-Radio
       tierCostEls.forEach((el) => {
         const tierName = el.dataset.tierCost;
         const cost = computeTotals(cart, tierName).shipping;
-        el.textContent = cost === 0 ? fmt(0) : '+ ' + fmt(cost);
+        el.textContent = cost === 0 ? freeLabel : '+ ' + fmt(cost);
       });
     };
 
