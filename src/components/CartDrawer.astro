@@ -303,7 +303,7 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
     const renderTotals = (cart, tier) => {
       const { subtotal, shipping, total } = computeTotals(cart, tier);
       if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
-      if (shippingEl) shippingEl.textContent = shipping === 0 ? freeLabel : fmt(shipping);
+      if (shippingEl) shippingEl.textContent = fmt(shipping);
       totalEl.textContent = fmt(total);
       // Aufpreis-Anzeige neben jedem Tier-Radio
       tierCostEls.forEach((el) => {

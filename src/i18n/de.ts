@@ -112,7 +112,7 @@ export const de = {
     shipping: 'Versand',
     total: 'Summe',
     shippingNote: 'Versand kostenfrei.',
-    shippingFree: 'kostenfrei',
+    shippingFree: 'versandkostenfrei',
     shippingTo: 'Lieferziel',
     tierSTD: 'Deutschland & übrige Länder',
     tierUS: 'USA',
