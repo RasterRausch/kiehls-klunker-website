@@ -159,11 +159,11 @@ const breadcrumbSchema = {
             {images.map((img, i) => (
               <button
                 type="button"
-                class:list={['gallery-thumb aspect-square overflow-hidden bg-[var(--color-bone)] shrink-0 snap-start w-[72px] md:w-[80px] lg:w-[88px]', i === 0 && 'is-active']}
+                class:list={['gallery-thumb aspect-[7/5] overflow-hidden bg-[var(--color-bone)] shrink-0 snap-start w-[84px] md:w-[96px] lg:w-[104px]', i === 0 && 'is-active']}
                 data-index={i}
                 aria-label={interpolate(strings.product.galleryThumbLabel, { index: i + 1 })}
               >
-                <Image src={img} alt="" role="presentation" widths={[120, 200, 300]} sizes="88px" class="w-full h-full object-cover" loading="lazy" />
+                <Image src={img} alt="" role="presentation" widths={[120, 200, 300]} sizes="104px" class="w-full h-full object-cover" loading="lazy" />
               </button>
             ))}
           </div>
