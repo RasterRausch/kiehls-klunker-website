@@ -148,7 +148,9 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const langPrefix = lang === 'en' ? '/en' : '';
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      payment_method_types: ['card', 'paypal'],
+      // payment_method_types weglassen → Stripe nimmt alle im Dashboard
+      // aktivierten Methoden. Kathrin schaltet PayPal/Klarna/Apple Pay etc.
+      // selbst frei, ohne dass wir den Code anfassen müssen.
       line_items: lineItems,
       locale: lang === 'en' ? 'en' : 'de',
       success_url: `${origin}${langPrefix}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
