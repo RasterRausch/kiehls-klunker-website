@@ -98,18 +98,18 @@ const breadcrumbSchema = {
     <a href={p('/shop')} class="link-arrow"><span class="arrow arrow-left">←</span> {strings.product.backToShop}</a>
   </section>
 
-  <section class="max-w-7xl mx-auto px-6 md:px-10 pb-12 md:pb-20 lg:pb-28 grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-20">
+  <section class="max-w-7xl mx-auto px-6 md:px-10 pb-12 md:pb-20 lg:pb-28 grid md:grid-cols-[1.2fr_1fr] gap-8 md:gap-12">
     <!-- GALLERY -->
     <div class="min-w-0" data-gallery>
       <!-- Haupt-Bild mit Prev/Next-Pfeilen -->
-      <div class="gallery-main-wrap aspect-square relative overflow-hidden bg-[var(--color-bone)] mb-4">
+      <div class="gallery-main-wrap aspect-[7/5] relative overflow-hidden bg-[var(--color-bone)] mb-4">
         {images.map((img, i) => (
           <Image
             src={img}
             alt={i === 0 ? displayName : `${displayName} – ${interpolate(strings.product.galleryThumbLabel, { index: i + 1 })}`}
             loading={i === 0 ? 'eager' : 'lazy'}
             widths={[480, 720, 960, 1200]}
-            sizes="(min-width: 768px) 45vw, 100vw"
+            sizes="(min-width: 768px) 55vw, 100vw"
             class:list={[
               'gallery-main absolute inset-0 w-full h-full object-cover transition-opacity duration-300',
               i === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none',
@@ -288,8 +288,6 @@ const breadcrumbSchema = {
               data-product-id={product.id}
               data-product-name={displayName}
               data-product-price={price}
-              data-product-price-us={product.data.priceUS ?? ''}
-              data-product-price-world={product.data.priceWorld ?? ''}
               data-product-image={product.data.images[0].src}
               data-product-max-stock={product.data.stock}
             >
@@ -450,15 +448,11 @@ const breadcrumbSchema = {
             if (existing) {
               existing.quantity = Math.min(maxStock, existing.quantity + qty);
             } else {
-              const rawUs = addBtn.dataset.productPriceUs;
-              const rawWorld = addBtn.dataset.productPriceWorld;
               cart.push({
                 id,
                 cartKey,
                 name: addBtn.dataset.productName,
                 price: parseFloat(addBtn.dataset.productPrice),
-                ...(rawUs ? { priceUS: parseFloat(rawUs) } : {}),
-                ...(rawWorld ? { priceWorld: parseFloat(rawWorld) } : {}),
                 image: addBtn.dataset.productImage,
                 quantity: qty,
                 variants,

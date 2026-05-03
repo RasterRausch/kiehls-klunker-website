@@ -19,7 +19,7 @@ type CartItem = {
 };
 
 function isShippingTier(v: unknown): v is ShippingTier {
-  return v === 'DE' || v === 'US' || v === 'WORLD';
+  return v === 'STD' || v === 'US';
 }
 
 export const POST: APIRoute = async ({ request, url, locals }) => {
@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const body = await request.json();
     const requestedLang = typeof body?.lang === 'string' && body.lang === 'en' ? 'en' : null;
     const lang: Lang = requestedLang ?? ((locals as { lang?: Lang })?.lang ?? 'de');
-    const tier: ShippingTier = isShippingTier(body?.shippingTier) ? body.shippingTier : 'DE';
+    const tier: ShippingTier = isShippingTier(body?.shippingTier) ? body.shippingTier : 'STD';
     const s = t(lang).checkout;
 
     // Globaler Schalter: Shop läuft im Testbetrieb → keine echten Bestellungen.
@@ -59,7 +59,6 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(origin);
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-    const cartForShipping: Array<{ data: typeof products[number]['data']; quantity: number }> = [];
 
     for (const raw of items) {
       const id = String(raw?.id ?? '').trim();
@@ -132,16 +131,14 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
         quantity: qty,
       });
 
-      cartForShipping.push({ data: product.data, quantity: qty });
     }
 
-    const shippingTotalCents = Math.round(shippingTotalEur(cartForShipping, tier) * 100);
+    const shippingTotalCents = Math.round(shippingTotalEur(tier) * 100);
 
     const allowedCountries = countriesForTier(tier);
     const shippingDisplayNames: Record<ShippingTier, string> = {
-      DE: s.shippingNameDE,
+      STD: s.shippingNameSTD,
       US: s.shippingNameUS,
-      WORLD: s.shippingNameWORLD,
     };
     const shippingDisplayName = shippingDisplayNames[tier];
 

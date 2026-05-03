@@ -6,7 +6,7 @@
 //   - Item-Änderung: `cart:changed`-Event triggert Re-Render + Badge-Update
 
 import { getLang, t, localizedPath, VARIANT_NAME_MAP, COLOR_VALUE_MAP } from '../i18n';
-import { WORLD_FLAT_RATE_EUR } from '../lib/shipping';
+import { STD_RATE_EUR, US_RATE_EUR } from '../lib/shipping';
 
 const lang = getLang(Astro);
 const strings = t(lang);
@@ -65,19 +65,14 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
       <legend class="text-xs uppercase tracking-[0.16em] text-[var(--color-ink-mute)] mb-2">{strings.cart.shippingTo}</legend>
       <div class="flex flex-col gap-1.5" role="radiogroup">
         <label class="flex items-center gap-2.5 cursor-pointer text-sm">
-          <input type="radio" name="cart-shipping-tier" value="DE" class="accent-[var(--color-ink)]" checked />
-          <span class="flex-1">{strings.cart.tierDE}</span>
-          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="DE">—</span>
+          <input type="radio" name="cart-shipping-tier" value="STD" class="accent-[var(--color-ink)]" checked />
+          <span class="flex-1">{strings.cart.tierSTD}</span>
+          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="STD">—</span>
         </label>
         <label class="flex items-center gap-2.5 cursor-pointer text-sm">
           <input type="radio" name="cart-shipping-tier" value="US" class="accent-[var(--color-ink)]" />
           <span class="flex-1">{strings.cart.tierUS}</span>
           <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="US">—</span>
-        </label>
-        <label class="flex items-center gap-2.5 cursor-pointer text-sm">
-          <input type="radio" name="cart-shipping-tier" value="WORLD" class="accent-[var(--color-ink)]" />
-          <span class="flex-1">{strings.cart.tierWORLD}</span>
-          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="WORLD">—</span>
         </label>
       </div>
     </fieldset>
@@ -183,18 +178,18 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
   checkoutErrorGeneric: strings.cart.checkoutError,
   checkoutLabel: strings.cart.checkout,
   checkoutLoading: strings.cart.checkoutLoading,
-  worldFlatRate: WORLD_FLAT_RATE_EUR,
+  stdRate: STD_RATE_EUR,
+  usRate: US_RATE_EUR,
   variantNameMap: VARIANT_NAME_MAP,
   colorValueMap: COLOR_VALUE_MAP,
 }}>
   (() => {
     // Cart-Schema-Version: bei Schema-Änderungen erhöhen, dann werden alte
-    // localStorage-Carts beim ersten Page-Load gedroppt (z. B. wenn neue
-    // Felder wie priceUS/priceWorld dazugekommen sind und alte Items die
-    // nicht haben).
-    const CART_VERSION = '2';
+    // localStorage-Carts beim ersten Page-Load gedroppt.
+    const CART_VERSION = '3';
     if (localStorage.getItem('kk_cart_version') !== CART_VERSION) {
       localStorage.removeItem('cart');
+      localStorage.removeItem('kk_shipping_tier');
       localStorage.setItem('kk_cart_version', CART_VERSION);
     }
 
@@ -237,33 +232,23 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
       return Object.keys(v).map((k) => `${tName(k)}: ${tValue(v[k])}`).join(' · ');
     };
 
-    // Versand-Tier: gemerkt in localStorage, Default = DE
+    // Versand-Tier: gemerkt in localStorage, Default = STD
     const TIER_KEY = 'kk_shipping_tier';
     const loadTier = () => {
       const v = localStorage.getItem(TIER_KEY);
-      return v === 'US' || v === 'WORLD' ? v : 'DE';
+      return v === 'US' ? 'US' : 'STD';
     };
     const saveTier = (t) => localStorage.setItem(TIER_KEY, t);
 
     // Versandkosten-Logik — Spiegel von src/lib/shipping.ts:
-    // - DE: 0
-    // - US: pro-Artikel (priceUS - priceDE) × Menge
-    // - WORLD: pauschal worldFlatRate pro Bestellung
-    const surchargePerItemUS = (item) => {
-      const base = item.price;
-      return Math.max(0, (item.priceUS ?? base) - base);
-    };
-
+    // Beide Tiers sind Pauschalen pro Bestellung, unabhängig von Menge.
     const computeTotals = (cart, tier) => {
       let subtotal = 0;
       for (const i of cart) subtotal += i.price * i.quantity;
 
-      let shipping = 0;
-      if (tier === 'US') {
-        for (const i of cart) shipping += surchargePerItemUS(i) * i.quantity;
-      } else if (tier === 'WORLD') {
-        shipping = cart.length > 0 ? worldFlatRate : 0;
-      }
+      const shipping = cart.length > 0
+        ? (tier === 'US' ? usRate : stdRate)
+        : 0;
       return { subtotal, shipping, total: subtotal + shipping };
     };
 
