@@ -371,18 +371,20 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 111;
-        /* Mobile: fast volle Breite (1rem Margin links/rechts).
-           Desktop: max 720px. */
-        max-width: min(720px, calc(100vw - 1rem));
-        max-height: calc(100vh - 1rem);
+        /* Margins matchen die Website (px-6 md:px-10): 24px mobile,
+           40px desktop. Width explizit, damit der Container die ganze
+           Breite einnimmt — width:auto schrumpft sonst. */
+        width: calc(100vw - 3rem);
+        max-width: 720px;
+        max-height: calc(100vh - 3rem);
         opacity: 0;
         transition: opacity 220ms ease;
-        line-height: 0; /* unterdrückt inline-baseline-Whitespace */
+        line-height: 0;
       }
       @media (min-width: 640px) {
         .news-lightbox {
-          max-width: min(720px, calc(100vw - 3rem));
-          max-height: calc(100vh - 3rem);
+          width: calc(100vw - 5rem);
+          max-height: calc(100vh - 5rem);
         }
       }
       .news-lightbox.is-open {
@@ -390,14 +392,13 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
       }
       .news-lightbox__img {
         display: block;
-        max-width: 100%;
-        max-height: calc(100vh - 1rem);
-        width: auto;
+        width: 100%;
         height: auto;
+        max-height: calc(100vh - 3rem);
       }
       @media (min-width: 640px) {
         .news-lightbox__img {
-          max-height: calc(100vh - 3rem);
+          max-height: calc(100vh - 5rem);
         }
       }
       .news-lightbox__close {
