@@ -1,30 +1,5 @@
 ---
 name: "Hammer-Haarkomma, Haarstab aus Titan, titanium hairstick"
-nameEn: "Hammered titanium hair comma (hairstick)"
-bodyEn: |
-  Hammered hair comma
-
-  The Haarkomma is a minimalist, ultra-light hairstick made of titanium. Its distinctive shape holds your hair reliably in place.
-  At just about 8 g, it's well suited for fine or thin hair.
-  True to its name, the Hammer-Haarkomma has a hammer-mark pattern that gives the stick its distinctive texture. It can also be anodized in a range of colors (see photos) for different looks.
-  The surface is matte, edges and tips are polished — gentle on your hair.
-
-  Other sizes are available on request — just get in touch!
-  Not sure what length you need? Feel free to message me.
-
-
-  ### Measurements
-
-  - Your chosen length × 1.5 cm (0.59″)
-  - Usable length = overall length
-
-  ### Material
-
-  Titanium
-
-  ### How it's made
-
-  Classic goldsmithing techniques
 category: "haarstaebe"
 material: "Titan"
 price: 39
@@ -51,30 +26,29 @@ images:
 sizes: []
 colors: []
 variants:
-  - name: "Farbe"
+  - name: "Primary color"
     values:
-      - "blau"
-      - "bunt"
-      - "gelb"
-      - "grün"
-      - "hellblau"
-      - "karamell"
-      - "mint"
-      - "ohne (titangrau)"
-      - "pink"
-      - "violett"
-  - name: "Länge"
+      - "0 ohne (titangrau)"
+      - "1 karamell"
+      - "2 gelb"
+      - "3 grün"
+      - "4 mint"
+      - "5 hellblau"
+      - "6 blau"
+      - "7 violett"
+      - "8 pink"
+      - "9 bunt"
+  - name: "Length"
     values:
-      - "9 cm"
+      - "??? cm"
       - "10,7 cm"
       - "12 cm"
-      - "Wunschmaß"
+      - "9 cm"
 featured: false
 order: 10
 personalizable: true
 ---
 
-Hammer-Haarkomma,
 Das Haarkomma ist ein minimalistischer, super leichter Haarstab aus Titan. Durch seine spezielle Form hält er sehr gut das Haar zusammen.
 Durch sein leichtes Gewicht (circa 8g) ist das Komma gut für leichte, feine Haare geeignet.
 Das Hammer-Haarkomma ist, wie der Name verrät, mit einem Hammerschlagmuster versehen, das dem Stab seine besondere Oberfläche verleiht. Der Haarstab kann zusätzlich in verschiedenen Farben anodisiert werden (siehe Foto) und dadurch verschiedene Farbvariationen erhalten.
@@ -84,15 +58,15 @@ Das Hammer-Haarkomma kann auch in anderen Größen gebaut werden, einfach nachfr
 Wer sich unsicher ist welche Länge benötigt wird, kann mich gern anschreiben.
 
 
-### Maße
-
+Maße:
+- klein: 9cm x 1,5cm
+- mittel: 10,7cm x 1,5cm
+- groß: 12cm x 1,5cm
 - Wunschlänge x 1,5cm
 - Nutzlänge = Gesamtlänge
 
-### Material
+Material:
+- Titan
 
-Titan
-
-### Herstellungsart
-
-Goldschmiedetechniken
+Herstellungsart:
+- Goldschmiedetechniken

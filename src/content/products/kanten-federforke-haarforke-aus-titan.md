@@ -1,27 +1,5 @@
 ---
 name: "Kanten-Federforke, Haarforke aus Titan"
-nameEn: "Colored-edge feather fork — titanium hair fork"
-bodyEn: |
-  A minimalist titanium hair fork with a colorful edge — understated enough to wear for pretty much any occasion or outfit.
-  Titanium is a remarkably strong yet lightweight material, which makes this feather fork a sturdy hair holder despite its delicate look. You barely notice it in your hair. On top of that, titanium is extremely corrosion-resistant — you can take the fork pretty much anywhere: into the shower, into the sea, behind Niagara Falls, into a steel mill, into outer space, even inside your own body (though that one might get tricky — not because of the fork).
-
-  Available in a range of colors and sizes. Custom sizes and color combinations on request, happy to make it work :-)
-  Questions always welcome!
-
-  ### Measurements
-
-  - **small** — 11 cm (usable length: 9 cm) / 4.3″
-  - **medium** — 12.5 cm (usable length: 10.5 cm) / 4.9″
-  - **large** — 14 cm (usable length: 12 cm) / 5.5″
-  - **Weight** — 8–10 g depending on size
-
-  ### Material
-
-  Titanium
-
-  ### How it's made
-
-  Classic goldsmithing techniques
 category: "haarforken"
 material: "Titan"
 price: 52
@@ -48,24 +26,24 @@ images:
 sizes: []
 colors: []
 variants:
-  - name: "Farbe"
+  - name: "Secondary color"
     values:
-      - "blau"
-      - "bunt"
-      - "Flieder"
-      - "gelb"
-      - "grün"
-      - "hellblau"
-      - "karamell"
-      - "mint"
-      - "rosé"
-      - "violett"
-  - name: "Länge"
+      - "1 bunt"
+      - "10 rosé"
+      - "2 grün"
+      - "3 karamell"
+      - "4 gelb"
+      - "5 mint"
+      - "6 hellblau"
+      - "7 blau"
+      - "8 violett"
+      - "9 Flieder"
+  - name: "Length"
     values:
+      - "??? cm"
       - "11 cm"
       - "12,5 cm"
       - "14 cm"
-      - "Wunschmaß"
 featured: false
 order: 7
 personalizable: true
@@ -77,17 +55,15 @@ Titan ist ein sehr stabiles und leichtes Material, das macht die Federforke trot
 Die Kanten-Federforke gibt es in verschiedenen Farben und Größen. Wünsche zu Sondergrößen und Farbkombinationen werden auf Anfrage - soweit möglich - erfüllt :-)...
 Wenn Fragen auftauchen, bitte gern fragen!
 
-### Maße
+Maße:
+- klein:    11cm x 2cm (Nutzlänge: 9cm)
+- mittel:  12,5cm x 2cm(Nutzlänge: 10,5cm)
+- groß:    14cm x 2cm (Nutzlänge 12cm)
+- Wunschlänge x 2cm (Nutzlänge = Wunschlänge - 2cm)
+- Gewicht: 8-10g je nach Länge
 
-- **klein** — 11cm (Nutzlänge: 9cm)
-- **mittel** — 12,5cm (Nutzlänge: 10,5cm)
-- **groß** — 14cm (Nutzlänge 12cm)
-- **Gewicht** — 8-10g je nach Länge
+Material:
+- Titan
 
-### Material
-
-Titan
-
-### Herstellungsart
-
-Goldschmiedetechniken
+Herstellungsart:
+- Goldschmiedetechniken

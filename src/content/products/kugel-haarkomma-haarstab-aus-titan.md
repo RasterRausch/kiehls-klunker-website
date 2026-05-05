@@ -1,30 +1,5 @@
 ---
 name: "Kugel-Haarkomma, Haarstab aus Titan"
-nameEn: "Ball-hammered titanium hair comma (hairstick)"
-bodyEn: |
-  Ball-hammered hair comma
-
-  The Haarkomma is a minimalist, ultra-light hairstick made of titanium. Its distinctive shape holds your hair reliably in place.
-  At just about 8 g, it's well suited for fine or thin hair.
-  The Kugel-Haarkomma gets its character from a ball-hammer pattern that gives the stick its distinctive dotted texture. It can also be anodized in a range of colors (see photos) for different looks.
-  The surface is matte, edges and tips are polished — gentle on your hair.
-
-  Other sizes are available on request — just get in touch!
-  Not sure what length you need? Feel free to message me.
-
-
-  ### Measurements
-
-  - Your chosen length × 1.5 cm (0.59″)
-  - Usable length = overall length
-
-  ### Material
-
-  Titanium
-
-  ### How it's made
-
-  Classic goldsmithing techniques
 category: "haarstaebe"
 material: "Titan"
 price: 38
@@ -32,9 +7,9 @@ priceDE: 33
 priceUS: 63
 priceWorld: 38
 currency: "EUR"
-stock: 20
+stock: 17
 available: true
-numFavorers: 6
+numFavorers: 7
 etsyListingId: 4475889652
 etsyUrl: "https://www.etsy.com/listing/4475889652/kugel-haarkomma-haarstab-aus-titan"
 images:
@@ -53,17 +28,17 @@ colors: []
 variants:
   - name: "Farbe"
     values:
-      - "blau"
-      - "bunt"
-      - "flieder"
-      - "gelb"
-      - "grün"
-      - "hellblau"
-      - "karamell"
-      - "mint"
-      - "ohne (titangrau)"
-      - "rosé"
-      - "violett"
+      - "0 ohne (titangrau)"
+      - "1 karamell"
+      - "10 bunt"
+      - "2 violett"
+      - "3 blau"
+      - "4 hellblau"
+      - "5 mint"
+      - "6 gelb"
+      - "7 rosé"
+      - "8 flieder"
+      - "9 grün"
   - name: "Länge"
     values:
       - "9cm"
@@ -84,15 +59,15 @@ Das Kugel-Haarkomma kann auch in anderen Größen gebaut werden, einfach nachfra
 Wer sich unsicher ist welche Länge benötigt wird, kann mich gern anschreiben.
 
 
-### Maße
-
+Maße:
+- klein: 9cm x 1,5cm
+- mittel: 10,5cm x 1,5cm
+- groß: 12cm x 1,5cm
 - Wunschlänge x 1,5cm
 - Nutzlänge = Gesamtlänge
 
-### Material
+Material:
+- Titan
 
-Titan
-
-### Herstellungsart
-
-Goldschmiedetechniken
+Herstellungsart:
+- Goldschmiedetechniken

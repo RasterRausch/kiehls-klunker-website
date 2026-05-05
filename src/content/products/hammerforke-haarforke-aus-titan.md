@@ -1,27 +1,5 @@
 ---
 name: "Hammerforke, Haarforke aus Titan"
-nameEn: "Hammered titanium hair fork"
-bodyEn: |
-  A minimalist titanium hair fork with a hammer-mark pattern, forged from a single piece of metal.
-  Titanium is a remarkably strong yet lightweight material, which makes the Hammerforke a sturdy hair holder despite its delicate look. You barely notice it in your hair. On top of that, titanium is extremely corrosion-resistant — you can take the fork pretty much anywhere: into the shower, into the sea, behind Niagara Falls, into a steel mill, into outer space, even inside your own body (though that one might get tricky — not because of the fork).
-
-  Available in a range of colors and sizes. Custom sizes on request, happy to make it work :-)
-  Questions always welcome!
-
-  ### Measurements
-
-  - **small** — 11 cm (usable length: 9 cm) / 4.3″
-  - **medium** — 12.5 cm (usable length: 10.5 cm) / 4.9″
-  - **large** — 14 cm (usable length: 12 cm) / 5.5″
-  - **Weight** — 8–10 g depending on size
-
-  ### Material
-
-  Titanium
-
-  ### How it's made
-
-  Classic goldsmithing techniques
 category: "haarforken"
 material: "Titan"
 price: 52
@@ -29,7 +7,7 @@ priceDE: 49
 priceUS: 79
 priceWorld: 52
 currency: "EUR"
-stock: 19
+stock: 18
 available: true
 numFavorers: 22
 etsyListingId: 1456135562
@@ -48,25 +26,25 @@ images:
 sizes: []
 colors: []
 variants:
-  - name: "Farbe"
+  - name: "Primary color"
     values:
-      - "blau"
-      - "bunt"
-      - "Flieder"
-      - "gelb"
-      - "grün"
-      - "hellblau"
-      - "karamell"
-      - "mint"
-      - "ohne (titangrau)"
-      - "rosé"
-      - "violett"
-  - name: "Länge"
+      - "0 ohne (titangrau)"
+      - "1 bunt"
+      - "10 rosé"
+      - "2 grün"
+      - "3 karamell"
+      - "4 gelb"
+      - "5 mint"
+      - "6 hellblau"
+      - "7 blau"
+      - "8 violett"
+      - "9 Flieder"
+  - name: "Length"
     values:
+      - "??? cm"
       - "11cm cm"
       - "12,5 cm"
       - "14 cm"
-      - "Wunschmaß"
 featured: false
 order: 11
 personalizable: true
@@ -78,17 +56,15 @@ Titan ist ein sehr stabiles und leichtes Material, das macht die Hammerforke tro
 Die Hammerforke gibt es in verschiedenen Farbvariationen und Größen. Wünsche zu Sondergrößen werden auf Anfrage - soweit möglich - erfüllt :-)...
 Wenn Fragen auftauchen, bitte gern fragen!
 
-### Maße
+Maße:
+- klein: 11cm x 2cm (Nutzlänge: 9cm)
+- mittel: 12,5cm x 2cm (Nutzlänge: 10,5cm)
+- groß: 14cm x 2cm (Nutzlänge 12cm)
+- Wunschlänge x 2cm (Nutzlänge = Wunschlänge - 2cm)
+- Gewicht: 8-10g je nach Länge 
 
-- **klein** — 11cm (Nutzlänge: 9cm)
-- **mittel** — 12,5cm (Nutzlänge: 10,5cm)
-- **groß** — 14cm (Nutzlänge 12cm)
-- **Gewicht** — 8-10g je nach Länge
+Material:
+- Titan
 
-### Material
-
-Titan
-
-### Herstellungsart
-
-Goldschmiedetechniken
+Herstellungsart:
+- Goldschmiedetechniken

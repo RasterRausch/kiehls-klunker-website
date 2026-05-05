@@ -1,25 +1,5 @@
 ---
 name: "Haarnudel, Haarforke aus Titan, titanium hair fork"
-nameEn: "Haarnudel — titanium hair fork (hammered)"
-bodyEn: |
-  Haarnudel ("hair noodle")
-
-  The Haarnudel is a titanium hair fork forged and bent from a single piece of metal. It carries a bold hammer-mark pattern that can be anodized in a variety of colors. The edges are colored too. The main surface is matte, only the edges and tips are polished.
-  At just 9 g and with its broad, smooth contact surface, it's remarkably comfortable to wear.
-
-  Available in other lengths and/or color combinations — just ask.
-
-  ### Measurements
-
-  12.5 cm × 2.5 cm (4.9″ × 0.98″)
-
-  ### Material
-
-  Titanium
-
-  ### How it's made
-
-  Classic goldsmithing techniques
 category: "haarforken"
 material: "Titan"
 price: 49
@@ -27,9 +7,9 @@ priceDE: 46
 priceUS: 76
 priceWorld: 49
 currency: "EUR"
-stock: 7
+stock: 5
 available: true
-numFavorers: 315
+numFavorers: 316
 etsyListingId: 955896401
 etsyUrl: "https://www.etsy.com/listing/955896401/haarnudel-haarforke-aus-titan-titanium"
 images:
@@ -45,38 +25,34 @@ images:
 sizes: []
 colors: []
 variants:
-  - name: "Farbe"
+  - name: "Secondary color"
     values:
-      - "blau"
-      - "bunt"
-      - "flieder"
-      - "gelb"
-      - "grün"
-      - "hellblau"
-      - "karamell"
-      - "mint"
-      - "ohne (titangrau)"
-      - "rosé"
-      - "violett"
+      - "0 ohne (titangrau)"
+      - "1 bunt"
+      - "10 karamell"
+      - "2 flieder"
+      - "3 violett"
+      - "4 blau"
+      - "5 hellblau"
+      - "6 mint"
+      - "7 grün"
+      - "8 gelb"
+      - "9 rosé"
 featured: false
 order: 3
 personalizable: true
 ---
 
-Haarnudel
 Die Haarnudel ist eine Titanhaarforke, die aus einem Stück geschmiedet und gebogen wird. Sie ist mit einem auffälligen Hammerschlagmuster verziert, dass in verschiedenen Farben anodisiert/gefärbt werden kann. Die Kanten sind ebenfalls gefärbt. Die Oberfläche der Forke ist matt, nur die Kanten und Spitzen sind poliert.
 Durch ihr geringes Gewicht (9g) und die breite Auflagefläche ist die Nudel sehr angenehm zu tragen. 
 
 Die Forke kann auch in anderen Längen und/oder Farbkombinationen gefertigt werden! Einfach nachfragen.
 
-### Maße
+Maße:
+- 12,5cm x 2,5cm
 
-12,5cm × 2,5cm
+Material:
+- Titan
 
-### Material
-
-Titan
-
-### Herstellungsart
-
-Goldschmiedetechnicken
+Herstellungsart:
+- Goldschmiedetechnicken
