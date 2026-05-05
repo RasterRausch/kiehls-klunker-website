@@ -108,12 +108,12 @@ const categoryCounts = activeCategories.map((key) => ({
                   class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700"
                 />
                 {product.data.stock === 0 && (
-                  <span class="absolute top-3 left-3 bg-[var(--color-ink)] text-[var(--color-paper)] text-[0.62rem] uppercase tracking-[0.22em] px-2.5 py-1">
+                  <span class="absolute top-2 left-2 md:top-3 md:left-3 bg-[var(--color-ink)] text-[var(--color-paper)] text-[0.55rem] md:text-[0.62rem] uppercase tracking-[0.14em] md:tracking-[0.22em] px-1.5 py-0.5 md:px-2.5 md:py-1">
                     {strings.product.soldOut}
                   </span>
                 )}
                 {product.data.stock !== undefined && product.data.stock > 0 && product.data.stock <= 5 && (
-                  <span class="absolute top-3 left-3 bg-[var(--color-paper)]/95 text-[var(--color-ink)] text-[0.62rem] uppercase tracking-[0.22em] px-2.5 py-1 border border-[var(--color-hairline)]">
+                  <span class="absolute top-2 left-2 md:top-3 md:left-3 bg-[var(--color-paper)]/95 text-[var(--color-ink)] text-[0.55rem] md:text-[0.62rem] uppercase tracking-[0.14em] md:tracking-[0.22em] px-1.5 py-0.5 md:px-2.5 md:py-1 border border-[var(--color-hairline)]">
                     {interpolate(strings.product.onlyLeft, { count: product.data.stock })}
                   </span>
                 )}
