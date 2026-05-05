@@ -2,8 +2,9 @@
 // Sticky News-Card unten rechts (Desktop) bzw. unten quer (Mobile).
 // Inhalt aus i18n (Termine als echter Text → SEO/Screenreader/Übersetzung).
 // Klick auf CTA → Lightbox mit Flyer-Bild.
-// X kollabiert die Card nur in-page zu einem Tab am rechten Rand;
-// der nächste Page-Load startet wieder ausgefahren.
+// X kollabiert die Card zu einem Tab am rechten Rand. Status bleibt
+// während der Browser-Session erhalten (sessionStorage) — auch über
+// Page-Wechsel hinweg. Beim nächsten Browser-Besuch wieder ausgefahren.
 import { getLang, t } from '../i18n';
 
 const lang = getLang(Astro);
@@ -123,15 +124,27 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
           if (tabActive) tab.removeAttribute('inert'); else tab.setAttribute('inert', '');
         };
 
+        // sessionStorage merkt sich den Collapse-Status für die Session.
+        const STORAGE_KEY = 'kk_news_collapsed';
+        let wasCollapsed = false;
+        try { wasCollapsed = sessionStorage.getItem(STORAGE_KEY) === '1'; } catch (e) {}
+
         // Anfangs sind beide off-screen (CSS-Default). Nach kurzem Delay
-        // ausfahren — das erzeugt das Slide-in. Kein Persist-Mechanismus:
-        // Jede Seitenladung startet ausgefahren.
-        window.setTimeout(() => setState('expanded'), 600);
+        // den richtigen Zustand setzen — das erzeugt das Slide-in.
+        window.setTimeout(() => {
+          setState(wasCollapsed ? 'collapsed' : 'expanded');
+        }, 600);
 
         const close = card.querySelector('[data-news-close]');
-        close?.addEventListener('click', () => setState('collapsed'));
+        close?.addEventListener('click', () => {
+          setState('collapsed');
+          try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
+        });
 
-        tab.addEventListener('click', () => setState('expanded'));
+        tab.addEventListener('click', () => {
+          setState('expanded');
+          try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        });
 
         const openBtn = card.querySelector('[data-news-open]');
         const closeLightbox = lightbox.querySelector('[data-news-lightbox-close]');
