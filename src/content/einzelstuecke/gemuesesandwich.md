@@ -6,5 +6,5 @@ stones: "Amazonit"
 stonesEn: "Amazonite"
 order: 12
 images:
-  - ./images/Gemuesesandwich-Messing-und-Amazonit.jpg
+  - ./images/Gemuesesandwich-Messing-und-Amazonit.webp
 ---

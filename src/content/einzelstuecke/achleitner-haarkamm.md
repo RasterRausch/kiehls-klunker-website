@@ -5,5 +5,5 @@ material: "Messing"
 order: 1
 needsReview: true
 images:
-  - ./images/Achleitner-Haarkamm.jpg
+  - ./images/Achleitner-Haarkamm.webp
 ---

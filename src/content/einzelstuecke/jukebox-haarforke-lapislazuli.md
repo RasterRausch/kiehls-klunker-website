@@ -6,5 +6,5 @@ stones: "Lapislazuli"
 stonesEn: "Lapis lazuli"
 order: 21
 images:
-  - ./images/Jukebox-Haarforke-aus-Messing-mit-Lapislazuli.jpg
+  - ./images/Jukebox-Haarforke-aus-Messing-mit-Lapislazuli.webp
 ---

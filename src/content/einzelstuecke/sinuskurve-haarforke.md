@@ -6,5 +6,5 @@ stones: "Falkenauge"
 stonesEn: "Hawk's eye"
 order: 47
 images:
-  - ./images/Sinuskurve-Haarforke-Messing-mit-Falkenauge.jpg
+  - ./images/Sinuskurve-Haarforke-Messing-mit-Falkenauge.webp
 ---

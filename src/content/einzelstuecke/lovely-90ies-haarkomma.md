@@ -5,5 +5,5 @@ material: "Titan"
 order: 61
 needsReview: true
 images:
-  - ./images/lovely-90ies-Haarkomma.jpg
+  - ./images/lovely-90ies-Haarkomma.webp
 ---

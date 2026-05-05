@@ -6,5 +6,5 @@ stones: "Bergkristall"
 stonesEn: "Rock crystal"
 order: 48
 images:
-  - ./images/Splitter-Forke-Silber-mit-Bergkristall.jpg
+  - ./images/Splitter-Forke-Silber-mit-Bergkristall.webp
 ---

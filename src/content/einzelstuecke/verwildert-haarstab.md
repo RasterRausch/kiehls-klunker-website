@@ -5,5 +5,5 @@ material: "Messing"
 order: 67
 needsReview: true
 images:
-  - ./images/verwildert-Haarstab.jpg
+  - ./images/verwildert-Haarstab.webp
 ---

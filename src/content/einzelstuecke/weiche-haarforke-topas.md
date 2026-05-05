@@ -7,5 +7,5 @@ stonesEn: "Topaz"
 order: 55
 needsReview: true
 images:
-  - ./images/Weiche-Haarforke-mit-Topas.jpg
+  - ./images/Weiche-Haarforke-mit-Topas.webp
 ---

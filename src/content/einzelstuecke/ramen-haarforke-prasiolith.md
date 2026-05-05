@@ -6,5 +6,5 @@ stones: "Prasiolith"
 stonesEn: "Prasiolite"
 order: 35
 images:
-  - ./images/Ramen-Haarforke-Messing-mit-Prasioltih.jpg
+  - ./images/Ramen-Haarforke-Messing-mit-Prasioltih.webp
 ---

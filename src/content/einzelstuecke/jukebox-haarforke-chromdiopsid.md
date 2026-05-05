@@ -6,5 +6,5 @@ stones: "Chromdiopsid"
 stonesEn: "Chrome diopside"
 order: 20
 images:
-  - ./images/Jukebox-Haarforke-Messing-mit-Chromdiopsid.jpg
+  - ./images/Jukebox-Haarforke-Messing-mit-Chromdiopsid.webp
 ---

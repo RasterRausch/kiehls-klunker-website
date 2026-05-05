@@ -6,5 +6,5 @@ stones: "Achat"
 stonesEn: "Agate"
 order: 41
 images:
-  - ./images/Scheiben-Haarforke-mit-drehbarem-Achat-Messing.jpg
+  - ./images/Scheiben-Haarforke-mit-drehbarem-Achat-Messing.webp
 ---

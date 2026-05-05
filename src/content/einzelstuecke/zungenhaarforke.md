@@ -6,5 +6,5 @@ stones: "Topas"
 stonesEn: "Topaz"
 order: 57
 images:
-  - ./images/Zungenhaarforke-Neusilber-mit-Topas.jpg
+  - ./images/Zungenhaarforke-Neusilber-mit-Topas.webp
 ---

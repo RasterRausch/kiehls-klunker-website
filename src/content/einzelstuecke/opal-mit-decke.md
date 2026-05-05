@@ -6,5 +6,5 @@ stones: "Rohopalgestein"
 stonesEn: "Rough opal"
 order: 28
 images:
-  - ./images/Opal-mit-Decke-Messing-mit-Rohopalgestein.jpg
+  - ./images/Opal-mit-Decke-Messing-mit-Rohopalgestein.webp
 ---

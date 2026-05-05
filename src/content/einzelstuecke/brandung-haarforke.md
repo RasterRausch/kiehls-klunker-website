@@ -6,5 +6,5 @@ stones: "Perlen"
 stonesEn: "Pearls"
 order: 5
 images:
-  - ./images/Brandung-Haarforke-aus-Messing-mit-Perlen.jpg
+  - ./images/Brandung-Haarforke-aus-Messing-mit-Perlen.webp
 ---

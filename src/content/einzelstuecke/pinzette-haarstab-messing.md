@@ -6,5 +6,5 @@ stones: "Zirkonia"
 stonesEn: "Zirconia"
 order: 30
 images:
-  - ./images/Pinzette-Haarstab-aus-Messing-mit-Zirkonia.jpg
+  - ./images/Pinzette-Haarstab-aus-Messing-mit-Zirkonia.webp
 ---

@@ -6,5 +6,5 @@ stones: "Ulexit"
 stonesEn: "Ulexite"
 order: 54
 images:
-  - ./images/Ulexitranke-Haarstab-Messing-Ulexit.jpg
+  - ./images/Ulexitranke-Haarstab-Messing-Ulexit.webp
 ---

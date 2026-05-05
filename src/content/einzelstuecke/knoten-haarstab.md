@@ -6,5 +6,5 @@ stones: "Zirkonia"
 stonesEn: "Zirconia"
 order: 23
 images:
-  - ./images/Knoten-Haarstab-Neusilber-mit-Zirkonia.jpg
+  - ./images/Knoten-Haarstab-Neusilber-mit-Zirkonia.webp
 ---

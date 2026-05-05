@@ -4,5 +4,5 @@ nameEn: "Hair-anchor hairstick (lacquered)"
 material: "Messing"
 order: 14
 images:
-  - ./images/Haaranker-Haarstab-aus-Messing-lackiert.jpg
+  - ./images/Haaranker-Haarstab-aus-Messing-lackiert.webp
 ---

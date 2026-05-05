@@ -5,5 +5,5 @@ material: "Messing"
 order: 43
 needsReview: true
 images:
-  - ./images/Schilf-Haarkamm.jpg
+  - ./images/Schilf-Haarkamm.webp
 ---

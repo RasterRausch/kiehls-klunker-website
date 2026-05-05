@@ -6,6 +6,6 @@ stones: "Spiegelglas"
 stonesEn: "Mirror glass"
 order: 17
 images:
-  - ./images/Haarforke-mit-zweitem-Gesicht-Messing-plus-Spiegelglas.jpg
-  - ./images/Haarforke-mit-zweitem-Gesicht-zweites-Gesicht.jpg
+  - ./images/Haarforke-mit-zweitem-Gesicht-Messing-plus-Spiegelglas.webp
+  - ./images/Haarforke-mit-zweitem-Gesicht-zweites-Gesicht.webp
 ---

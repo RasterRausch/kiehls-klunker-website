@@ -6,5 +6,5 @@ stones: "Wechselsteine"
 stonesEn: "Interchangeable stones"
 order: 36
 images:
-  - ./images/Ranke-Haarstab-aus-Messing-mit-Wechselsteinen.jpg
+  - ./images/Ranke-Haarstab-aus-Messing-mit-Wechselsteinen.webp
 ---

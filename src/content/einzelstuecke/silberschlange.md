@@ -4,6 +4,7 @@ nameEn: "Silver snake"
 material: "Silber"
 order: 46
 images:
-  - ./images/Silberschlange-2.jpg
-  - ./images/Silberschlange-3.jpg
+  - ./images/Silberschlange-antiklastisch-geschmiedet.webp
+  - ./images/Silberschlange-2.webp
+  - ./images/Silberschlange-3.webp
 ---

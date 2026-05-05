@@ -4,5 +4,5 @@ nameEn: "Potato-chip hair fork"
 material: "Messing"
 order: 22
 images:
-  - ./images/Kartoffelchip-Haarforke-Messing.jpg
+  - ./images/Kartoffelchip-Haarforke-Messing.webp
 ---

@@ -6,5 +6,5 @@ stones: "Fluorit"
 stonesEn: "Fluorite"
 order: 40
 images:
-  - ./images/Saturn-Haarforke-Neusilber-Fluorit.jpg
+  - ./images/Saturn-Haarforke-Neusilber-Fluorit.webp
 ---

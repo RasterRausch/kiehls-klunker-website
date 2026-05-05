@@ -4,5 +4,5 @@ nameEn: "Titanium tiger"
 material: "Titan"
 order: 52
 images:
-  - ./images/Titantiger.jpg
+  - ./images/Titantiger.webp
 ---

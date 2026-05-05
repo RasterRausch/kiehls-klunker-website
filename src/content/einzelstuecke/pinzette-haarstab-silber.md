@@ -6,5 +6,5 @@ stones: "Rohdiamant"
 stonesEn: "Rough diamond"
 order: 31
 images:
-  - ./images/Pinzette-Haarstab-aus-Silber-mit-Rohdiamant.jpg
+  - ./images/Pinzette-Haarstab-aus-Silber-mit-Rohdiamant.webp
 ---

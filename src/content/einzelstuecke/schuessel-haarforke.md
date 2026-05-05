@@ -6,6 +6,6 @@ stones: "Akoya-Zuchtperle"
 stonesEn: "Akoya cultured pearl"
 order: 45
 images:
-  - ./images/Schuessel-Haarforke-Silber-Akoyazuchtperle.jpg
-  - ./images/Schuessel-Haatforke-Silber-mit-Akoyazuchtperle.jpg
+  - ./images/Schuessel-Haarforke-Silber-Akoyazuchtperle.webp
+  - ./images/Schuessel-Haatforke-Silber-mit-Akoyazuchtperle.webp
 ---

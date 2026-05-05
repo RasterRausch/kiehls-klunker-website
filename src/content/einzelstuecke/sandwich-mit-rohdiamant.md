@@ -6,5 +6,5 @@ stones: "Rohdiamant"
 stonesEn: "Rough diamond"
 order: 39
 images:
-  - ./images/Sandwich-mit-Rohdiamant-Messing-Haarforke.jpg
+  - ./images/Sandwich-mit-Rohdiamant-Messing-Haarforke.webp
 ---

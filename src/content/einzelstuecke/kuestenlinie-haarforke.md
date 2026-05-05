@@ -5,5 +5,5 @@ material: "Messing"
 order: 26
 needsReview: true
 images:
-  - ./images/Kuestenlinie-Haarforke.jpg
+  - ./images/Kuestenlinie-Haarforke.webp
 ---

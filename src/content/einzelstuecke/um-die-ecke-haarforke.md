@@ -5,6 +5,6 @@ material: "Messing"
 order: 65
 needsReview: true
 images:
-  - ./images/um-die-Ecke-Haarforke.jpg
-  - ./images/um-die-Ecke-Haarforke-2.jpg
+  - ./images/um-die-Ecke-Haarforke.webp
+  - ./images/um-die-Ecke-Haarforke-2.webp
 ---

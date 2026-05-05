@@ -4,5 +4,5 @@ nameEn: "Thoughts hair fork"
 material: "Neusilber"
 order: 11
 images:
-  - ./images/Gedankenhaarforke-Neusilber.jpg
+  - ./images/Gedankenhaarforke-Neusilber.webp
 ---

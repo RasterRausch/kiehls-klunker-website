@@ -6,5 +6,5 @@ stones: "Carneol"
 stonesEn: "Carnelian"
 order: 19
 images:
-  - ./images/Haarstab-mit-Carneol-Neusilber.jpg
+  - ./images/Haarstab-mit-Carneol-Neusilber.webp
 ---

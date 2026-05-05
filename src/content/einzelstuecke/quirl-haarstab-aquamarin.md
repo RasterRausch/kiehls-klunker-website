@@ -6,5 +6,5 @@ stones: "Aquamarin"
 stonesEn: "Aquamarine"
 order: 33
 images:
-  - ./images/Quirl-Haarstab-aus-Messing-mit-Aquamarin.jpg
+  - ./images/Quirl-Haarstab-aus-Messing-mit-Aquamarin.webp
 ---

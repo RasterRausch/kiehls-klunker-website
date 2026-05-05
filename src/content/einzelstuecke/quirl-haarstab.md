@@ -4,5 +4,5 @@ nameEn: "Whisk hairstick"
 material: "Messing"
 order: 32
 images:
-  - ./images/Quirl-Haarstab-aus-Messing.jpg
+  - ./images/Quirl-Haarstab-aus-Messing.webp
 ---

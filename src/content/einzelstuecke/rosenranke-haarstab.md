@@ -6,5 +6,5 @@ stones: "Rosenquarz"
 stonesEn: "Rose quartz"
 order: 37
 images:
-  - ./images/Rosenranke-Neusilberhaarstab-mit-Rosenquarz.jpg
+  - ./images/Rosenranke-Neusilberhaarstab-mit-Rosenquarz.webp
 ---

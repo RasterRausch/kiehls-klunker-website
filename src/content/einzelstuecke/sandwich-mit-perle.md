@@ -6,5 +6,5 @@ stones: "Perle"
 stonesEn: "Pearl"
 order: 38
 images:
-  - ./images/Sandwich-mit-Perle-Messing.jpg
+  - ./images/Sandwich-mit-Perle-Messing.webp
 ---

@@ -6,5 +6,5 @@ stones: "Peridot"
 stonesEn: "Peridot"
 order: 63
 images:
-  - ./images/taillierte-Haarforke-mit-Peridot-Neusilber.jpg
+  - ./images/taillierte-Haarforke-mit-Peridot-Neusilber.webp
 ---

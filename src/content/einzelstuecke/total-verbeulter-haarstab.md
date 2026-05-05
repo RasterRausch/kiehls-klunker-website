@@ -4,5 +4,5 @@ nameEn: "Totally battered hairstick"
 material: "Neusilber"
 order: 64
 images:
-  - ./images/total-verbeulter-Haarstab-Neusilber.jpg
+  - ./images/total-verbeulter-Haarstab-Neusilber.webp
 ---

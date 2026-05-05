@@ -7,5 +7,5 @@ stonesEn: "Zirconia"
 order: 56
 needsReview: true
 images:
-  - ./images/Weiche-Haarforke-mit-Zirkonia.jpg
+  - ./images/Weiche-Haarforke-mit-Zirkonia.webp
 ---

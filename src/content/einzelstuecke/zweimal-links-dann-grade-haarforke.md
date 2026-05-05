@@ -5,5 +5,5 @@ material: "Messing"
 order: 68
 needsReview: true
 images:
-  - ./images/zweimal-links-dann-grade-Haarforke.jpg
+  - ./images/zweimal-links-dann-grade-Haarforke.webp
 ---

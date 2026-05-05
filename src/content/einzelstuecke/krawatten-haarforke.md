@@ -5,6 +5,6 @@ material: "Messing"
 order: 25
 needsReview: true
 images:
-  - ./images/Krawatten-Haarforke.jpg
-  - ./images/Krawatten-Haarforke-2.jpg
+  - ./images/Krawatten-Haarforke.webp
+  - ./images/Krawatten-Haarforke-2.webp
 ---

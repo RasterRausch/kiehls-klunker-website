@@ -6,5 +6,5 @@ stones: "Zirkonia"
 stonesEn: "Zirconia"
 order: 62
 images:
-  - ./images/schiefe-Haarforke-Neusilber-mit-Zirkonia.jpg
+  - ./images/schiefe-Haarforke-Neusilber-mit-Zirkonia.webp
 ---

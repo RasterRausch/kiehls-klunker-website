@@ -6,5 +6,5 @@ stones: "Zirkonia"
 stonesEn: "Zirconia"
 order: 10
 images:
-  - ./images/Flexhaarstab-Messing-und-Zirkonia.jpg
+  - ./images/Flexhaarstab-Messing-und-Zirkonia.webp
 ---

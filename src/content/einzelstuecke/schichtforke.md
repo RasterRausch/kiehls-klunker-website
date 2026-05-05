@@ -4,5 +4,5 @@ nameEn: "Layer hair fork"
 material: "Messing"
 order: 42
 images:
-  - ./images/Schichtforke-Messing.jpg
+  - ./images/Schichtforke-Messing.webp
 ---

@@ -4,5 +4,5 @@ nameEn: "Ramen hair fork"
 material: "Messing"
 order: 34
 images:
-  - ./images/Ramen-Haarforke-Messing.jpg
+  - ./images/Ramen-Haarforke-Messing.webp
 ---

@@ -6,5 +6,5 @@ stones: "Zirkonia"
 stonesEn: "Zirconia"
 order: 24
 images:
-  - ./images/Krake-Haarforke-aus-Messing-mit-Zirkonia.jpg
+  - ./images/Krake-Haarforke-aus-Messing-mit-Zirkonia.webp
 ---

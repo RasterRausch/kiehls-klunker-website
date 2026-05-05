@@ -4,5 +4,5 @@ nameEn: "Tentacle hairstick"
 material: "Neusilber"
 order: 51
 images:
-  - ./images/Tentakel-Haarstab-aus-Neusilber.jpg
+  - ./images/Tentakel-Haarstab-aus-Neusilber.webp
 ---
