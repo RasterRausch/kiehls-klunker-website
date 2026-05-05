@@ -18,12 +18,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.lang = lang;
 
   // 2. /en/... intern auf die deutschen Page-Dateien rewriten.
+  // Wichtig: `next(pfad)` statt `context.rewrite()`, damit die Middleware
+  // *nicht* erneut für den rewriteten Pfad ausgeführt wird — sonst würde
+  // `locals.lang` auf DE-Default zurückgesetzt, weil der gestrippte Pfad
+  // den `/en/`-Check nicht mehr matcht.
   if (path === '/en' || path === '/en/') {
-    return context.rewrite(new URL('/', url));
+    return next('/');
   }
   if (path.startsWith('/en/')) {
     const stripped = path.slice(3);
-    return context.rewrite(new URL(stripped + url.search, url));
+    return next(stripped + url.search);
   }
 
   return next();
