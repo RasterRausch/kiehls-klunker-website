@@ -56,7 +56,7 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
               </li>
             ))}
           </ul>
-          <span class="news-card__cta">{strings.cta} <span aria-hidden="true">→</span></span>
+          <span class="news-card__cta link-arrow">{strings.cta}<span class="arrow" aria-hidden="true">→</span></span>
         </div>
       </button>
     </aside>
@@ -322,19 +322,15 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
       }
 
       .news-card__cta {
-        margin-top: 0.2rem;
-        font-size: 0.875rem;
-        letter-spacing: 0.04em;
-        color: var(--color-ink);
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        margin-top: 0.5rem;
       }
-      .news-card__cta .arrow,
-      .news-card__cta span {
-        margin-left: 0.15rem;
-      }
+      /* Damit Hover irgendwo auf der Card-Body den Arrow animiert
+         (statt nur Hover direkt auf dem Link-Span). */
       .news-card__body:hover .news-card__cta {
-        text-decoration-thickness: 2px;
+        color: var(--color-gold-hover);
+      }
+      .news-card__body:hover .news-card__cta .arrow {
+        transform: translateX(6px);
       }
 
       /* Lightbox */
