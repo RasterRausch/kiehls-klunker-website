@@ -75,6 +75,13 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
       <span class="news-tab__text">{strings.eyebrow}</span>
     </button>
 
+    <button
+      type="button"
+      class="news-lightbox__backdrop"
+      data-news-lightbox-backdrop
+      aria-label={strings.flyerLightboxClose}
+      hidden
+    ></button>
     <div
       class="news-lightbox"
       data-news-lightbox
@@ -129,22 +136,30 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
         const openBtn = card.querySelector('[data-news-open]');
         const closeLightbox = lightbox.querySelector('[data-news-lightbox-close]');
 
+        const backdrop = document.querySelector('[data-news-lightbox-backdrop]');
+
         const openLightbox = () => {
           lightbox.hidden = false;
-          requestAnimationFrame(() => lightbox.classList.add('is-open'));
+          if (backdrop) backdrop.hidden = false;
+          requestAnimationFrame(() => {
+            lightbox.classList.add('is-open');
+            backdrop?.classList.add('is-open');
+          });
           document.body.style.overflow = 'hidden';
         };
         const hideLightbox = () => {
           lightbox.classList.remove('is-open');
+          backdrop?.classList.remove('is-open');
           document.body.style.overflow = '';
-          window.setTimeout(() => { lightbox.hidden = true; }, 220);
+          window.setTimeout(() => {
+            lightbox.hidden = true;
+            if (backdrop) backdrop.hidden = true;
+          }, 220);
         };
 
         openBtn?.addEventListener('click', openLightbox);
         closeLightbox?.addEventListener('click', hideLightbox);
-        lightbox.addEventListener('click', (e) => {
-          if (e.target === lightbox) hideLightbox();
-        });
+        backdrop?.addEventListener('click', hideLightbox);
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && !lightbox.hidden) hideLightbox();
         });
@@ -333,29 +348,44 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
         transform: translateX(6px);
       }
 
-      /* Lightbox */
-      .news-lightbox {
+      /* Lightbox: Backdrop und Bild-Frame als zwei getrennte Layer.
+         So ist `.news-lightbox` *exakt* so groß wie das Bild — kein
+         Container-länger-als-Bild-Effekt mehr. */
+      .news-lightbox__backdrop {
         position: fixed;
         inset: 0;
         z-index: 110;
-        background: rgba(28, 28, 26, 0.82);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1.5rem;
+        border: none;
+        padding: 0;
+        background: rgba(28, 28, 26, 0.94);
+        cursor: pointer;
         opacity: 0;
         transition: opacity 220ms ease;
+      }
+      .news-lightbox__backdrop.is-open {
+        opacity: 1;
+      }
+      .news-lightbox {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 111;
+        max-width: min(720px, calc(100vw - 3rem));
+        max-height: calc(100vh - 3rem);
+        opacity: 0;
+        transition: opacity 220ms ease;
+        line-height: 0; /* unterdrückt inline-baseline-Whitespace */
       }
       .news-lightbox.is-open {
         opacity: 1;
       }
       .news-lightbox__img {
-        max-width: min(720px, 100%);
-        max-height: 90vh;
+        display: block;
+        max-width: 100%;
+        max-height: calc(100vh - 3rem);
         width: auto;
         height: auto;
-        border-radius: 4px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       }
       .news-lightbox__close {
         position: absolute;
@@ -371,6 +401,7 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
         color: var(--color-ink);
         cursor: pointer;
         border-radius: 50%;
+        z-index: 1;
       }
       .news-lightbox__close:focus-visible {
         outline: 2px solid #fff;
