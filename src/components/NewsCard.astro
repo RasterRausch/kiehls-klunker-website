@@ -371,11 +371,19 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 111;
-        max-width: min(720px, calc(100vw - 3rem));
-        max-height: calc(100vh - 3rem);
+        /* Mobile: fast volle Breite (1rem Margin links/rechts).
+           Desktop: max 720px. */
+        max-width: min(720px, calc(100vw - 1rem));
+        max-height: calc(100vh - 1rem);
         opacity: 0;
         transition: opacity 220ms ease;
         line-height: 0; /* unterdrückt inline-baseline-Whitespace */
+      }
+      @media (min-width: 640px) {
+        .news-lightbox {
+          max-width: min(720px, calc(100vw - 3rem));
+          max-height: calc(100vh - 3rem);
+        }
       }
       .news-lightbox.is-open {
         opacity: 1;
@@ -383,9 +391,14 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
       .news-lightbox__img {
         display: block;
         max-width: 100%;
-        max-height: calc(100vh - 3rem);
+        max-height: calc(100vh - 1rem);
         width: auto;
         height: auto;
+      }
+      @media (min-width: 640px) {
+        .news-lightbox__img {
+          max-height: calc(100vh - 3rem);
+        }
       }
       .news-lightbox__close {
         position: absolute;
