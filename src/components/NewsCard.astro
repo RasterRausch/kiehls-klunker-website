@@ -2,15 +2,13 @@
 // Sticky News-Card unten rechts (Desktop) bzw. unten quer (Mobile).
 // Inhalt aus i18n (Termine als echter Text → SEO/Screenreader/Übersetzung).
 // Klick auf CTA → Lightbox mit Flyer-Bild.
-// X dismissed via localStorage; Versions-Key bumpen, wenn neuer News-Inhalt kommt.
+// X kollabiert die Card nur in-page zu einem Tab am rechten Rand;
+// der nächste Page-Load startet wieder ausgefahren.
 import { getLang, t } from '../i18n';
 
 const lang = getLang(Astro);
 const strings = t(lang).news;
 
-// Wenn Kathrin später eine neue News reinhängt, hier hochzählen.
-// Wer die alte schon weggeklickt hatte, sieht die neue dann wieder.
-const VERSION = '2026-marktdates';
 const FLYER_SRC = '/news/maerkte-2026.webp';
 
 // Auf Checkout-/Erfolgsseiten nicht stören.
@@ -23,10 +21,10 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
     <aside
       class="news-card"
       data-news-card
-      data-news-version={VERSION}
       role="complementary"
       aria-label={strings.eyebrow}
-      hidden
+      aria-hidden="true"
+      inert
     >
       <button
         type="button"
@@ -63,6 +61,20 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
       </button>
     </aside>
 
+    <button
+      type="button"
+      class="news-tab"
+      data-news-tab
+      aria-label={strings.expandLabel}
+      aria-hidden="true"
+      inert
+    >
+      <svg class="news-tab__arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <polyline points="15 6 9 12 15 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="news-tab__text">{strings.eyebrow}</span>
+    </button>
+
     <div
       class="news-lightbox"
       data-news-lightbox
@@ -88,32 +100,31 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
     <script is:inline>
       (() => {
         const card = document.querySelector('[data-news-card]');
+        const tab = document.querySelector('[data-news-tab]');
         const lightbox = document.querySelector('[data-news-lightbox]');
-        if (!card || !lightbox) return;
+        if (!card || !tab || !lightbox) return;
 
-        const version = card.getAttribute('data-news-version') || '';
-        const STORAGE_KEY = 'kk_news_dismissed_v';
+        const setState = (state) => {
+          // state: 'expanded' | 'collapsed'
+          document.body.classList.toggle('news-expanded', state === 'expanded');
+          document.body.classList.toggle('news-collapsed', state === 'collapsed');
+          const cardActive = state === 'expanded';
+          const tabActive = state === 'collapsed';
+          card.setAttribute('aria-hidden', String(!cardActive));
+          tab.setAttribute('aria-hidden', String(!tabActive));
+          if (cardActive) card.removeAttribute('inert'); else card.setAttribute('inert', '');
+          if (tabActive) tab.removeAttribute('inert'); else tab.setAttribute('inert', '');
+        };
 
-        let dismissed = '';
-        try { dismissed = localStorage.getItem(STORAGE_KEY) || ''; } catch (e) {}
-
-        if (dismissed !== version) {
-          // Mit kleinem Delay einblenden, damit kein Flash beim Page-Load.
-          window.setTimeout(() => {
-            card.hidden = false;
-            // doppelter rAF, damit transition greift
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-              card.classList.add('is-visible');
-            }));
-          }, 600);
-        }
+        // Anfangs sind beide off-screen (CSS-Default). Nach kurzem Delay
+        // ausfahren — das erzeugt das Slide-in. Kein Persist-Mechanismus:
+        // Jede Seitenladung startet ausgefahren.
+        window.setTimeout(() => setState('expanded'), 600);
 
         const close = card.querySelector('[data-news-close]');
-        close?.addEventListener('click', () => {
-          card.classList.remove('is-visible');
-          window.setTimeout(() => { card.hidden = true; }, 280);
-          try { localStorage.setItem(STORAGE_KEY, version); } catch (e) {}
-        });
+        close?.addEventListener('click', () => setState('collapsed'));
+
+        tab.addEventListener('click', () => setState('expanded'));
 
         const openBtn = card.querySelector('[data-news-open]');
         const closeLightbox = lightbox.querySelector('[data-news-lightbox-close]');
@@ -148,17 +159,18 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
         border: 1px solid var(--color-hairline);
         box-shadow: 0 12px 40px rgba(28, 28, 26, 0.12);
         opacity: 0;
-        transform: translateY(12px);
-        transition: opacity 280ms ease, transform 280ms ease;
+        /* Default: off-screen rechts. Mobile: über die rechte Bildschirmkante. */
+        transform: translateX(calc(100% + 1.5rem));
+        transition: transform 360ms cubic-bezier(0.32, 0.72, 0.24, 1), opacity 280ms ease;
         font-family: var(--font-sans);
         bottom: 1rem;
         left: 1rem;
         right: 1rem;
         max-width: none;
       }
-      .news-card.is-visible {
+      body.news-expanded .news-card {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateX(0);
       }
 
       @media (min-width: 640px) {
@@ -167,6 +179,56 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
           right: 1.5rem;
           bottom: 1.5rem;
           width: 340px;
+        }
+      }
+
+      /* Tab am rechten Bildschirmrand — sichtbar wenn die Card eingeklappt ist. */
+      .news-tab {
+        position: fixed;
+        z-index: 80;
+        right: 0;
+        bottom: 1rem;
+        background: var(--color-paper);
+        border: 1px solid var(--color-hairline);
+        border-right: none;
+        padding: 0.85rem 0.55rem 0.95rem 0.65rem;
+        box-shadow: -6px 8px 24px rgba(28, 28, 26, 0.1);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-sans);
+        color: var(--color-ink);
+        /* Default: off-screen rechts. */
+        transform: translateX(100%);
+        transition: transform 360ms cubic-bezier(0.32, 0.72, 0.24, 1);
+      }
+      body.news-collapsed .news-tab {
+        transform: translateX(0);
+      }
+      .news-tab:hover {
+        background: var(--color-bone-deep);
+      }
+      .news-tab:focus-visible {
+        outline: 2px solid var(--color-ink);
+        outline-offset: 2px;
+      }
+      .news-tab__arrow {
+        opacity: 0.55;
+        flex-shrink: 0;
+      }
+      .news-tab__text {
+        writing-mode: vertical-rl;
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      @media (min-width: 640px) {
+        .news-tab {
+          bottom: 1.5rem;
         }
       }
 
@@ -321,9 +383,9 @@ const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
 
       @media (prefers-reduced-motion: reduce) {
         .news-card,
+        .news-tab,
         .news-lightbox {
-          transition: opacity 100ms ease;
-          transform: none;
+          transition: opacity 120ms ease;
         }
       }
     </style>
