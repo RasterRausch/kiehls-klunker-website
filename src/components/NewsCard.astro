@@ -1,0 +1,331 @@
+---
+// Sticky News-Card unten rechts (Desktop) bzw. unten quer (Mobile).
+// Inhalt aus i18n (Termine als echter Text → SEO/Screenreader/Übersetzung).
+// Klick auf CTA → Lightbox mit Flyer-Bild.
+// X dismissed via localStorage; Versions-Key bumpen, wenn neuer News-Inhalt kommt.
+import { getLang, t } from '../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang).news;
+
+// Wenn Kathrin später eine neue News reinhängt, hier hochzählen.
+// Wer die alte schon weggeklickt hatte, sieht die neue dann wieder.
+const VERSION = '2026-marktdates';
+const FLYER_SRC = '/news/maerkte-2026.webp';
+
+// Auf Checkout-/Erfolgsseiten nicht stören.
+const path = Astro.url.pathname;
+const hidden = path.startsWith('/checkout') || path.startsWith('/api/');
+---
+
+{!hidden && (
+  <>
+    <aside
+      class="news-card"
+      data-news-card
+      data-news-version={VERSION}
+      role="complementary"
+      aria-label={strings.eyebrow}
+      hidden
+    >
+      <button
+        type="button"
+        class="news-card__close"
+        data-news-close
+        aria-label={strings.closeLabel}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18" stroke-linecap="round"/>
+          <line x1="18" y1="6" x2="6" y2="18" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="news-card__body"
+        data-news-open
+        aria-label={strings.cta}
+      >
+        <div class="news-card__text">
+          <span class="news-card__eyebrow">{strings.eyebrow}</span>
+          <span class="news-card__headline">{strings.headline}</span>
+          <ul class="news-card__dates">
+            {strings.dates.map((d) => (
+              <li>
+                <span class="news-card__date">{d.date}</span>
+                <span class="news-card__sep"> · </span>
+                <span class="news-card__loc">{d.location}</span>
+              </li>
+            ))}
+          </ul>
+          <span class="news-card__cta">{strings.cta} <span aria-hidden="true">→</span></span>
+        </div>
+      </button>
+    </aside>
+
+    <div
+      class="news-lightbox"
+      data-news-lightbox
+      role="dialog"
+      aria-modal="true"
+      aria-label={strings.flyerAlt}
+      hidden
+    >
+      <button
+        type="button"
+        class="news-lightbox__close"
+        data-news-lightbox-close
+        aria-label={strings.flyerLightboxClose}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18" stroke-linecap="round"/>
+          <line x1="18" y1="6" x2="6" y2="18" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <img class="news-lightbox__img" src={FLYER_SRC} alt={strings.flyerAlt} />
+    </div>
+
+    <script is:inline>
+      (() => {
+        const card = document.querySelector('[data-news-card]');
+        const lightbox = document.querySelector('[data-news-lightbox]');
+        if (!card || !lightbox) return;
+
+        const version = card.getAttribute('data-news-version') || '';
+        const STORAGE_KEY = 'kk_news_dismissed_v';
+
+        let dismissed = '';
+        try { dismissed = localStorage.getItem(STORAGE_KEY) || ''; } catch (e) {}
+
+        if (dismissed !== version) {
+          // Mit kleinem Delay einblenden, damit kein Flash beim Page-Load.
+          window.setTimeout(() => {
+            card.hidden = false;
+            // doppelter rAF, damit transition greift
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+              card.classList.add('is-visible');
+            }));
+          }, 600);
+        }
+
+        const close = card.querySelector('[data-news-close]');
+        close?.addEventListener('click', () => {
+          card.classList.remove('is-visible');
+          window.setTimeout(() => { card.hidden = true; }, 280);
+          try { localStorage.setItem(STORAGE_KEY, version); } catch (e) {}
+        });
+
+        const openBtn = card.querySelector('[data-news-open]');
+        const closeLightbox = lightbox.querySelector('[data-news-lightbox-close]');
+
+        const openLightbox = () => {
+          lightbox.hidden = false;
+          requestAnimationFrame(() => lightbox.classList.add('is-open'));
+          document.body.style.overflow = 'hidden';
+        };
+        const hideLightbox = () => {
+          lightbox.classList.remove('is-open');
+          document.body.style.overflow = '';
+          window.setTimeout(() => { lightbox.hidden = true; }, 220);
+        };
+
+        openBtn?.addEventListener('click', openLightbox);
+        closeLightbox?.addEventListener('click', hideLightbox);
+        lightbox.addEventListener('click', (e) => {
+          if (e.target === lightbox) hideLightbox();
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !lightbox.hidden) hideLightbox();
+        });
+      })();
+    </script>
+
+    <style>
+      .news-card {
+        position: fixed;
+        z-index: 80;
+        background: var(--color-paper);
+        border: 1px solid var(--color-hairline);
+        box-shadow: 0 12px 40px rgba(28, 28, 26, 0.12);
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 280ms ease, transform 280ms ease;
+        font-family: var(--font-sans);
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        max-width: none;
+      }
+      .news-card.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (min-width: 640px) {
+        .news-card {
+          left: auto;
+          right: 1.5rem;
+          bottom: 1.5rem;
+          width: 340px;
+        }
+      }
+
+      .news-card__close {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        color: var(--color-ink);
+        cursor: pointer;
+        border-radius: 4px;
+        opacity: 0.6;
+        transition: opacity 150ms ease, background 150ms ease;
+      }
+      .news-card__close:hover,
+      .news-card__close:focus-visible {
+        opacity: 1;
+        background: var(--color-bone-deep);
+      }
+      .news-card__close:focus-visible {
+        outline: 2px solid var(--color-ink);
+        outline-offset: 2px;
+      }
+
+      .news-card__body {
+        display: block;
+        padding: 0;
+        text-align: left;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        width: 100%;
+        font: inherit;
+        color: inherit;
+      }
+      .news-card__body:focus-visible {
+        outline: 2px solid var(--color-ink);
+        outline-offset: 2px;
+      }
+
+      .news-card__text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 0;
+        padding: 1.1rem 2.5rem 1.1rem 1.25rem;
+      }
+
+      .news-card__eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--color-ink-soft, var(--color-ink));
+        opacity: 0.65;
+        font-weight: 500;
+      }
+
+      .news-card__headline {
+        font-family: var(--font-serif);
+        font-size: 1.15rem;
+        line-height: 1.25;
+        color: var(--color-ink);
+        margin-top: 0.15rem;
+      }
+
+      .news-card__dates {
+        list-style: none;
+        margin: 0.5rem 0 0.55rem;
+        padding: 0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--color-ink);
+      }
+      .news-card__dates li {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+      }
+      .news-card__date {
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
+      }
+      .news-card__sep {
+        opacity: 0.5;
+      }
+
+      .news-card__cta {
+        margin-top: 0.2rem;
+        font-size: 0.875rem;
+        letter-spacing: 0.04em;
+        color: var(--color-ink);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .news-card__cta .arrow,
+      .news-card__cta span {
+        margin-left: 0.15rem;
+      }
+      .news-card__body:hover .news-card__cta {
+        text-decoration-thickness: 2px;
+      }
+
+      /* Lightbox */
+      .news-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 110;
+        background: rgba(28, 28, 26, 0.82);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+      .news-lightbox.is-open {
+        opacity: 1;
+      }
+      .news-lightbox__img {
+        max-width: min(720px, 100%);
+        max-height: 90vh;
+        width: auto;
+        height: auto;
+        border-radius: 4px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+      .news-lightbox__close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 44px;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--color-ink);
+        cursor: pointer;
+        border-radius: 50%;
+      }
+      .news-lightbox__close:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .news-card,
+        .news-lightbox {
+          transition: opacity 100ms ease;
+          transform: none;
+        }
+      }
+    </style>
+  </>
+)}

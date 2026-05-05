@@ -263,6 +263,18 @@ export const de = {
     lightboxCounter: '{index} / {total}',
     cardViewLabel: 'Bilder ansehen',
   },
+  news: {
+    eyebrow: 'News',
+    headline: 'Auf Kunsthandwerkermärkten 2026',
+    dates: [
+      { date: '30.–31.05.', location: 'Markkleeberg', detail: 'Handwerker- u. Töpfermarkt am Cospudener See, 10–18 Uhr' },
+      { date: '14.–16.08.', location: 'Zingst', detail: 'Kunstmagistrale, 11–19 Uhr' },
+    ],
+    cta: 'Flyer ansehen',
+    closeLabel: 'News schließen',
+    flyerAlt: 'Flyer mit den Märkten 2026',
+    flyerLightboxClose: 'Schließen',
+  },
   about: {
     pageTitle: 'Kathrin Kiehl — Goldschmiedin in Leipzig | Kiehls Klunker',
     pageDescription: 'Hinter Kiehls Klunker steht Kathrin Kiehl, gelernte Goldschmiedin aus Leipzig. Seit 2016 fertigt sie Haarforken und Haarstäbe aus Titan und Messing.',

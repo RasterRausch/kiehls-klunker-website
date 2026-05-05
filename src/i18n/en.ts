@@ -266,6 +266,18 @@ export const en: typeof de = {
     lightboxCounter: '{index} / {total}',
     cardViewLabel: 'View images',
   },
+  news: {
+    eyebrow: 'News',
+    headline: 'At craft fairs in 2026',
+    dates: [
+      { date: 'May 30–31', location: 'Markkleeberg', detail: 'Crafts & pottery market at Cospudener See, 10am–6pm' },
+      { date: 'Aug 14–16', location: 'Zingst', detail: 'Kunstmagistrale, 11am–7pm' },
+    ],
+    cta: 'View flyer',
+    closeLabel: 'Close news',
+    flyerAlt: 'Flyer with the 2026 markets',
+    flyerLightboxClose: 'Close',
+  },
   about: {
     pageTitle: 'Kathrin Kiehl — Goldsmith in Leipzig | Kiehls Klunker',
     pageDescription: 'The maker behind Kiehls Klunker: Kathrin Kiehl, trained goldsmith from Leipzig. Crafting hair forks and sticks in titanium and brass since 2016.',
