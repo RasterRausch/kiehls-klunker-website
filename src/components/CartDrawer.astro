@@ -6,7 +6,7 @@
 //   - Item-Änderung: `cart:changed`-Event triggert Re-Render + Badge-Update
 
 import { getLang, t, localizedPath, VARIANT_NAME_MAP, COLOR_VALUE_MAP } from '../i18n';
-import { STD_RATE_EUR, US_RATE_EUR } from '../lib/shipping';
+import { DE_RATE_EUR, EU_RATE_EUR, US_RATE_EUR } from '../lib/shipping';
 
 const lang = getLang(Astro);
 const strings = t(lang);
@@ -65,9 +65,14 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
       <legend class="text-xs uppercase tracking-[0.16em] text-[var(--color-ink-mute)] mb-2">{strings.cart.shippingTo}</legend>
       <div class="flex flex-col gap-1.5" role="radiogroup">
         <label class="flex items-center gap-2.5 cursor-pointer text-sm">
-          <input type="radio" name="cart-shipping-tier" value="STD" class="accent-[var(--color-ink)]" checked />
-          <span class="flex-1">{strings.cart.tierSTD}</span>
-          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="STD">—</span>
+          <input type="radio" name="cart-shipping-tier" value="DE" class="accent-[var(--color-ink)]" checked />
+          <span class="flex-1">{strings.cart.tierDE}</span>
+          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="DE">—</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer text-sm">
+          <input type="radio" name="cart-shipping-tier" value="EU" class="accent-[var(--color-ink)]" />
+          <span class="flex-1">{strings.cart.tierEU}</span>
+          <span class="text-xs text-[var(--color-ink-mute)]" data-tier-cost="EU">—</span>
         </label>
         <label class="flex items-center gap-2.5 cursor-pointer text-sm">
           <input type="radio" name="cart-shipping-tier" value="US" class="accent-[var(--color-ink)]" />
@@ -178,7 +183,8 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
   checkoutErrorGeneric: strings.cart.checkoutError,
   checkoutLabel: strings.cart.checkout,
   checkoutLoading: strings.cart.checkoutLoading,
-  stdRate: STD_RATE_EUR,
+  deRate: DE_RATE_EUR,
+  euRate: EU_RATE_EUR,
   usRate: US_RATE_EUR,
   freeLabel: strings.cart.shippingFree,
   variantNameMap: VARIANT_NAME_MAP,
@@ -187,7 +193,7 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
   (() => {
     // Cart-Schema-Version: bei Schema-Änderungen erhöhen, dann werden alte
     // localStorage-Carts beim ersten Page-Load gedroppt.
-    const CART_VERSION = '3';
+    const CART_VERSION = '4';
     if (localStorage.getItem('kk_cart_version') !== CART_VERSION) {
       localStorage.removeItem('cart');
       localStorage.removeItem('kk_shipping_tier');
@@ -233,23 +239,27 @@ const testMode = import.meta.env.PUBLIC_TEST_MODE === 'true';
       return Object.keys(v).map((k) => `${tName(k)}: ${tValue(v[k])}`).join(' · ');
     };
 
-    // Versand-Tier: gemerkt in localStorage, Default = STD
+    // Versand-Tier: gemerkt in localStorage, Default = DE
     const TIER_KEY = 'kk_shipping_tier';
     const loadTier = () => {
       const v = localStorage.getItem(TIER_KEY);
-      return v === 'US' ? 'US' : 'STD';
+      if (v === 'US' || v === 'EU' || v === 'DE') return v;
+      return 'DE';
     };
     const saveTier = (t) => localStorage.setItem(TIER_KEY, t);
 
     // Versandkosten-Logik — Spiegel von src/lib/shipping.ts:
-    // Beide Tiers sind Pauschalen pro Bestellung, unabhängig von Menge.
+    // Alle Tiers sind Pauschalen pro Bestellung, unabhängig von Menge.
+    const rateFor = (tier) => {
+      if (tier === 'US') return usRate;
+      if (tier === 'EU') return euRate;
+      return deRate;
+    };
     const computeTotals = (cart, tier) => {
       let subtotal = 0;
       for (const i of cart) subtotal += i.price * i.quantity;
 
-      const shipping = cart.length > 0
-        ? (tier === 'US' ? usRate : stdRate)
-        : 0;
+      const shipping = cart.length > 0 ? rateFor(tier) : 0;
       return { subtotal, shipping, total: subtotal + shipping };
     };
 

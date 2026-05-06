@@ -79,7 +79,7 @@ Wenn du eine neue Section anlegst, pick S oder M. Wenn unklar → M.
 
 - 3 Preisregionen pro Produkt im Markdown: `priceDE`, `priceUS` (DE + 30 €), `priceWorld` (Original-Etsy).
 - `src/lib/price.ts` → `displayPrice(data, country)` wählt passend.
-- Versand: Fixrate **4,90 €**, **2–9 Werktage**. Aktuell nur EU-Länder (siehe `ALLOWED_COUNTRIES` in `src/pages/api/checkout.ts`).
+- Versand: drei Tarife, **2–9 Werktage**. **DE** kostenfrei · **übriges Europa** (EU + CH/NO/IS/LI/GB) Pauschale 4,90 € · **USA** Pauschale 39 €. Logik in `src/lib/shipping.ts`, gespiegelt im CartDrawer.
 - **§19 UStG Kleinunternehmer** → keine USt auf Rechnungen. Footer-Hinweis in `invoice_data.footer` der Stripe-Session.
 
 ## E-Mails

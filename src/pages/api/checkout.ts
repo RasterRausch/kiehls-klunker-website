@@ -19,7 +19,7 @@ type CartItem = {
 };
 
 function isShippingTier(v: unknown): v is ShippingTier {
-  return v === 'STD' || v === 'US';
+  return v === 'DE' || v === 'EU' || v === 'US';
 }
 
 export const POST: APIRoute = async ({ request, url, locals }) => {
@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const body = await request.json();
     const requestedLang = typeof body?.lang === 'string' && body.lang === 'en' ? 'en' : null;
     const lang: Lang = requestedLang ?? ((locals as { lang?: Lang })?.lang ?? 'de');
-    const tier: ShippingTier = isShippingTier(body?.shippingTier) ? body.shippingTier : 'STD';
+    const tier: ShippingTier = isShippingTier(body?.shippingTier) ? body.shippingTier : 'DE';
     const s = t(lang).checkout;
 
     // Globaler Schalter: Shop läuft im Testbetrieb → keine echten Bestellungen.
@@ -137,7 +137,8 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
 
     const allowedCountries = countriesForTier(tier);
     const shippingDisplayNames: Record<ShippingTier, string> = {
-      STD: s.shippingNameSTD,
+      DE: s.shippingNameDE,
+      EU: s.shippingNameEU,
       US: s.shippingNameUS,
     };
     const shippingDisplayName = shippingDisplayNames[tier];

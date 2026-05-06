@@ -1,21 +1,23 @@
-// Versand-Tier-Logik: zwei Tarife.
-// - STD: Deutschland + EU + Rest-Europa → kostenfrei
-// - US:  nur USA → 39 € pauschal pro Bestellung
+// Versand-Tier-Logik: drei Tarife.
+// - DE: nur Deutschland → kostenfrei
+// - EU: übriges Europa (EU + CH/NO/IS/LI/GB) → 4,90 € pauschal
+// - US: nur USA → 39 € pauschal
 //
 // Hinweis: Spiegelt sich in src/components/CartDrawer.astro für die Live-Anzeige.
 // Wer hier was ändert, muss auch dort nachziehen.
 
-export type ShippingTier = 'STD' | 'US';
+export type ShippingTier = 'DE' | 'EU' | 'US';
 
-export const STD_RATE_EUR = 0;
+export const DE_RATE_EUR = 0;
+export const EU_RATE_EUR = 4.90;
 export const US_RATE_EUR = 39.00;
 
-// USA als eigener Tarif wegen langer Distanz / Zoll-Aufwand.
+export const COUNTRIES_DE: readonly string[] = ['DE'];
+
 export const COUNTRIES_US: readonly string[] = ['US'];
 
-// Standard-Tarif: Deutschland + EU + Rest-Europa.
-export const COUNTRIES_STD: readonly string[] = [
-  'DE',
+// Übriges Europa: EU-Mitgliedstaaten + Schweiz, Norwegen, Island, Liechtenstein, UK.
+export const COUNTRIES_EU: readonly string[] = [
   'AT', 'CH', 'NL', 'BE', 'LU', 'FR', 'IT', 'ES',
   'DK', 'SE', 'FI', 'IE', 'PT', 'PL', 'CZ', 'SK', 'SI', 'HU',
   'BG', 'RO', 'HR', 'EE', 'LV', 'LT', 'GR', 'CY', 'MT',
@@ -23,15 +25,21 @@ export const COUNTRIES_STD: readonly string[] = [
 ];
 
 export function tierFor(country: string): ShippingTier {
-  return COUNTRIES_US.includes(country) ? 'US' : 'STD';
+  if (COUNTRIES_US.includes(country)) return 'US';
+  if (COUNTRIES_DE.includes(country)) return 'DE';
+  return 'EU';
 }
 
 export function countriesForTier(tier: ShippingTier): readonly string[] {
-  return tier === 'US' ? COUNTRIES_US : COUNTRIES_STD;
+  if (tier === 'US') return COUNTRIES_US;
+  if (tier === 'DE') return COUNTRIES_DE;
+  return COUNTRIES_EU;
 }
 
 // Pauschale pro Bestellung — unabhängig von Anzahl/Preis der Artikel.
 // Aufrufer stellen sicher, dass der Cart nicht leer ist (siehe api/checkout.ts).
 export function shippingTotalEur(tier: ShippingTier): number {
-  return tier === 'US' ? US_RATE_EUR : STD_RATE_EUR;
+  if (tier === 'US') return US_RATE_EUR;
+  if (tier === 'EU') return EU_RATE_EUR;
+  return DE_RATE_EUR;
 }
