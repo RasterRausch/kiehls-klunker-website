@@ -145,7 +145,17 @@ const tagline = lang === 'en' ? 'Handmade in Leipzig' : 'Handgefertigt in Leipzi
         <li><a href="/impressum" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.footer.impressum}</a></li>
         <li><a href="/datenschutz" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.footer.datenschutz}</a></li>
         <li><a href="/agb" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.footer.agb}</a></li>
+        <li><a href="/widerruf" class="text-[var(--color-paper)]/85 hover:text-[var(--color-paper)] transition-colors">{strings.footer.widerruf}</a></li>
       </ul>
+      <!-- Gesetzlicher Widerrufsbutton (RL 2023/2673) — auf jeder Seite erreichbar,
+           visuell als Button hervorgehoben, ≥44px Touch-Target, ohne Login. -->
+      <a
+        href={p('/vertrag-widerrufen')}
+        aria-label={`${strings.footer.widerrufButton} — ${strings.footer.widerruf}`}
+        class="mt-5 inline-flex items-center justify-center min-h-[44px] w-full md:w-auto px-5 py-3 text-[0.7rem] font-medium uppercase tracking-[0.18em] bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-paper)] hover:bg-transparent hover:text-[var(--color-paper)] transition-colors"
+      >
+        {strings.footer.widerrufButton}
+      </a>
     </div>
   </div>
   <div class="border-t border-[var(--color-paper)]/10">

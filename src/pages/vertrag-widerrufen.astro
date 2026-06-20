@@ -1,0 +1,450 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getLang, t, localizedPath } from '../i18n';
+
+const lang = getLang(Astro);
+const strings = t(lang);
+const w = strings.widerruf;
+const p = (path: string) => localizedPath(path, lang);
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
+const doneUrl = p('/widerruf-eingegangen');
+const privacyUrl = p('/datenschutz');
+---
+
+<BaseLayout title={w.pageTitle} description={w.pageDescription} noindex={true}>
+  <section class="py-12 md:py-20 lg:py-28">
+    <div class="max-w-2xl mx-auto px-6 md:px-10">
+      <!-- HERO -->
+      <div class="text-center mb-12 md:mb-16">
+        <p class="eyebrow mb-4">{w.eyebrow}</p>
+        <h1 class="mb-6">{w.title}</h1>
+        <p class="text-[var(--color-ink-soft)] leading-relaxed max-w-lg mx-auto">
+          {w.intro}
+        </p>
+      </div>
+
+      <p class="text-sm text-[var(--color-ink-mute)] leading-relaxed border border-[var(--color-hairline)] px-4 py-3 mb-10">
+        {w.legalNote}
+      </p>
+
+      <form id="widerruf-form" class="widerruf-form" novalidate>
+        <!-- ——— SCHRITT 1: ANGABEN ——————————————————————————— -->
+        <div data-step="1">
+          <p class="eyebrow mb-6 !text-[var(--color-ink-mute)]">{w.step1Label}</p>
+
+          <div class="field">
+            <label for="w-name">{w.name}</label>
+            <input id="w-name" name="name" type="text" required maxlength="100" autocomplete="name" />
+          </div>
+
+          <div class="field mt-5 sm:mt-6">
+            <label for="w-order">{w.orderNumber}</label>
+            <input id="w-order" name="orderNumber" type="text" required maxlength="100" autocomplete="off" inputmode="text" />
+          </div>
+
+          <div class="field mt-5 sm:mt-6">
+            <label for="w-email">{w.email}</label>
+            <input id="w-email" name="email" type="email" required maxlength="150" autocomplete="email" />
+          </div>
+
+          <div class="field mt-5 sm:mt-6">
+            <label for="w-reason">{w.reason} <span class="optional">{w.optional}</span></label>
+            <textarea id="w-reason" name="reason" rows="4" maxlength="2000"></textarea>
+            <p class="hint">{w.reasonHint}</p>
+          </div>
+
+          <!-- Honeypot — off-screen statt display:none -->
+          <div class="hp" aria-hidden="true">
+            <label for="w-website">Website</label>
+            <input id="w-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          {turnstileSiteKey && (
+            <div
+              class="cf-turnstile mt-6 flex justify-center"
+              data-sitekey={turnstileSiteKey}
+              data-size="flexible"
+              data-theme="light"
+            ></div>
+          )}
+
+          <div class="mt-8">
+            <button type="button" data-continue class="btn-primary w-full sm:w-auto sm:min-w-[220px]">
+              {w.continue}
+            </button>
+            <p class="text-xs text-[var(--color-ink-mute)] leading-relaxed mt-4">
+              {w.privacyNote} <a href={privacyUrl} class="underline hover:text-[var(--color-ink)]">{w.privacyLink}</a>.
+            </p>
+          </div>
+        </div>
+
+        <!-- ——— SCHRITT 2: BESTÄTIGUNG ————————————————————————— -->
+        <div data-step="2" class="hidden" tabindex="-1">
+          <p class="eyebrow mb-6 !text-[var(--color-ink-mute)]">{w.step2Label}</p>
+          <h2 class="font-serif text-2xl mb-3">{w.reviewHeading}</h2>
+          <p class="text-sm text-[var(--color-ink-soft)] leading-relaxed mb-8">{w.reviewIntro}</p>
+
+          <dl class="review">
+            <div class="review-row">
+              <dt>{w.name}</dt>
+              <dd data-review="name"></dd>
+            </div>
+            <div class="review-row">
+              <dt>{w.orderNumber}</dt>
+              <dd data-review="orderNumber"></dd>
+            </div>
+            <div class="review-row">
+              <dt>{w.email}</dt>
+              <dd data-review="email"></dd>
+            </div>
+            <div class="review-row">
+              <dt>{w.reason}</dt>
+              <dd data-review="reason"></dd>
+            </div>
+          </dl>
+
+          <div class="mt-8 flex flex-col sm:flex-row-reverse gap-4 sm:items-center">
+            <button type="submit" class="btn-primary w-full sm:w-auto sm:min-w-[220px] disabled:opacity-50 disabled:cursor-not-allowed">
+              <span data-btn-label>{w.confirm}</span>
+              <span data-btn-loading class="hidden">{w.submitting}</span>
+            </button>
+            <button type="button" data-edit class="btn-text w-full sm:w-auto text-center">
+              {w.edit}
+            </button>
+          </div>
+        </div>
+
+        <!-- Status-Messages -->
+        <div id="w-status" class="mt-6 hidden" role="alert" aria-live="assertive"></div>
+      </form>
+
+      <noscript>
+        <p class="text-sm text-[var(--color-ink-soft)] leading-relaxed border border-[var(--color-hairline)] px-4 py-3 mt-8">
+          {w.noscript}
+        </p>
+      </noscript>
+    </div>
+  </section>
+
+  {turnstileSiteKey && (
+    <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+  )}
+
+  <style>
+    .widerruf-form .field {
+      display: flex;
+      flex-direction: column;
+    }
+    .widerruf-form label {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-ink);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .widerruf-form .optional {
+      color: var(--color-ink-mute);
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+    .widerruf-form .hint {
+      font-size: 0.72rem;
+      color: var(--color-ink-mute);
+      margin-top: 0.4rem;
+      line-height: 1.5;
+    }
+    .widerruf-form input,
+    .widerruf-form textarea {
+      width: 100%;
+      background: var(--color-paper);
+      border: 1px solid var(--color-hairline);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      padding: 0.85rem 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .widerruf-form textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+    .widerruf-form input:hover,
+    .widerruf-form textarea:hover {
+      border-color: var(--color-ink-soft);
+    }
+    .widerruf-form input:focus,
+    .widerruf-form textarea:focus {
+      outline: none;
+      border-color: var(--color-ink);
+      box-shadow: inset 0 0 0 1px var(--color-ink);
+    }
+    .widerruf-form input.is-invalid,
+    .widerruf-form textarea.is-invalid {
+      border-color: #a05530;
+    }
+
+    /* Honeypot — off-screen, nicht display:none */
+    .widerruf-form .hp {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    /* Sekundär-Button „Ändern" — textlich, kein Vollblock */
+    .btn-text {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0.75rem 1rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: var(--color-ink-soft);
+      border: 1px solid var(--color-hairline);
+      background: transparent;
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-text:hover {
+      color: var(--color-ink);
+      border-color: var(--color-ink-soft);
+    }
+
+    /* Review-Liste */
+    .review {
+      border-top: 1px solid var(--color-hairline);
+    }
+    .review-row {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--color-hairline);
+    }
+    @media (max-width: 480px) {
+      .review-row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+      }
+    }
+    .review-row dt {
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--color-ink-mute);
+      padding-top: 0.15rem;
+    }
+    .review-row dd {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--color-ink);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .review-row dd.is-empty {
+      color: var(--color-ink-mute);
+      font-style: italic;
+    }
+
+    #w-status {
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      border: 1px solid var(--color-hairline);
+    }
+    #w-status.is-error {
+      background: #faf1ec;
+      color: var(--color-ink);
+      border-color: #d9b8a3;
+    }
+  </style>
+
+  <script is:inline define:vars={{
+    doneUrl,
+    lang,
+    str: {
+      errorName: w.errorName,
+      errorOrder: w.errorOrder,
+      errorEmail: w.errorEmail,
+      errorGeneric: w.errorGeneric,
+      errorNetwork: w.errorNetwork,
+      errorRateLimit: w.errorRateLimit,
+      reasonEmpty: w.reviewReasonEmpty,
+    },
+  }}>
+    (() => {
+      const form = document.getElementById('widerruf-form');
+      if (!form) return;
+
+      const step1 = form.querySelector('[data-step="1"]');
+      const step2 = form.querySelector('[data-step="2"]');
+      const status = document.getElementById('w-status');
+      const continueBtn = form.querySelector('[data-continue]');
+      const editBtn = form.querySelector('[data-edit]');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const labelEl = submitBtn?.querySelector('[data-btn-label]');
+      const loadingEl = submitBtn?.querySelector('[data-btn-loading]');
+
+      // Zeit-Check-Timestamp: wann wurde das Formular gerendert
+      const formOpenedAt = Date.now();
+
+      const fields = {
+        name: form.querySelector('[name="name"]'),
+        orderNumber: form.querySelector('[name="orderNumber"]'),
+        email: form.querySelector('[name="email"]'),
+        reason: form.querySelector('[name="reason"]'),
+        website: form.querySelector('[name="website"]'),
+      };
+
+      const showStatus = (msg) => {
+        if (!status) return;
+        status.textContent = msg;
+        status.classList.remove('hidden');
+        status.classList.add('is-error');
+      };
+      const hideStatus = () => {
+        status?.classList.add('hidden');
+        status?.classList.remove('is-error');
+      };
+
+      // Invalid-Markierung entfernen, sobald getippt wird
+      ['name', 'orderNumber', 'email'].forEach((k) => {
+        fields[k]?.addEventListener('input', () => {
+          fields[k].removeAttribute('aria-invalid');
+          fields[k].classList.remove('is-invalid');
+        });
+      });
+
+      const markInvalid = (el) => {
+        el.setAttribute('aria-invalid', 'true');
+        el.classList.add('is-invalid');
+      };
+
+      // Schritt-1-Validierung. Gibt {ok, firstInvalid, message} zurück.
+      const validate = () => {
+        const name = fields.name.value.trim();
+        const order = fields.orderNumber.value.trim();
+        const email = fields.email.value.trim();
+        const checks = [
+          { el: fields.name, ok: name.length > 0 && name.length <= 100, msg: str.errorName },
+          { el: fields.orderNumber, ok: order.length > 0 && order.length <= 100, msg: str.errorOrder },
+          { el: fields.email, ok: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email), msg: str.errorEmail },
+        ];
+        let firstInvalid = null;
+        let message = '';
+        for (const { el, ok, msg } of checks) {
+          if (ok) {
+            el.removeAttribute('aria-invalid');
+            el.classList.remove('is-invalid');
+          } else {
+            markInvalid(el);
+            if (!firstInvalid) { firstInvalid = el; message = msg; }
+          }
+        }
+        return { ok: !firstInvalid, firstInvalid, message };
+      };
+
+      const setReview = (key, value, emptyText) => {
+        const el = step2.querySelector(`[data-review="${key}"]`);
+        if (!el) return;
+        if (value) {
+          el.textContent = value;
+          el.classList.remove('is-empty');
+        } else {
+          el.textContent = emptyText;
+          el.classList.add('is-empty');
+        }
+      };
+
+      // —— Stufe 1 → Stufe 2: „Weiter zur Bestätigung" ——
+      continueBtn?.addEventListener('click', () => {
+        hideStatus();
+        const result = validate();
+        if (!result.ok) {
+          showStatus(result.message);
+          result.firstInvalid?.focus();
+          return;
+        }
+        // Review befüllen
+        setReview('name', fields.name.value.trim(), '');
+        setReview('orderNumber', fields.orderNumber.value.trim(), '');
+        setReview('email', fields.email.value.trim(), '');
+        setReview('reason', fields.reason.value.trim(), str.reasonEmpty);
+
+        step1.classList.add('hidden');
+        step2.classList.remove('hidden');
+        step2.focus();
+        step2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      // —— Zurück zu Stufe 1: „Angaben ändern" ——
+      editBtn?.addEventListener('click', () => {
+        hideStatus();
+        step2.classList.add('hidden');
+        step1.classList.remove('hidden');
+        fields.name.focus();
+        step1.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      const setLoading = (loading) => {
+        if (!submitBtn) return;
+        submitBtn.disabled = loading;
+        labelEl?.classList.toggle('hidden', loading);
+        loadingEl?.classList.toggle('hidden', !loading);
+      };
+
+      // —— Stufe 2: „Widerruf bestätigen" → erst HIER wird übermittelt ——
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // Schutz: submit nur gültig, wenn Stufe 2 sichtbar ist
+        if (step2.classList.contains('hidden')) return;
+        hideStatus();
+
+        const tsField = form.querySelector('input[name="cf-turnstile-response"]');
+        const payload = {
+          name: fields.name.value.trim(),
+          orderNumber: fields.orderNumber.value.trim(),
+          email: fields.email.value.trim(),
+          reason: fields.reason.value.trim(),
+          website: fields.website ? fields.website.value : '',
+          ts: formOpenedAt,
+          turnstile: tsField ? (tsField.value || '') : '',
+          lang,
+        };
+
+        setLoading(true);
+        try {
+          const res = await fetch('/api/widerruf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.ok) {
+            // Erfolg → neutrale Bestätigungsseite
+            window.location.href = doneUrl;
+            return;
+          }
+          if (res.status === 429) {
+            showStatus(str.errorRateLimit);
+          } else {
+            showStatus(data.error || str.errorGeneric);
+          }
+        } catch (err) {
+          showStatus(str.errorNetwork);
+        } finally {
+          setLoading(false);
+        }
+      });
+    })();
+  </script>
+</BaseLayout>

@@ -23,6 +23,9 @@ _inbox/
 _archiv/
 .etsy-auth-pending
 
+# Widerruf-Nachweisprotokoll — enthält personenbezogene Daten (Name, E-Mail)
+data/
+
 # macOS-specific files
 .DS_Store
 
