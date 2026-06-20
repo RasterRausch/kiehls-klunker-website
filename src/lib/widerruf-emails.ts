@@ -94,17 +94,17 @@ export function widerrufConfirmationEmail(data: WiderrufData, lang: WiderrufLang
       }
     : {
         eyebrow: 'Widerruf eingegangen',
-        heading: 'Wir haben Ihren Widerruf erhalten.',
-        intro: 'Vielen Dank. Ihre Widerrufserklärung ist am',
-        introTail: 'bei uns eingegangen und wurde protokolliert. Diese E-Mail bestätigt den <strong>Eingang</strong> Ihrer Erklärung — über deren Wirksamkeit und die Rückabwicklung informieren wir Sie gesondert.',
-        nothing: 'Sie müssen vorerst nichts weiter tun.',
-        yourDetails: 'Ihre Angaben',
+        heading: 'Wir haben deinen Widerruf erhalten.',
+        intro: 'Vielen Dank. Deine Widerrufserklärung ist am',
+        introTail: 'bei uns eingegangen und wurde protokolliert. Diese E-Mail bestätigt den <strong>Eingang</strong> deiner Erklärung — über deren Wirksamkeit und die Rückabwicklung informieren wir dich gesondert.',
+        nothing: 'Du musst vorerst nichts weiter tun.',
+        yourDetails: 'Deine Angaben',
         labelName: 'Name',
         labelOrder: 'Bestell-/Vertragsnr.',
         labelReceived: 'Eingegangen',
         labelReason: 'Grund',
         noReason: '— kein Grund angegeben —',
-        regards: 'Mit freundlichen Grüßen,',
+        regards: 'Herzlich,',
       };
 
   const body = `

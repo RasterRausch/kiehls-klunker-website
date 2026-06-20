@@ -314,7 +314,6 @@ export const en: typeof de = {
     eyebrow: 'News',
     headline: 'At craft fairs in 2026',
     dates: [
-      { date: 'May 30–31', location: 'Markkleeberg', detail: 'Crafts & pottery market at Cospudener See, 10am–6pm' },
       { date: 'Aug 14–16', location: 'Zingst', detail: 'Kunstmagistrale, 11am–7pm' },
     ],
     cta: 'View flyer',

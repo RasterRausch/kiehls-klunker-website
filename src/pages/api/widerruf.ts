@@ -243,7 +243,7 @@ export const POST: APIRoute = async ({ request, url }) => {
       to: overrideTo || e,
       subject: customerLang === 'en'
         ? 'We have received your withdrawal — Kiehls Klunker'
-        : 'Wir haben Ihren Widerruf erhalten — Kiehls Klunker',
+        : 'Wir haben deinen Widerruf erhalten — Kiehls Klunker',
       html: confirm.html,
       text: confirm.text,
     });
