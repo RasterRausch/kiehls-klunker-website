@@ -135,7 +135,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     // 1) Rate-Limit
     if (!checkRateLimit(ip)) {
-      return json({ error: 'Zu viele Anfragen. Bitte versuchen Sie es in einer Stunde erneut.' }, 429);
+      return json({ error: 'Zu viele Anfragen. Bitte versuche es in einer Stunde erneut.' }, 429);
     }
 
     const body = await request.json().catch(() => ({}));
@@ -167,13 +167,13 @@ export const POST: APIRoute = async ({ request, url }) => {
     const e = String(email).trim();
     const r = String(reason).trim();
     if (!n || !o || !e) {
-      return json({ error: 'Bitte füllen Sie Name, Bestell-/Vertragsnummer und E-Mail aus.' }, 400);
+      return json({ error: 'Bitte fülle Name, Bestell-/Vertragsnummer und E-Mail aus.' }, 400);
     }
     if (n.length > 100 || o.length > 100 || e.length > 150 || r.length > 2000) {
       return json({ error: 'Eingabe ist zu lang.' }, 400);
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) {
-      return json({ error: 'Bitte geben Sie eine gültige E-Mail-Adresse an.' }, 400);
+      return json({ error: 'Bitte gib eine gültige E-Mail-Adresse an.' }, 400);
     }
     // KEIN Content-/Spam-Filter auf den Freitext „Grund" — ein gesetzlicher
     // Widerruf darf nicht an URLs oder Sonderzeichen scheitern.
@@ -251,7 +251,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     return json({ ok: true }, 200);
   } catch (err) {
     console.error('[widerruf] error:', err);
-    return json({ error: 'Uns ist ein Fehler unterlaufen. Bitte versuchen Sie es gleich noch einmal.' }, 500);
+    return json({ error: 'Uns ist ein Fehler unterlaufen. Bitte versuche es gleich noch einmal.' }, 500);
   }
 };
 
