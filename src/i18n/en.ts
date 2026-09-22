@@ -314,13 +314,11 @@ export const en: typeof de = {
     eyebrow: 'News',
     headline: 'At craft fairs in 2026',
     dates: [
-      { date: 'Aug 14–16', location: 'Zingst', detail: 'Kunstmagistrale, 11am–7pm' },
+      { date: 'Nov 14–15', location: 'Plauen', detail: '11th pre-Advent craft fair, Töpferei Leonhardt, Bärenstr. 4, 08523 Plauen' },
+      { date: 'Dec 12–13 & 19–20', location: 'Trebsen', detail: 'Advent im Schloß Trebsen, Zum Schloß 1, 04687 Trebsen' },
     ],
-    cta: 'View flyer',
     closeLabel: 'Collapse news',
     expandLabel: 'Show news',
-    flyerAlt: 'Flyer with the 2026 markets',
-    flyerLightboxClose: 'Close',
   },
   about: {
     pageTitle: 'Kathrin Kiehl — Goldsmith in Leipzig | Kiehls Klunker',

@@ -314,13 +314,11 @@ export const de = {
     eyebrow: 'News',
     headline: 'Auf Kunsthandwerkermärkten 2026',
     dates: [
-      { date: '14.–16.08.', location: 'Zingst', detail: 'Kunstmagistrale, 11–19 Uhr' },
+      { date: '14.–15.11.', location: 'Plauen', detail: '11. Voradventlicher Kunsthandwerkermarkt, Töpferei Leonhardt, Bärenstr. 4, 08523 Plauen' },
+      { date: '12.–13.12. & 19.–20.12.', location: 'Trebsen', detail: 'Advent im Schloß Trebsen, Zum Schloß 1, 04687 Trebsen' },
     ],
-    cta: 'Flyer ansehen',
     closeLabel: 'News einklappen',
     expandLabel: 'News einblenden',
-    flyerAlt: 'Flyer mit den Märkten 2026',
-    flyerLightboxClose: 'Schließen',
   },
   about: {
     pageTitle: 'Kathrin Kiehl — Goldschmiedin in Leipzig | Kiehls Klunker',
