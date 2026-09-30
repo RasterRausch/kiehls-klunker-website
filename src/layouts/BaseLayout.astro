@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 import NewsCard from '../components/NewsCard.astro';
 import TestModeBanner from '../components/TestModeBanner.astro';
+import Statistik from '../components/Statistik.astro';
 import { getLang, localizedPath } from '../i18n';
 
 interface Props {
@@ -120,6 +121,9 @@ if (structuredData) {
 
     <!-- Strukturierte Daten (JSON-LD) — Organization global plus Page-spezifisch -->
     <script type="application/ld+json" set:html={JSON.stringify(allLd.length === 1 ? allLd[0] : allLd)}></script>
+
+    <!-- Besucherstatistik (Umami), nur im Live-Stand — siehe components/Statistik.astro -->
+    <Statistik />
   </head>
   <body class="min-h-screen flex flex-col">
     <a href="#main-content" class="skip-link">

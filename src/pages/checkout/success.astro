@@ -29,6 +29,18 @@ const eyebrow = lang === 'en' ? 'Order confirmed' : 'Bestellung bestätigt';
   </section>
 
   <script is:inline>
+    // Besucherstatistik: abgeschlossene Bestellung zählen (nur die Tatsache,
+    // keine Bestelldaten). Stripe hängt ?session_id=… an. Die ID wird hier
+    // aus der Adresszeile entfernt, BEVOR das Umami-Skript (defer) startet —
+    // so landet sie nicht in der Statistik, es gibt keinen doppelten
+    // Seitenaufruf, und ein Neuladen der Seite zählt nicht noch einmal.
+    if (new URLSearchParams(location.search).has('session_id')) {
+      history.replaceState(null, '', location.pathname);
+      window.addEventListener('load', function () {
+        if (window.umami) window.umami.track('Bestellung abgeschlossen');
+      });
+    }
+
     // Warenkorb leeren, Header-Badge aktualisieren
     localStorage.removeItem('cart');
     window.dispatchEvent(new CustomEvent('cart:changed'));

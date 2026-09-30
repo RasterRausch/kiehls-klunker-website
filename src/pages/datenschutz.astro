@@ -137,11 +137,68 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
             verbleiben ausschließlich in Ihrem Browser und werden nicht an uns übermittelt,
             solange Sie die Bestellung nicht abschließen.
           </li>
+          <li>
+            <span class="ink-strong">kk_news_collapsed</span> (Session Storage) — merkt
+            sich, ob Sie den News-Hinweis unten rechts eingeklappt haben, damit er beim
+            Wechsel auf eine andere Seite eingeklappt bleibt. Wird beim Schließen des
+            Browsers automatisch gelöscht und verbleibt ausschließlich in Ihrem Browser.
+          </li>
         </ul>
       </section>
 
       <section class="mb-10">
-        <h2>6. Schriftarten</h2>
+        <h2>6. Besucherstatistik</h2>
+        <p class="mb-3">
+          Um zu sehen, wie unsere Website genutzt wird, zählen wir die Besuche mit der
+          Open-Source-Software <span class="ink-strong">Umami</span>. Umami läuft nicht bei
+          einem Analyseanbieter, sondern auf einem Server der Agentur, die unsere Website
+          technisch betreut und die Daten in unserem Auftrag verarbeitet:
+        </p>
+        <p class="mb-3 py-1 pl-4 border-l border-[var(--color-hairline)]">
+          Raster Rausch — Alexander Ritter<br />
+          Kolonnadenstraße 24<br />
+          04109 Leipzig<br />
+          Deutschland
+        </p>
+        <p class="mb-3">
+          Der Server steht bei der Mittwald CM Service GmbH &amp; Co. KG in Deutschland
+          (siehe Abschnitt&nbsp;4). Mit Raster Rausch besteht ein Vertrag zur
+          Auftragsverarbeitung nach Art.&nbsp;28 DSGVO. Daten an andere Anbieter gehen
+          dabei nicht.
+        </p>
+        <p class="mb-3">
+          Umami setzt keine Cookies und legt nichts auf Ihrem Gerät ab. Erfasst werden:
+        </p>
+        <ul class="mb-3">
+          <li>die aufgerufene Seite und die Seite, von der Sie zu uns kommen</li>
+          <li>Browser, Betriebssystem, Gerätetyp, Bildschirmgröße und Spracheinstellung</li>
+          <li>Land, Region und Stadt, abgeleitet aus Ihrer IP-Adresse</li>
+          <li>
+            die Tatsache, dass eine Nachricht über das Kontaktformular gesendet oder eine
+            Bestellung abgeschlossen wurde — Inhalte der Nachricht oder der Bestellung
+            gehen dabei nicht an die Statistik
+          </li>
+        </ul>
+        <p class="mb-3">
+          Ihre IP-Adresse wird nicht gespeichert. Aus IP-Adresse, Browser und einem
+          geheimen Schlüssel bildet Umami eine Prüfsumme, mit der sich mehrere Besuche
+          innerhalb eines Kalendermonats zusammenfassen lassen. Sie lässt sich nicht in
+          die IP-Adresse zurückrechnen und ändert sich mit jedem neuen Monat. Wir führen
+          die Statistik nicht mit anderen Daten zusammen.
+        </p>
+        <p class="mb-3">
+          Haben Sie in Ihrem Browser die Einstellung „Do Not Track“ eingeschaltet, wird
+          Ihr Besuch nicht gezählt.
+        </p>
+        <p>
+          <span class="ink-strong">Rechtsgrundlage:</span> Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f
+          DSGVO. Unser berechtigtes Interesse liegt darin, zu erfahren, wie Besucherinnen
+          und Besucher unsere Website finden und nutzen, um Website und Angebot zu verbessern.
+        </p>
+      </section>
+
+      <section class="mb-10">
+        <h2>7. Schriftarten</h2>
         <p>
           Zur einheitlichen Darstellung setzen wir die Web-Schriftarten
           <span class="ink-strong">DM Sans</span> und
@@ -155,7 +212,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>7. Kontaktformular und Bot-Schutz</h2>
+        <h2>8. Kontaktformular und Bot-Schutz</h2>
         <p class="mb-3">
           Wenn Sie uns über das Kontaktformular eine Nachricht senden, verarbeiten wir die
           von Ihnen angegebenen Daten (Name, E-Mail-Adresse, ggf.&nbsp;Betreff, Nachrichten­text)
@@ -187,7 +244,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>8. Bestellabwicklung und Zahlung</h2>
+        <h2>9. Bestellabwicklung und Zahlung</h2>
         <p class="mb-3">
           Für die Durchführung Ihrer Bestellung verarbeiten wir die dafür notwendigen
           Daten: Vor- und Nachname, Liefer- und Rechnungsanschrift, E-Mail-Adresse,
@@ -224,7 +281,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>9. Versand</h2>
+        <h2>10. Versand</h2>
         <p class="mb-3">
           Zur Auslieferung Ihrer Bestellung übermitteln wir Ihre Liefer­anschrift sowie,
           soweit für die Zustellung erforderlich, Ihre E-Mail-Adresse und ggf.&nbsp;Telefonnummer
@@ -243,7 +300,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>10. E-Mail-Versand (Bestellbestätigungen, Kontakt-Antworten)</h2>
+        <h2>11. E-Mail-Versand (Bestellbestätigungen, Kontakt-Antworten)</h2>
         <p class="mb-3">
           Für den Versand von Bestell- und Kontaktbestätigungen nutzen wir den Dienst:
         </p>
@@ -267,7 +324,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>11. Newsletter</h2>
+        <h2>12. Newsletter</h2>
         <p class="mb-3">
           Wenn Sie über das Formular im Seitenfuß Ihre E-Mail-Adresse hinterlassen,
           erfasst der Server die Adresse, Ihre bevorzugte Sprache und den Zeitpunkt
@@ -302,7 +359,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>12. Social-Media-Verlinkungen</h2>
+        <h2>13. Social-Media-Verlinkungen</h2>
         <p>
           Auf der Website finden sich Verlinkungen zu Profilen auf Instagram, Facebook und
           Etsy. Diese Links sind als reine HTML-Verweise ausgeführt. Eine Datenübertragung
@@ -313,7 +370,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>13. Datenweitergabe in Drittländer</h2>
+        <h2>14. Datenweitergabe in Drittländer</h2>
         <p>
           Soweit Daten an Empfänger außerhalb der EU/des EWR übermittelt werden (insb.&nbsp;USA
           im Rahmen der oben genannten Dienste), erfolgt dies ausschließlich auf Grundlage
@@ -324,7 +381,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>14. Keine automatisierte Entscheidungsfindung</h2>
+        <h2>15. Keine automatisierte Entscheidungsfindung</h2>
         <p>
           Eine automatisierte Entscheidungsfindung einschließlich Profiling (Art.&nbsp;22 DSGVO)
           findet nicht statt.
@@ -332,7 +389,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <section class="mb-10">
-        <h2>15. Aktualität und Änderung dieser Erklärung</h2>
+        <h2>16. Aktualität und Änderung dieser Erklärung</h2>
         <p>
           Diese Datenschutzerklärung ist aktuell gültig. Durch die Weiterentwicklung unserer
           Website und Angebote oder aufgrund geänderter gesetzlicher Vorgaben kann eine
@@ -342,7 +399,7 @@ import LegalEnNotice from '../components/LegalEnNotice.astro';
       </section>
 
       <p class="text-sm text-[var(--color-ink-mute)] mt-16">
-        Stand: 27. April 2026
+        Stand: 30. September 2026
       </p>
     </div>
   </section>

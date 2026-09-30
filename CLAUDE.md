@@ -4,8 +4,8 @@
 
 - **Shop:** Handgefertigter Titan-/Messingschmuck (Haarforken, Haarstäbe, Ohrringe). Macherin: **Kathrin Kiehl** (Inhaberin, Kleinunternehmerin nach §19 UStG).
 - **Hosting/Dev:** **Alex / raster-rausch.de** betreibt Agentur-Server (Mittwald mStudio), hostet für Kathrin im Unterauftrag. Trennung: Kathrin = Verantwortlicher/Data Controller, Alex = Auftragsverarbeiter (AVV).
-- **Prod-Domain:** `kiehls-klunker.de` (noch nicht umgelegt)
-- **Staging:** `https://p-bn7b5m.project.space/` — hier läuft gerade alles
+- **Prod-Domain:** `kiehls-klunker.de` — live, gleiche App wie Staging (mittwald p-bn7b5m)
+- **Staging:** `https://p-bn7b5m.project.space/` — dieselbe Installation, Canonical zeigt auf kiehls-klunker.de
 
 ## Stack & Quirks
 
@@ -95,6 +95,16 @@ Wenn du eine neue Section anlegst, pick S oder M. Wenn unklar → M.
 - **Webhook:** Endpoint ist `/api/stripe/webhook`. Secret fehlt noch — Kathrin muss im Dashboard Endpoint anlegen auf `https://p-bn7b5m.project.space/api/stripe/webhook`, Events `checkout.session.completed` + `checkout.session.async_payment_succeeded`, dann `STRIPE_WEBHOOK_SECRET` eintragen und Node restart.
 - Ohne Webhook funktioniert der Kaufvorgang (Stripe zieht Geld), aber die Bestell-Mails gehen *nicht* raus.
 
+## Besucherstatistik (Umami)
+
+- Umami der Agentur unter `statistik.raster-rausch.de` (mittwald p-gdc5j0, Stack „Umami", v3.4.0). Hier im Projekt wird **nichts** an Umami selbst geändert.
+- **Website-ID:** `2f0d14c0-d8bc-4380-8196-7d9579632777` (nicht geheim)
+- **Einbau:** `src/components/Statistik.astro`, eingebunden im `<head>` von `src/layouts/BaseLayout.astro`. Nur im Build (`import.meta.env.PROD`), `data-domains` = `kiehls-klunker.de,www.kiehls-klunker.de` → Staging und localhost zählen nicht.
+- **Ereignisse:** „Anfrage gesendet" (Erfolgsfall in `src/pages/kontakt.astro`), „Bestellung abgeschlossen" (`src/pages/checkout/success.astro`, nur mit `?session_id`, die vor dem Umami-Start aus der URL entfernt wird). Newsletter und Widerruf zählen bewusst **nicht**.
+- **Eigene Besuche ausschließen:** `https://kiehls-klunker.de/?statistik=aus` je Browser, `?statistik=an` schaltet zurück.
+- **Datenschutzerklärung:** Abschnitt 6 „Besucherstatistik" in `src/pages/datenschutz.astro`. Wer Umami-Einbau oder Ereignisse ändert, zieht den Abschnitt nach.
+- Raster Rausch verarbeitet die Statistik im Auftrag von Kathrin → AVV nötig.
+
 ## Sicherheitsrails
 
 - `.env` enthält Live-Secrets (Stripe sk_live, Resend-Key, Etsy-Tokens) — **niemals committen**, niemals in Logs, niemals an Dritte.
@@ -109,5 +119,4 @@ Wenn du eine neue Section anlegst, pick S oder M. Wenn unklar → M.
 - [ ] AGB-Texte final reviewen (Rechtsberatung oder Service)
 - [ ] Etsy EN-Sprache aktivieren (Kathrin)
 - [ ] **Resend-Domain verifizieren** (`kiehls-klunker.de` bei resend.com/domains hinzufügen, DKIM/SPF/MX-Records ins DNS der Domain eintragen). Muss *vor* Go-Live passieren — sonst gehen alle Kontaktformular- und Bestell-Mails ins Leere (403 "domain not verified"). Braucht DNS-Zugriff + ~30 Min Propagation.
-- [ ] Domain-Umzug von Staging → `kiehls-klunker.de`
 - [ ] Später: Geo-Detection für Auto-Sprachwahl

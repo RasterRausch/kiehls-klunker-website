@@ -1,0 +1,54 @@
+---
+// Besucherstatistik mit Umami, eingebaut am 30. September 2026.
+//
+// Umami gehört der Agentur Raster Rausch, nicht diesem Projekt: eine
+// Installation für alle Kundenseiten, je Seite eine „Website" mit eigener
+// ID. Läuft im mittwald-Projekt Raster Rausch (p-gdc5j0), Stack „Umami",
+// unter statistik.raster-rausch.de, fest auf Version 3.4.0. Raster Rausch
+// verarbeitet die Daten im Auftrag von Kathrin (AVV nötig).
+//
+// Skript und Zähladresse heißen rr.js und /api/rr statt script.js und
+// /api/send — Werbeblocker sperren die Standardnamen häufig.
+//
+// Nur im gebauten Stand (import.meta.env.PROD). data-domains zählt nur
+// die echte Domain — nicht die Staging-Adresse p-bn7b5m.project.space und
+// nicht localhost. data-do-not-track: Wer „Do Not Track" eingeschaltet
+// hat, wird nicht gezählt (steht so in der Datenschutzerklärung).
+//
+// Ereignisse (nur die Tatsache, keine Formular- oder Bestellinhalte):
+// - „Anfrage gesendet": Kontaktformular, Erfolgsfall in pages/kontakt.astro
+// - „Bestellung abgeschlossen": Rückkehr von Stripe, pages/checkout/success.astro
+//
+// Eigene Besuche ausschließen: einmal je Browser und Gerät
+// kiehls-klunker.de/?statistik=aus aufrufen, ?statistik=an schaltet
+// zurück. Setzt bzw. löscht „umami.disabled" im localStorage, das
+// Umami-Skript prüft den Eintrag selbst. Normale Besucher bekommen keinen
+// Eintrag. Läuft vor dem Umami-Skript (defer), deshalb zählt schon der
+// Aufruf mit ?statistik=aus nicht mehr.
+//
+// Die Website-ID ist nicht geheim, sie steht in jedem Seitenquelltext.
+
+const WEBSITE_ID = '2f0d14c0-d8bc-4380-8196-7d9579632777';
+---
+
+{import.meta.env.PROD && (
+  <>
+    <script is:inline>
+      (function () {
+        var schalter = new URLSearchParams(location.search).get('statistik');
+        try {
+          if (schalter === 'aus') localStorage.setItem('umami.disabled', '1');
+          if (schalter === 'an') localStorage.removeItem('umami.disabled');
+        } catch (e) {}
+      })();
+    </script>
+    <script
+      is:inline
+      defer
+      src="https://statistik.raster-rausch.de/rr.js"
+      data-website-id={WEBSITE_ID}
+      data-domains="kiehls-klunker.de,www.kiehls-klunker.de"
+      data-do-not-track="true"
+    ></script>
+  </>
+)}
